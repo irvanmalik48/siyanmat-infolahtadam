@@ -6,25 +6,25 @@ WIP.
 
 ### Frontend
 
-[x] File-based client-side routing
-[x] React Helmet for changing `<head></head>` metadatas
-[x] Implement login page header component
-[x] Implement footer component
-[x] Implement login form component
-[x] Implement sidebar component
-[x] Implement login page
-[ ] Implement dashboard page
-[ ] Implement kegiatan page
-[ ] Implement peralatan page
-[ ] Implement cetak page
+- [x] File-based client-side routing
+- [x] React Helmet for changing `<head></head>` metadatas
+- [x] Implement login page header component
+- [x] Implement footer component
+- [x] Implement login form component
+- [x] Implement sidebar component
+- [x] Implement login page
+- [ ] Implement dashboard page
+- [ ] Implement kegiatan page
+- [ ] Implement peralatan page
+- [ ] Implement cetak page
 
 ### Backend
 
-[ ] Implement authentication logic
-[ ] Implement GET requests for kegiatan and peralatan
-[ ] Implement POST requests for kegiatan and peralatan
-[ ] Implement PUT request for image uploads
-[ ] Implement JSON-to-XLSX logic
+- [ ] Implement authentication logic
+- [ ] Implement GET requests for kegiatan and peralatan
+- [ ] Implement POST requests for kegiatan and peralatan
+- [ ] Implement PUT request for image uploads
+- [ ] Implement JSON-to-XLSX logic
 
 ## Quickstart
 
@@ -58,3 +58,6 @@ or
 pnpm run build
 ```
 
+## License
+
+MIT
