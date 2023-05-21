@@ -13,7 +13,7 @@ WIP.
 - [x] Implement login form component
 - [x] Implement sidebar component
 - [x] Implement login page
-- [ ] Implement dashboard page
+- [x] Implement dashboard page
 - [ ] Implement kegiatan page
 - [ ] Implement peralatan page
 - [ ] Implement cetak page
