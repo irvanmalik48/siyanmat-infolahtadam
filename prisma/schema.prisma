@@ -22,9 +22,10 @@ model User {
 }
 
 model Kegiatan {
-  id           String @id @default(uuid())
+  id           String    @id @default(uuid())
   namaKegiatan String
   tglKegiatan  DateTime
+  peralatan    Peralatan @relation(fields: [idPeralatan], references: [id])
   idPeralatan  String
   waktuGuna    Int
   operator     String
@@ -37,11 +38,13 @@ model Kegiatan {
 }
 
 model Peralatan {
-  id            String @id @default(uuid())
+  id            String   @id @default(uuid())
   namaPeralatan String
   tglPengadaan  DateTime
   maksUsia      Int
   gambar        String?
+
+  kegiatan Kegiatan[]
 
   activityLogs ActivityLog[]
 
