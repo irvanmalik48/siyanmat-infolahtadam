@@ -16,7 +16,7 @@ WIP.
 - [x] Implement dashboard page
 - [x] Implement kegiatan page
 - [x] Implement peralatan page
-- [ ] Implement cetak page
+- [x] Implement cetak page
 
 ### Backend
 
