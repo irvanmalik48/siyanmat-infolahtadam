@@ -14,8 +14,8 @@ WIP.
 - [x] Implement sidebar component
 - [x] Implement login page
 - [x] Implement dashboard page
-- [ ] Implement kegiatan page
-- [ ] Implement peralatan page
+- [x] Implement kegiatan page
+- [x] Implement peralatan page
 - [ ] Implement cetak page
 
 ### Backend
