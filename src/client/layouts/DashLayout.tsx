@@ -2,6 +2,7 @@ import { useLocation } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import { PageMetadata } from "../types/types";
 import RootLayout from "./RootLayout";
+import ArtLogo from "../assets/logo_art.png";
 
 export default function DashLayout(props: PageMetadata) {
   const location = useLocation();
@@ -63,13 +64,14 @@ export default function DashLayout(props: PageMetadata) {
     >
       <div id="master-layout" className="flex">
         <Sidebar />
-        <section className="w-full">
-          <div id="top-bar-tracker" className="w-full px-5 py-3 bg-neutral-200">
+        <section className="relative w-full isolate">
+          <img src={ArtLogo} alt="pernak pernik" className="absolute -z-[1] hidden w-64 lg:block top-24 right-24 opacity-20" />
+          <div id="top-bar-tracker" className="w-full px-5 py-3 bg-neutral-100">
             <p className="text-lg font-bold">
               {getLocation()?.name}
             </p>
           </div>
-          <div id="main-content" className="w-full px-5 py-3 my-12">
+          <div id="main-content" className="w-full px-5 py-3 my-24">
             {props.children}
           </div>
         </section>
