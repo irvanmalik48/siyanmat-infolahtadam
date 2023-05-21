@@ -24,6 +24,11 @@ model User {
 model Kegiatan {
   id           String @id @default(uuid())
   namaKegiatan String
+  tglKegiatan  DateTime
+  idPeralatan  String
+  waktuGuna    Int
+  operator     String
+  keterangan   String
 
   activityLogs ActivityLog[]
 
@@ -34,6 +39,9 @@ model Kegiatan {
 model Peralatan {
   id            String @id @default(uuid())
   namaPeralatan String
+  tglPengadaan  DateTime
+  maksUsia      Int
+  gambar        String?
 
   activityLogs ActivityLog[]
 
