@@ -81,13 +81,13 @@ export default function Index() {
             </td>
             <td className="px-5 py-3 text-sm font-medium text-left">
               <div className="flex gap-3">
-                <Link to="/kegiatan/info">
+                <Link to="/peralatan/info">
                   <Info size={16} />
                 </Link>
-                <Link to="/kegiatan/ubah">
+                <Link to="/peralatan/ubah">
                   <Pencil size={16} />
                 </Link>
-                <Link to="/kegiatan/hapus">
+                <Link to="/peralatan/hapus">
                   <Trash2 size={16} />
                 </Link>
               </div>
