@@ -10,8 +10,7 @@ export default function Index() {
       description="Dashboard page SIYANMAT"
     >
       <h1 className="text-4xl font-bold">
-        Apa yang ingin anda
-        lakukan hari ini?
+        Apa yang ingin anda lakukan hari ini?
       </h1>
       <nav id="quick-menu" className="flex flex-col flex-wrap w-full gap-5 py-5 md:flex-row">
         <CardLink
@@ -59,7 +58,7 @@ export default function Index() {
             </th>
           </tr>
         </thead>
-        <tbody className="w-full">
+        <tbody className="w-full divide-y divide-gray-300">
           <tr className="w-full odd:bg-neutral-100">
             <td className="px-5 py-3 text-lg font-semibold text-left">
               01
