@@ -5,7 +5,7 @@ export default function Sidebar() {
   const location = useLocation();
 
   return (
-    <nav className="sticky top-0 h-screen text-white w-72 bg-tni-darker">
+    <nav className="sticky top-0 hidden h-screen text-white md:block w-72 bg-tni-darker">
       <div className="relative w-full aspect-square bg-neutral-400">
         <img src="/placeholder_portrait.png" alt="User portrait" />
         <div className="absolute inset-x-0 bottom-0 px-5 py-3 bg-opacity-80 bg-tni-darker backdrop-blur-sm">
