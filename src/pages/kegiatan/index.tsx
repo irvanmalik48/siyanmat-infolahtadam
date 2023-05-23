@@ -2,8 +2,105 @@ import Link from "next/link";
 import DashLayout from "@/components/DashLayout";
 import TableSection from "@/components/TableSection";
 import { Info, Pencil, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { trpc } from "@/common/trpc";
 
 export default function Index() {
+  const [listKegiatan, setListKegiatan] = useState<any[]>([]);
+  const [listPeralatan, setListPeralatan] = useState<any[]>([]);
+  const [sortBy, setSortBy] = useState<"tanggal" | "nama" | "operator">("tanggal");
+  const [fetched, setFetched] = useState<boolean>(false);
+  const [hasFetchError, setHasFetchError] = useState<boolean>(false);
+
+  const getAllKegiatan = trpc.getAllKegiatan.useMutation();
+  const getAllPeralatan = trpc.getAllPeralatan.useMutation();
+
+  useEffect(() => {
+    async function getData() {
+      const resOne = await getAllKegiatan.mutateAsync();
+      const resTwo = await getAllPeralatan.mutateAsync();
+      if (resOne.status === 201 && resTwo.status === 201) {
+        setFetched(true);
+        setListPeralatan(resTwo.result);
+        setListKegiatan(resOne.result.sort((a: any, b: any) => {
+          if (sortBy === "tanggal")
+            return new Date(b.tglKegiatan).getTime() - new Date(a.tglKegiatan).getTime();
+          if (sortBy === "nama")
+            return a.namaKegiatan.localeCompare(b.namaKegiatan);
+          if (sortBy === "operator")
+            return a.operator.localeCompare(b.operator);
+        }));
+      } else {
+        setHasFetchError(true);
+      }
+    }
+
+    getData();
+  }, [sortBy])
+
+  function AllKegiatan() {
+    return (
+      <>
+        {fetched === false && (
+          <tr className="w-full">
+            <td className="px-5 py-3 text-sm font-medium text-center" colSpan={8} rowSpan={10}>
+              Mengambil data...
+            </td>
+          </tr>
+        )}
+        {hasFetchError === true && (
+          <tr className="w-full">
+            <td className="px-5 py-3 text-sm font-medium text-center" colSpan={8} rowSpan={10}>
+              Terjadi kesalahan saat mengambil data.
+            </td>
+          </tr>
+        )}
+        {listKegiatan.length > 0 && listKegiatan.map((obj, key) => (
+          <tr key={key} className="w-full odd:bg-neutral-100">
+            <td className="px-5 py-3 text-sm font-medium text-center">
+              {key + 1}
+            </td>
+            <td className="px-5 py-3 text-sm font-medium text-left">
+              {obj.namaKegiatan}
+            </td>
+            <td className="px-5 py-3 text-sm font-medium text-left">
+              {(new Date(obj.tglKegiatan)).toLocaleDateString("id-ID")}
+            </td>
+            <td className="px-5 py-3 text-sm font-medium text-left">
+              {
+                listPeralatan.filter((peralatan) => peralatan.id === obj.idPeralatan)[0].namaPeralatan
+              }
+            </td>
+            <td className="px-5 py-3 text-sm font-medium text-left">
+              {
+                `${obj.waktuGuna / 60} jam ${obj.waktuGuna % 60} menit`
+              }
+            </td>
+            <td className="px-5 py-3 text-sm font-medium text-left">
+              {obj.operator}
+            </td>
+            <td className="px-5 py-3 text-sm font-medium text-left">
+              {obj.keterangan}
+            </td>
+            <td className="px-5 py-3 text-sm font-medium text-left">
+              <div className="flex gap-3">
+                <Link href={`/kegiatan/info/${obj.id}`}>
+                  <Info size={16} />
+                </Link>
+                <Link href={`/kegiatan/ubah/${obj.id}`}>
+                  <Pencil size={16} />
+                </Link>
+                <Link href={`/kegiatan/hapus/${obj.id}`}>
+                  <Trash2 size={16} />
+                </Link>
+              </div>
+            </td>
+          </tr>
+        ))}
+      </>
+    )
+  }
+
   return (
     <DashLayout
       title="Kegiatan"
@@ -23,10 +120,12 @@ export default function Index() {
           <select
             id="filter-by-select"
             className="w-full max-w-sm px-3 py-2 transition bg-white border-2 border-gray-300 rounded-lg outline-none appearance-none focus:border-tni-darker focus:ring-4 focus:ring-tni-accented focus:ring-opacity-50"
+            defaultValue={"tanggal"}
+            onChange={(e) => setSortBy(e.target.value as "tanggal" | "nama" | "operator")}
           >
-            <option value="tanggal" selected>Sortir berdasarkan tanggal kegiatan</option>
+            <option value="tanggal">Sortir berdasarkan tanggal kegiatan</option>
             <option value="nama">Sortir berdasarkan nama kegiatan</option>
-            <option value="peralatan">Sortir berdasarkan peralatan</option>
+            <option value="operator">Sortir berdasarkan operator</option>
           </select>
         </div>
         <Link href="/kegiatan/tambah" className="block w-full px-5 py-2 font-semibold text-center text-white transition rounded-lg md:w-fit min-w-fit bg-tni-dark hover:bg-tni-accented">
@@ -49,7 +148,7 @@ export default function Index() {
               Peralatan
             </th>
             <th className="px-5 py-3 text-sm font-bold text-left">
-              Waktu Guna
+              Waktu Penggunaan
             </th>
             <th className="px-5 py-3 text-sm font-bold text-left">
               Operator
@@ -63,42 +162,7 @@ export default function Index() {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-300">
-          <tr className="w-full odd:bg-neutral-100">
-            <td className="px-5 py-3 text-sm font-medium text-center">
-              1
-            </td>
-            <td className="px-5 py-3 text-sm font-medium text-left">
-              Rapat Koordinasi Acara HUT TNI ke-76
-            </td>
-            <td className="px-5 py-3 text-sm font-medium text-left">
-              2021-09-01 07:00:00
-            </td>
-            <td className="px-5 py-3 text-sm font-medium text-left">
-              Proyektor
-            </td>
-            <td className="px-5 py-3 text-sm font-medium text-left">
-              2 jam 30 menit
-            </td>
-            <td className="px-5 py-3 text-sm font-medium text-left">
-              Manto
-            </td>
-            <td className="px-5 py-3 text-sm font-medium text-left">
-              Tidak ada keterangan.
-            </td>
-            <td className="px-5 py-3 text-sm font-medium text-left">
-              <div className="flex gap-3">
-                <Link href="/kegiatan/info">
-                  <Info size={16} />
-                </Link>
-                <Link href="/kegiatan/ubah">
-                  <Pencil size={16} />
-                </Link>
-                <Link href="/kegiatan/hapus">
-                  <Trash2 size={16} />
-                </Link>
-              </div>
-            </td>
-          </tr>
+          <AllKegiatan />
         </tbody>
       </TableSection>
     </DashLayout>
