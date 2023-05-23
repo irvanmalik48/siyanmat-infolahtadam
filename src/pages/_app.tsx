@@ -2,7 +2,6 @@ import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import type { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
-import { Inter, Playfair_Display } from 'next/font/google';
 import { trpc } from "../common/trpc";
 
 interface CustomAppProps extends AppProps {
