@@ -21,7 +21,7 @@ export const serverRouter = t.router({
       });
     }
 
-    const hashedPassword = await hash(password, 8);
+    const hashedPassword = await hash(password, 10);
 
     const result = await ctx.prisma.user.create({
       data: { email, name, password: hashedPassword },
@@ -32,6 +32,7 @@ export const serverRouter = t.router({
       message: "Account created successfully",
       result: result.email,
     };
+
   }),
 });
 
