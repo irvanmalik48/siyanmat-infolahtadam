@@ -38,11 +38,12 @@ model Kegiatan {
 }
 
 model Peralatan {
-  id            String   @id @default(uuid())
-  namaPeralatan String
-  tglPengadaan  DateTime
-  maksUsia      Int
-  gambar        String?
+  id             String   @id @default(uuid())
+  namaPeralatan  String
+  tglPengadaan   DateTime
+  menitPemakaian Int      @default(0)
+  maksUsia       Int
+  gambar         String?
 
   kegiatan Kegiatan[]
 
