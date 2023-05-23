@@ -5,16 +5,6 @@ import { SessionProvider } from "next-auth/react";
 import { Inter, Playfair_Display } from 'next/font/google';
 import { trpc } from "../common/trpc";
 
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-});
-
-const playfair = Playfair_Display({
-  subsets: ['latin'],
-  variable: '--font-playfair',
-});
-
 interface CustomAppProps extends AppProps {
   pageProps: {
     session?: Session;
@@ -24,9 +14,7 @@ interface CustomAppProps extends AppProps {
 function App({ Component, pageProps }: CustomAppProps) {
   return (
     <SessionProvider session={pageProps.session}>
-      <main id="finject" className={`${inter.variable} ${playfair.variable}`}>
-        <Component {...pageProps} />
-      </main>
+      <Component {...pageProps} />
     </SessionProvider>
   );
 }
