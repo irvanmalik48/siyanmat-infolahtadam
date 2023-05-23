@@ -8,8 +8,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-inter)", "sans-serif"],
-        serif: ["var(--font-playfair", "serif"],
+        sans: ["Inter", "sans-serif"],
+        serif: ["Playfair Display", "serif"],
       },
       colors: {
         tni: {
@@ -24,5 +24,6 @@ module.exports = {
       },
     },
   },
+  important: true,
   plugins: [],
 };
