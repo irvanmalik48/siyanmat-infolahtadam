@@ -3,7 +3,7 @@ import { hash } from "bcrypt";
 
 import { IContext } from "./context";
 import { loginSchema as signUpSchema } from "../common/validation/auth";
-import { idSchema, kegiatanSchema, menitPemakaianSchema, peralatanSchema } from "@/types/types";
+import { diffPemakaianSchema, idSchema, kegiatanSchema, menitPemakaianSchema, peralatanSchema } from "@/types/types";
 
 const t = initTRPC.context<IContext>().create();
 
@@ -140,9 +140,44 @@ export const serverRouter = t.router({
   tambahMenitPemakaian: t.procedure.input(menitPemakaianSchema).mutation(async ({ input, ctx }) => {
     const { id, menitPemakaian } = input;
 
+    const getInitial = await ctx.prisma.peralatan.findUnique({
+      where: { id },
+    });
+
     const result = await ctx.prisma.peralatan.update({
       where: { id },
-      data: { menitPemakaian },
+      data: { menitPemakaian: getInitial?.menitPemakaian as number + menitPemakaian },
+    });
+
+    return {
+      status: 201,
+      message: `Peralatan ${id} updated successfully`,
+      result: result,
+    };
+  }),
+  diffMenitPemakaian: t.procedure.input(menitPemakaianSchema).mutation(async ({ input, ctx }) => {
+    const { id, menitPemakaian } = input;
+
+    const getInitial = await ctx.prisma.peralatan.findUnique({
+      where: { id },
+    });
+
+    const sumAllWaktuGuna = await ctx.prisma.kegiatan.aggregate({
+      _sum: {
+        waktuGuna: true,
+      },
+      where: {
+        idPeralatan: id,
+      }
+    });
+
+    const actOne = sumAllWaktuGuna._sum?.waktuGuna as number - menitPemakaian;
+    const actTwo = getInitial?.menitPemakaian as number - menitPemakaian;
+    const difference = actOne - actTwo;
+
+    const result = await ctx.prisma.peralatan.update({
+      where: { id },
+      data: { menitPemakaian: getInitial?.menitPemakaian as number + difference },
     });
 
     return {
