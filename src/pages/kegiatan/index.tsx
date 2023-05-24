@@ -9,11 +9,27 @@ export default function Index() {
   const [listKegiatan, setListKegiatan] = useState<any[]>([]);
   const [listPeralatan, setListPeralatan] = useState<any[]>([]);
   const [sortBy, setSortBy] = useState<"tanggal" | "nama" | "operator">("tanggal");
+  const [search, setSearch] = useState<string>("");
   const [fetched, setFetched] = useState<boolean>(false);
   const [hasFetchError, setHasFetchError] = useState<boolean>(false);
 
   const getAllKegiatan = trpc.getAllKegiatan.useMutation();
   const getAllPeralatan = trpc.getAllPeralatan.useMutation();
+
+  function parseToJamMenit(variable: number) {
+    const jam = Math.floor(variable / 60);
+    const menit = variable % 60;
+
+    if (jam === 0) {
+      return `${menit} menit`;
+    }
+
+    if (menit === 0) {
+      return `${jam} jam`;
+    }
+
+    return `${jam} jam ${menit} menit`;
+  }
 
   useEffect(() => {
     async function getData() {
@@ -30,13 +46,21 @@ export default function Index() {
           if (sortBy === "operator")
             return a.operator.localeCompare(b.operator);
         }));
+        if (search !== "") {
+          setListKegiatan(resOne.result.filter((obj: any) => {
+            return obj.namaKegiatan.toLowerCase().includes(search.toLowerCase()) ||
+              obj.operator.toLowerCase().includes(search.toLowerCase()) ||
+              obj.keterangan.toLowerCase().includes(search.toLowerCase()) ||
+              obj.tglKegiatan.toLowerCase().includes(search.toLowerCase());
+          }));
+        }
       } else {
         setHasFetchError(true);
       }
     }
 
     getData();
-  }, [sortBy])
+  }, [sortBy, search])
 
   function AllKegiatan() {
     return (
@@ -72,9 +96,7 @@ export default function Index() {
               }
             </td>
             <td className="px-5 py-3 text-sm font-medium text-left">
-              {
-                `${obj.waktuGuna / 60} jam ${obj.waktuGuna % 60} menit`
-              }
+              {parseToJamMenit(obj.waktuGuna)}
             </td>
             <td className="px-5 py-3 text-sm font-medium text-left">
               {obj.operator}
@@ -87,10 +109,10 @@ export default function Index() {
                 <Link href={`/kegiatan/info/${obj.id}`}>
                   <Info size={16} />
                 </Link>
-                <Link href={`/kegiatan/ubah/${obj.id}`}>
+                <Link href={`/kegiatan/edit/${obj.id}`}>
                   <Pencil size={16} />
                 </Link>
-                <Link href={`/kegiatan/hapus/${obj.id}`}>
+                <Link href={`/kegiatan/delete/${obj.id}`}>
                   <Trash2 size={16} />
                 </Link>
               </div>
@@ -112,6 +134,7 @@ export default function Index() {
       <div className="flex flex-col justify-end gap-3 py-5 xl:justify-between xl:flex-row xl:items-center">
         <div className="flex flex-col flex-wrap w-full gap-3 lg:flex-row">
           <input
+            onChange={(e) => setSearch(e.target.value)}
             id="search-input"
             type="text"
             className="w-full max-w-sm px-3 py-2 transition border-2 border-gray-300 rounded-lg outline-none focus:border-tni-darker focus:ring-4 focus:ring-tni-accented focus:ring-opacity-50"
