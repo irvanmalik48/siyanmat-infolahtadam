@@ -13,11 +13,13 @@ export default function DashLayout(props: PageMetadata) {
     "/kegiatan": "Atur Kegiatan",
     "/kegiatan/tambah": "Tambah Kegiatan",
     "/kegiatan/edit": "Edit Kegiatan",
-    "/kegiatan/detail": "Detail Kegiatan",
+    "/kegiatan/info": "Detail Kegiatan",
+    "/kegiatan/delete": "Hapus Kegiatan",
     "/peralatan": "Atur Peralatan",
     "/peralatan/tambah": "Tambah Peralatan",
     "/peralatan/edit": "Edit Peralatan",
-    "/peralatan/detail": "Detail Peralatan",
+    "/peralatan/info": "Detail Peralatan",
+    "/peralatan/delete": "Hapus Peralatan",
     "/cetak": "Cetak Laporan"
   };
 
