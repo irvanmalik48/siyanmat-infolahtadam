@@ -6,8 +6,6 @@ import { trpc } from "@/common/trpc";
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { PeralatanOptions } from "@/components/Options";
-
-import "react-datepicker/dist/react-datepicker.css";
 import { UUID } from "uuidjs";
 
 export default function TambahKegiatan() {
@@ -168,14 +166,14 @@ export default function TambahKegiatan() {
           <div className="grid w-full grid-cols-2 gap-5">
             <button
               type="submit"
-              className="flex items-center justify-center order-2 w-full px-4 py-2 text-base font-medium text-white transition rounded-lg bg-tni-dark hover:bg-tni-darker"
+              className="flex items-center justify-center order-2 w-full px-4 py-2 text-base font-medium text-white transition rounded-lg active:scale-90 bg-tni-dark hover:bg-tni-darker"
             >
               Tambah
             </button>
             <button
               type="reset"
               onClick={() => reset()}
-              className="flex items-center justify-center order-1 w-full px-4 py-2 text-base font-medium text-white transition bg-red-600 rounded-lg hover:bg-red-800"
+              className="flex items-center justify-center order-1 w-full px-4 py-2 text-base font-medium text-white transition bg-red-600 rounded-lg active:scale-90 hover:bg-red-800"
             >
               Reset
             </button>
