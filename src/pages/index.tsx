@@ -99,7 +99,7 @@ export default function Login() {
             {errors.password?.type === "required" && <p className="w-full text-sm font-medium text-red-500">Password tidak boleh kosong</p>}
           </div>
           <div className="flex items-center justify-end w-full mt-5">
-            <button className="px-5 py-2 font-semibold text-white transition rounded-lg bg-tni-dark hover:bg-tni-accented" type="submit">
+            <button className="px-5 py-2 font-semibold text-white transition rounded-lg active:scale-90 bg-tni-dark hover:bg-tni-accented" type="submit">
               Login
             </button>
           </div>
