@@ -1,67 +1,104 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider          = "postgresql"
-  url               = env("DATABASE_URL")
-  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
-  directUrl         = env("DIRECT_URL")
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {
-  id       String  @id @default(uuid())
-  email    String  @unique
-  name     String?
+  id       String    @id @default(cuid())
+  username String    @unique
+  email    String    @unique
   password String
+  name     String?
+  image    String?   @default("/placeholder_portrait.png")
+  role     String    @default("viewer")
+  accounts Account[]
+  sessions Session[]
 
-  activityLogs ActivityLog[]
+  activities Activity[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  logs Log[]
+
+  @@unique([username, email])
 }
 
-model Kegiatan {
-  id           String    @id @default(uuid())
-  namaKegiatan String
-  tglKegiatan  DateTime
-  peralatan    Peralatan @relation(fields: [idPeralatan], references: [id])
-  idPeralatan  String
-  waktuGuna    Int
-  operator     String
-  keterangan   String
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
 
-  activityLogs ActivityLog[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  @@unique([identifier, token])
 }
 
-model Peralatan {
-  id             String   @id @default(uuid())
-  namaPeralatan  String
-  tglPengadaan   DateTime
-  menitPemakaian Int      @default(0)
-  maksUsia       Int
-  gambar         String?
+model Activity {
+  id            String   @id @default(cuid())
+  activityCode  String   @unique
+  name          String
+  description   String?
+  date          DateTime
+  operator      User     @relation(fields: [operatorUname], references: [username], onDelete: Cascade)
+  operatorUname String
+  tool          Tool     @relation(fields: [toolCode], references: [toolCode], onDelete: Cascade)
+  toolCode      String
+  toolUsage     Int
 
-  kegiatan Kegiatan[]
-
-  activityLogs ActivityLog[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  logs Log[]
 }
 
-model ActivityLog {
-  id          String     @id @default(uuid())
-  user        User       @relation(fields: [userId], references: [id])
-  userId      String
-  kegiatan    Kegiatan?  @relation(fields: [kegiatanId], references: [id])
-  kegiatanId  String?
-  peralatan   Peralatan? @relation(fields: [peralatanId], references: [id])
-  peralatanId String?
-  description String
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+model Tool {
+  id           String  @id @default(cuid())
+  toolCode     String  @unique
+  name         String
+  maxHourUsage Int
+  image        String? @default("/placeholder_tool.png")
+  isAvailable  Boolean @default(true)
+
+  activities Activity[]
+
+  logs Log[]
+}
+
+model Log {
+  id           String   @id @default(cuid())
+  activity     Activity @relation(fields: [activityCode], references: [activityCode], onDelete: Cascade)
+  activityCode String
+  tool         Tool     @relation(fields: [toolCode], references: [toolCode], onDelete: Cascade)
+  toolCode     String
+  user         User     @relation(fields: [username], references: [username], onDelete: Cascade)
+  username     String
+  date         DateTime
+  usage        Int
 }

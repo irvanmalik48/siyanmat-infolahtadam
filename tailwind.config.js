@@ -7,23 +7,36 @@ module.exports = {
   ],
   theme: {
     extend: {
-      fontFamily: {
-        sans: ["Inter", "sans-serif"],
-        serif: ["Playfair Display", "serif"],
-      },
       colors: {
-        tni: {
-          gold: "#FFC700",
-          accented: "#2D6D32",
-          dark: "#225226",
-          darker: "#1A3F1D",
+        celtic: {
+          50: "#edfaeb",
+          100: "#d4f4d3",
+          200: "#adebab",
+          300: "#7bdc7a",
+          400: "#50cb51",
+          500: "#32b035",
+          600: "#248c28",
+          700: "#206b24",
+          800: "#1e5622",
+          900: "#183b1b",
+          950: "#0b280e",
         },
-      },
-      backgroundImage: {
-        camo: "url('/artwork.svg')",
+        supernova: {
+          50: "#fffee7",
+          100: "#fffcc1",
+          200: "#fff686",
+          300: "#ffe941",
+          400: "#ffd70d",
+          500: "#ffc700",
+          600: "#d19100",
+          700: "#a66702",
+          800: "#89500a",
+          900: "#74410f",
+          950: "#442204",
+        },
       },
     },
   },
-  important: true,
   plugins: [],
+  important: true,
 };
