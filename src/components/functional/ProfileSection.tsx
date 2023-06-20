@@ -9,6 +9,7 @@ import { Crown, Shield, Users, Upload } from "lucide-react";
 import { atom, useAtom } from "jotai";
 import { useEffect, useReducer } from "react";
 import { useRouter } from "next/navigation";
+import Toast from "./Toast";
 
 interface SafeUser {
   id: string;
@@ -30,6 +31,7 @@ const onDragLeaveAtom = atom(false);
 const onDragOverAtom = atom(false);
 const onDropAtom = atom(false);
 const onFileChangeAtom = atom(false);
+const onSuccessAtom = atom(false);
 
 export default function ProfileSection() {
   const router = useRouter();
@@ -47,7 +49,7 @@ export default function ProfileSection() {
     }
   );
 
-  const [profilePicDialogOpen, setProfilePicDialogOpen] = useAtom(
+  const [_profilePicDialogOpen, setProfilePicDialogOpen] = useAtom(
     profilePicDialogOpenAtom
   );
 
@@ -205,11 +207,13 @@ function UploadProfilePicDialog() {
     `/api/users/${session?.user?.email}`
   );
 
-  const [onDragEnter, setOnDragEnter] = useAtom(onDragEnterAtom);
-  const [onDragLeave, setOnDragLeave] = useAtom(onDragLeaveAtom);
+  const [_onDragEnter, setOnDragEnter] = useAtom(onDragEnterAtom);
+  const [_onDragLeave, setOnDragLeave] = useAtom(onDragLeaveAtom);
   const [onDragOver, setOnDragOver] = useAtom(onDragOverAtom);
   const [onDrop, setOnDrop] = useAtom(onDropAtom);
   const [onFileChange, setOnFileChange] = useAtom(onFileChangeAtom);
+
+  const [onSuccess, setOnSuccess] = useAtom(onSuccessAtom);
 
   const reducer = (state: any, action: any) => {
     switch (action.type) {
@@ -315,140 +319,156 @@ function UploadProfilePicDialog() {
   };
 
   return (
-    <AnimatePresence>
-      {dialogOpen && (
-        <motion.dialog
-          key="upload-profile-pic-dialog"
-          className="fixed inset-0 flex items-center justify-center w-full h-full p-5 bg-black bg-opacity-50"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
-          <motion.div
-            className="flex w-full max-w-[500px] flex-col items-center justify-center rounded-2xl bg-white p-5"
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            exit={{ scale: 0 }}
+    <>
+      <AnimatePresence
+        onExitComplete={() => setOnSuccess(false)}
+      >
+        {
+          onSuccess && (
+            <Toast
+              key="upload-profile-pic-success-toast"
+              message="Berhasil mengganti gambar profil!"
+              atom={onSuccessAtom}
+            />
+          )
+        }
+      </AnimatePresence>
+      <AnimatePresence>
+        {dialogOpen && (
+          <motion.dialog
+            key="upload-profile-pic-dialog"
+            className="fixed inset-0 flex items-center justify-center w-full h-full p-5 bg-black bg-opacity-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
           >
-            <h1 className="text-2xl font-bold">Upload Gambar Profil</h1>
-            <p className="text-sm font-semibold text-neutral-500">
-              Upload gambar untuk mengganti gambar profilmu
-            </p>
-            <Formik
-              initialValues={{
-                image: "",
-              }}
-              onSubmit={async (values) => {
-                const formData = new FormData();
-                formData.append("image", state.file);
-
-                const res = await fetch("/api/upload", {
-                  method: "POST",
-                  body: formData,
-                });
-
-                const data = await res.json();
-
-                const anotherFormData = new FormData();
-                anotherFormData.append("email", session?.user?.email as string);
-                anotherFormData.append("image", data.imageUrl);
-
-                const anotherRes = await fetch("/api/users/upload", {
-                  method: "PUT",
-                  body: anotherFormData,
-                });
-
-                const anotherData = await anotherRes.json();
-
-                await mutate(anotherData, {
-                  optimisticData: {
-                    ...anotherData,
-                    image: data.imageUrl,
-                  },
-                });
-
-                setOnFileChange(false);
-
-
-                dispatch({ type: "RESET_FILE" });
-              }}
+            <motion.div
+              className="flex w-full max-w-[500px] flex-col items-center justify-center rounded-2xl bg-white p-5"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0 }}
             >
-              {({ isSubmitting }) => (
-                <Form className="flex flex-col items-center justify-center w-full gap-5 mt-5">
-                  <label
-                    className="flex flex-col items-center justify-center w-full gap-2 p-5 transition border cursor-pointer rounded-xl border-neutral-300"
-                    onDragEnter={handleDragEnter}
-                    onDragLeave={handleDragLeave}
-                    onDragOver={handleDragOver}
-                    onDrop={handleDrop}
-                    style={{
-                      backgroundColor: onDragOver
-                        ? "rgb(30 86 34 / 100%)"
-                        : "transparent",
-                      borderColor: onDragOver
-                        ? "rgb(30 86 34 / 100%) !important"
-                        : "rgb(212 212 212 / 100%)",
-                      color: onDragOver ? "white" : "rgb(30 86 34 / 100%)",
-                    }}
-                  >
-                    {(onDrop || onFileChange) && dialogOpen ? (
-                      <>
-                        <img
-                          src={URL.createObjectURL(state.file)}
-                          alt="profile-pic"
-                          className="w-24 h-24 rounded-lg"
+              <h1 className="text-2xl font-bold">Upload Gambar Profil</h1>
+              <p className="text-sm font-semibold text-neutral-500">
+                Upload gambar untuk mengganti gambar profilmu
+              </p>
+              <Formik
+                initialValues={{
+                  image: "",
+                }}
+                onSubmit={async (values) => {
+                  const formData = new FormData();
+                  formData.append("image", state.file);
+
+                  const res = await fetch("/api/upload?type=user", {
+                    method: "POST",
+                    body: formData,
+                  });
+
+                  const data = await res.json();
+
+                  const anotherFormData = new FormData();
+                  anotherFormData.append("email", session?.user?.email as string);
+                  anotherFormData.append("image", data.imageUrl);
+
+                  const anotherRes = await fetch("/api/users/upload", {
+                    method: "PUT",
+                    body: anotherFormData,
+                  });
+
+                  const anotherData = await anotherRes.json();
+
+                  await mutate(anotherData, {
+                    optimisticData: {
+                      ...anotherData,
+                      image: data.imageUrl,
+                    },
+                  });
+
+                  setOnFileChange(false);
+                  dispatch({ type: "RESET_FILE" });
+                  setOnSuccess(true);
+                }}
+              >
+                {({ isSubmitting }) => (
+                  <>
+                    <Form className="flex flex-col items-center justify-center w-full gap-5 mt-5">
+                      <label
+                        className="flex flex-col items-center justify-center w-full gap-2 p-5 transition border cursor-pointer rounded-xl border-neutral-300"
+                        onDragEnter={handleDragEnter}
+                        onDragLeave={handleDragLeave}
+                        onDragOver={handleDragOver}
+                        onDrop={handleDrop}
+                        style={{
+                          backgroundColor: onDragOver
+                            ? "rgb(30 86 34 / 100%)"
+                            : "transparent",
+                          borderColor: onDragOver
+                            ? "rgb(30 86 34 / 100%) !important"
+                            : "rgb(212 212 212 / 100%)",
+                          color: onDragOver ? "white" : "rgb(30 86 34 / 100%)",
+                        }}
+                      >
+                        {(onDrop || onFileChange) && dialogOpen ? (
+                          <>
+                            <img
+                              src={URL.createObjectURL(state.file)}
+                              alt="profile-pic"
+                              className="w-24 h-24 rounded-lg"
+                            />
+                            <p className="px-5 py-2 mt-2 overflow-hidden truncate rounded-full max-w-48 bg-celtic-800 bg-opacity-10">
+                              {state.file.name}
+                            </p>
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="w-8 h-8" />
+                            <p className="text-sm font-semibold">
+                              {onDragOver
+                                ? "Lepas gambar anda disini"
+                                : "Tarik atau klik untuk mengunggah gambar"}
+                            </p>
+                          </>
+                        )}
+                        <Field
+                          name="image"
+                          type="file"
+                          className="hidden"
+                          onChange={(e: any) => {
+                            handleFileChange(e);
+                          }}
                         />
-                        <p className="px-5 py-2 mt-2 overflow-hidden truncate rounded-full max-w-48 bg-celtic-800 bg-opacity-10">
-                          {state.file.name}
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        <Upload className="w-8 h-8" />
-                        <p className="text-sm font-semibold">
-                          {onDragOver
-                            ? "Lepas gambar anda disini"
-                            : "Tarik atau klik untuk mengunggah gambar"}
-                        </p>
-                      </>
-                    )}
-                    <Field
-                      name="image"
-                      type="file"
-                      className="hidden"
-                      onChange={(e: any) => {
-                        handleFileChange(e);
-                      }}
-                    />
-                  </label>
-                  <div className="flex items-center justify-center gap-2 mx-auto">
-                    <button
-                      className="py-2 font-semibold text-white transition bg-red-700 rounded-full w-fit px-7 hover:bg-red-600 disabled:brightness-50"
-                      disabled={isSubmitting}
-                      onClick={handleClose}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="py-2 font-semibold text-white transition rounded-full w-fit bg-celtic-800 px-7 hover:bg-celtic-700 disabled:brightness-50"
-                      disabled={isSubmitting}
-                      onClick={() => {
-                        const timer = setTimeout(() => {
-                          setDialogOpen(false);
-                          clearTimeout(timer);
-                        }, 50);
-                      }}
-                    >
-                      {isSubmitting ? "Submitting..." : "Submit"}
-                    </button>
-                  </div>
-                </Form>
-              )}
-            </Formik>
-          </motion.div>
-        </motion.dialog>
-      )}
-    </AnimatePresence>
+                      </label>
+                      <div className="flex items-center justify-center gap-2 mx-auto">
+                        <button
+                          className="py-2 font-semibold text-white transition bg-red-700 rounded-full w-fit px-7 hover:bg-red-600 disabled:brightness-50"
+                          disabled={isSubmitting}
+                          onClick={handleClose}
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          className="py-2 font-semibold text-white transition rounded-full w-fit bg-celtic-800 px-7 hover:bg-celtic-700 disabled:brightness-50"
+                          disabled={isSubmitting}
+                          onClick={() => {
+                            const timer = setTimeout(() => {
+                              setDialogOpen(false);
+                              clearTimeout(timer);
+                            }, 50);
+                          }}
+                        >
+                          {isSubmitting ? "Submitting..." : "Submit"}
+                        </button>
+                      </div>
+                    </Form>
+                  </>
+                )}
+              </Formik>
+            </motion.div>
+          </motion.dialog>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

@@ -6,6 +6,8 @@ import { Formik, Form, Field } from "formik";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { emailRegex } from "@/lib/rfc5322";
+import Toast from "./Toast";
+import { atom, useAtom } from "jotai";
 
 interface SafeUser {
   id: string;
@@ -16,6 +18,8 @@ interface SafeUser {
   role: string;
 }
 
+const onSuccessAtom = atom(false);
+
 export default function EditProfileSection() {
   const { data: session, status } = useSession();
   const { data: profile, isLoading, mutate } = useStaleWhileRevalidate<SafeUser>(
@@ -25,6 +29,7 @@ export default function EditProfileSection() {
   const [nameError, setNameError] = useState<string | undefined>();
   const [emailError, setEmailError] = useState<string | undefined>();
   const [usernameError, setUsernameError] = useState<string | undefined>();
+  const [onSuccess, setOnSuccess] = useAtom(onSuccessAtom);
 
   return (
     <section className="flex flex-col w-full gap-5 mt-7">
@@ -96,176 +101,190 @@ export default function EditProfileSection() {
               });
 
               setSubmitting(false);
+              setOnSuccess(true);
             }}
           >
             {({ isSubmitting, errors, touched }) => (
-              <Form className="flex flex-col w-full gap-5 p-5 border rounded-xl border-neutral-300">
-                <Field
-                  id="id"
-                  name="id"
-                  type="hidden"
-                  className="hidden"
-                />
-                <motion.div
-                  key="name-container"
-                  className="flex flex-col items-start justify-start w-full gap-1"
-                  initial={{
-                    height: "70px",
-                  }}
-                  animate={{
-                    height: errors.name && touched.name ? "110px" : "70px",
-                  }}
-                  exit={{
-                    height: "70px",
-                  }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 500,
-                    height: {
-                      duration: 0.3,
-                    },
-                  }}
+              <>
+                <AnimatePresence
+                  onExitComplete={() => setOnSuccess(false)}
                 >
-                  <label htmlFor="name" className="font-semibold">
-                    Nama
-                  </label>
+                  {onSuccess && (
+                    <Toast
+                      key="success"
+                      message="Berhasil mengubah profil!"
+                      atom={onSuccessAtom}
+                    />
+                  )}
+                </AnimatePresence>
+                <Form className="flex flex-col w-full gap-5 p-5 border rounded-xl border-neutral-300">
                   <Field
-                    id="name"
-                    name="name"
-                    type="text"
-                    className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
-                    placeholder="Masukkan nama anda"
+                    id="id"
+                    name="id"
+                    type="hidden"
+                    className="hidden"
                   />
-                  <AnimatePresence
-                    onExitComplete={() => {
-                      setNameError(undefined);
+                  <motion.div
+                    key="name-container"
+                    className="flex flex-col items-start justify-start w-full gap-1"
+                    initial={{
+                      height: "70px",
+                    }}
+                    animate={{
+                      height: errors.name && touched.name ? "110px" : "70px",
+                    }}
+                    exit={{
+                      height: "70px",
+                    }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 500,
+                      height: {
+                        duration: 0.3,
+                      },
                     }}
                   >
-                    {errors.name && touched.name && (
-                      <motion.div
-                        key="name-error"
-                        className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                      >
-                        {nameError}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-                <motion.div
-                  key="email-container"
-                  className="flex flex-col items-start justify-start w-full gap-1"
-                  initial={{
-                    height: "70px",
-                  }}
-                  animate={{
-                    height: errors.email && touched.email ? "110px" : "70px",
-                  }}
-                  exit={{
-                    height: "70px",
-                  }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 500,
-                    height: {
-                      duration: 0.3,
-                    },
-                  }}
-                >
-                  <label htmlFor="email" className="font-semibold">
-                    Email
-                  </label>
-                  <Field
-                    id="email"
-                    name="email"
-                    type="text"
-                    className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
-                    placeholder="Masukkan email anda"
-                  />
-                  <AnimatePresence
-                    onExitComplete={() => {
-                      setEmailError(undefined);
+                    <label htmlFor="name" className="font-semibold">
+                      Nama
+                    </label>
+                    <Field
+                      id="name"
+                      name="name"
+                      type="text"
+                      className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                      placeholder="Masukkan nama anda"
+                    />
+                    <AnimatePresence
+                      onExitComplete={() => {
+                        setNameError(undefined);
+                      }}
+                    >
+                      {errors.name && touched.name && (
+                        <motion.div
+                          key="name-error"
+                          className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                        >
+                          {nameError}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                  <motion.div
+                    key="email-container"
+                    className="flex flex-col items-start justify-start w-full gap-1"
+                    initial={{
+                      height: "70px",
+                    }}
+                    animate={{
+                      height: errors.email && touched.email ? "110px" : "70px",
+                    }}
+                    exit={{
+                      height: "70px",
+                    }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 500,
+                      height: {
+                        duration: 0.3,
+                      },
                     }}
                   >
-                    {errors.email && touched.email && (
-                      <motion.div
-                        key="email-error"
-                        className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                      >
-                        {emailError}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-                <motion.div
-                  key="username-container"
-                  className="flex flex-col items-start justify-start w-full gap-1"
-                  initial={{
-                    height: "70px",
-                  }}
-                  animate={{
-                    height: errors.username && touched.username ? "110px" : "70px",
-                  }}
-                  exit={{
-                    height: "70px",
-                  }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 500,
-                    height: {
-                      duration: 0.3,
-                    },
-                  }}
-                >
-                  <label htmlFor="username" className="font-semibold">
-                    Username
-                  </label>
-                  <Field
-                    id="username"
-                    name="username"
-                    type="text"
-                    className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
-                    placeholder="Masukkan username"
-                  />
-                  <AnimatePresence
-                    onExitComplete={() => {
-                      setUsernameError(undefined);
+                    <label htmlFor="email" className="font-semibold">
+                      Email
+                    </label>
+                    <Field
+                      id="email"
+                      name="email"
+                      type="text"
+                      className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                      placeholder="Masukkan email anda"
+                    />
+                    <AnimatePresence
+                      onExitComplete={() => {
+                        setEmailError(undefined);
+                      }}
+                    >
+                      {errors.email && touched.email && (
+                        <motion.div
+                          key="email-error"
+                          className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                        >
+                          {emailError}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                  <motion.div
+                    key="username-container"
+                    className="flex flex-col items-start justify-start w-full gap-1"
+                    initial={{
+                      height: "70px",
+                    }}
+                    animate={{
+                      height: errors.username && touched.username ? "110px" : "70px",
+                    }}
+                    exit={{
+                      height: "70px",
+                    }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 500,
+                      height: {
+                        duration: 0.3,
+                      },
                     }}
                   >
-                    {errors.username && touched.username && (
-                      <motion.div
-                        key="username-error"
-                        className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                      >
-                        {usernameError}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-                <Field
-                  id="role"
-                  name="role"
-                  type="hidden"
-                  className="hidden"
-                />
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="self-end py-2 font-semibold text-white transition rounded-full px-7 w-fit bg-celtic-800 hover:bg-celtic-700 disabled:brightness-50"
-                >
-                  {
-                    isSubmitting ? "Menyimpan..." : "Simpan"
-                  }
-                </button>
-              </Form>
+                    <label htmlFor="username" className="font-semibold">
+                      Username
+                    </label>
+                    <Field
+                      id="username"
+                      name="username"
+                      type="text"
+                      className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                      placeholder="Masukkan username"
+                    />
+                    <AnimatePresence
+                      onExitComplete={() => {
+                        setUsernameError(undefined);
+                      }}
+                    >
+                      {errors.username && touched.username && (
+                        <motion.div
+                          key="username-error"
+                          className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                        >
+                          {usernameError}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                  <Field
+                    id="role"
+                    name="role"
+                    type="hidden"
+                    className="hidden"
+                  />
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="self-end py-2 font-semibold text-white transition rounded-full px-7 w-fit bg-celtic-800 hover:bg-celtic-700 disabled:brightness-50"
+                  >
+                    {
+                      isSubmitting ? "Menyimpan..." : "Simpan"
+                    }
+                  </button>
+                </Form>
+              </>
             )}
           </Formik>
         ) : (
