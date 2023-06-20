@@ -24,8 +24,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-.env
-
 # vercel
 .vercel
 
@@ -34,3 +32,5 @@ yarn-error.log*
 next-env.d.ts
 
 /public/uploads
+
+.env
