@@ -31,12 +31,12 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# prisma
-/public/uploads
-/prisma/src/*
-
 # local env files
 .env.local
 .env.development.local
 .env.test.local
 .env
+
+# prisma
+/public/uploads
+/prisma/src/db/dev.db
