@@ -3,7 +3,7 @@
 import { useStaleWhileRevalidate } from "@/lib/swr";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { Home, UserCircle, LogOut, Shapes, Activity } from "lucide-react";
+import { Home, UserCircle, LogOut, Shapes, Calendar } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 
@@ -14,6 +14,29 @@ interface SafeUser {
   image: string;
   role: string;
 }
+
+const links = [
+  {
+    href: "/",
+    icon: <Home size={20} />,
+    children: "Dashboard",
+  },
+  {
+    href: "/activities",
+    icon: <Calendar size={20} />,
+    children: "Kegiatan",
+  },
+  {
+    href: "/tools",
+    icon: <Shapes size={20} />,
+    children: "Peralatan",
+  },
+  {
+    href: "/profile",
+    icon: <UserCircle size={20} />,
+    children: "Profil Saya",
+  },
+]
 
 export default function Sidebar() {
   return (
@@ -29,18 +52,11 @@ export default function Sidebar() {
 function SidebarNav() {
   return (
     <nav className="flex flex-col w-full gap-2 px-3 text-white">
-      <SidebarNavLink type="link" href="/" icon={<Home size={20} />}>
-        Dashboard
-      </SidebarNavLink>
-      <SidebarNavLink type="link" href="/activities" icon={<Activity size={20} />}>
-        Kegiatan
-      </SidebarNavLink>
-      <SidebarNavLink type="link" href="/tools" icon={<Shapes size={20} />}>
-        Peralatan
-      </SidebarNavLink>
-      <SidebarNavLink type="link" href="/profile" icon={<UserCircle size={20} />}>
-        Profile
-      </SidebarNavLink>
+      {links.map((link) => (
+        <SidebarNavLink key={link.href} type="link" href={link.href} icon={link.icon}>
+          {link.children}
+        </SidebarNavLink>
+      ))}
       <SidebarNavLink type="button" icon={<LogOut size={20} />} onClick={() => {
         signOut();
       }}>
