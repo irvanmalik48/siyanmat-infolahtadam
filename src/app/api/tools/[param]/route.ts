@@ -38,7 +38,7 @@ export async function GET(req: NextRequest, {
   const toolCode = params.param;
   let getAll = true;
 
-  if (toolCode) {
+  if (toolCode !== "get") {
     getAll = false;
   }
 
@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
   const formData = await req.formData();
 
   const { toolCode, name, maxHourUsage, image, isAvailable } = Object.fromEntries(
-    formData.entries() as IterableIterator<[keyof CreateToolBody, string | File | undefined]>
+    formData.entries() as IterableIterator<[keyof CreateToolBody, string | undefined]>
   );
 
   if (!toolCode || !name || !maxHourUsage || !image || !isAvailable) {
@@ -91,31 +91,12 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  let imageLink = "/placeholder-tool.png";
-
-  if (image instanceof File) {
-    const toArrayBuffer = await image.arrayBuffer();
-    const toBuffer = Buffer.from(toArrayBuffer);
-
-    const uploadResponse = await fetch(
-      "/api/upload",
-      {
-        method: "POST",
-        body: toBuffer,
-      }
-    );
-
-    const uploadResponseJson = await uploadResponse.json();
-
-    imageLink = uploadResponseJson.imageUrl;
-  }
-
   const tool = await prisma.tool.create({
     data: {
       toolCode: toolCode as string,
       name: name as string,
       maxHourUsage: Number(maxHourUsage),
-      image: imageLink,
+      image: image as string,
       isAvailable: isAvailable === "true" ? true : false,
     },
   });
