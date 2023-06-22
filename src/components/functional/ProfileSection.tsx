@@ -20,7 +20,7 @@ interface SafeUser {
 }
 
 const roles = {
-  superadmin: "Overseer",
+  superadmin: "Super Administrator",
   admin: "Administrator",
   viewer: "Viewer",
 };
