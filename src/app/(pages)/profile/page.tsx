@@ -10,7 +10,7 @@ export const metadata = {
 export default function Profile() {
   return (
     <section className="w-full max-w-4xl px-5 mx-auto">
-      <h1 className="w-full text-4xl font-bold mt-14">Profil Saya</h1>
+      <h1 className="w-full text-4xl font-bold leading-snug mt-14">Profil Saya</h1>
       <ProfileSection />
       <EditProfileSection />
       <EditPasswordSection />
