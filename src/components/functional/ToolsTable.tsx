@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { useStaleWhileRevalidate } from "@/lib/swr";
 import { atom, useAtom } from "jotai";
 import Fuse from "fuse.js";
+import { AnimatePresence, motion } from "framer-motion";
+import { RefreshCw } from "lucide-react";
 
 interface Tool {
   id: string;
@@ -32,14 +34,16 @@ export default function ToolsTable() {
   const [processedTools, setProcessedTools] = useAtom(processedToolsAtom);
   const [searchResults, setSearchResults] = useAtom(searchResultsAtom);
 
-  const { data: tools, isLoading } = useStaleWhileRevalidate<Tool[]>("/api/tools/get?all");
+  const { data: tools, isLoading, isValidating } = useStaleWhileRevalidate<Tool[]>("/api/tools/get?all", {
+    refreshInterval: 10000,
+  });
 
   useEffect(() => {
-    if (!isLoading && tools) {
+    if ((!isLoading || !isValidating) && tools) {
       setProcessedTools(tools.sort((a, b) => a.toolCode.localeCompare(b.toolCode)));
       setMaxPages(Math.ceil(tools?.length / 10));
     }
-  }, [isLoading]);
+  }, [isLoading, isValidating]);
 
   useEffect(() => {
     if (!isLoading && tools && filterBy === "all") {
@@ -113,7 +117,22 @@ export default function ToolsTable() {
             </select>
           </div>
         </div>
-        <div className="flex items-center justify-end gap-3">
+        <div className="flex items-center justify-end gap-5">
+          <AnimatePresence>
+            {
+              !isValidating && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex items-center gap-2 text-sm text-neutral-500"
+                >
+                  <RefreshCw size={16} className="text-neutral-500 animate-spin" />
+                  <span className="font-semibold">Autorefreshing...</span>
+                </motion.div>
+              )
+            }
+          </AnimatePresence>
           <Link
             href="/tools/add"
             className="py-2 font-semibold text-white transition rounded-full w-fit bg-celtic-800 px-7 hover:bg-celtic-700 disabled:brightness-75"
@@ -223,7 +242,7 @@ function ToolTableRow({ tool, index }: { tool: Tool, index: number }) {
       </td>
       <td className="px-5 py-3">
         <Link
-          href={`/tools/${tool.toolCode}`}
+          href={`/tools/view/${tool.toolCode}`}
           className="font-semibold text-celtic-800 hover:text-celtic-700"
         >
           {tool.toolCode}
