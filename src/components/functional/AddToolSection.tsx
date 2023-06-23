@@ -303,7 +303,7 @@ export default function AddToolSection() {
                   id="image"
                   name="image"
                   type="file"
-                  className="w-full p-2 outline-none file:font-sans file:font-semibold file:border-none file:rounded-full file:bg-celtic-800 file:text-white file:px-5 file:py-2 file:inline-block file:mr-3"
+                  className="w-full p-2 outline-none file:hover:bg-celtic-700 file:cursor-pointer file:transition file:font-sans file:font-semibold file:border-none file:rounded-full file:bg-celtic-800 file:text-white file:px-5 file:py-2 file:inline-block file:mr-3"
                   placeholder="Masukkan gambar alat"
                   onChange={(event: any) => {
                     if (event.currentTarget.files) {
