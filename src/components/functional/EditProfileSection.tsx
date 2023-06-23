@@ -21,7 +21,7 @@ interface SafeUser {
 const onSuccessAtom = atom(false);
 
 export default function EditProfileSection() {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const { data: profile, isLoading, mutate } = useStaleWhileRevalidate<SafeUser>(
     `/api/users/${session?.user?.email}`,
   );
