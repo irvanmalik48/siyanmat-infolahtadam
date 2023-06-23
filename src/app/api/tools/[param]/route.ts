@@ -169,26 +169,12 @@ export async function PUT(req: NextRequestWithAuth) {
     );
   }
 
-  const fetchFormData = new FormData();
-
-  fetchFormData.append("image", image as string);
-
-  const res = await fetch(
-    "/api/upload/?type=tool",
-    {
-      method: "POST",
-      body: fetchFormData,
-    }
-  );
-
-  const resJson = await res.json();
-
   const tool = await prisma.tool.update({
     where: {
       toolCode: toolCode as string,
     },
     data: {
-      image: resJson.imageUrl,
+      image: image,
     },
   });
 
