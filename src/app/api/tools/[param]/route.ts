@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { NextRequestWithAuth } from "next-auth/middleware";
+import fs from "fs";
 
 const prisma = new PrismaClient();
 
@@ -22,10 +23,6 @@ interface UpdateToolBody {
 interface UpdateToolImageBody {
   toolCode: string;
   image: string;
-}
-
-interface DeleteToolBody {
-  toolCode: string;
 }
 
 export async function GET(req: NextRequest, {
@@ -187,12 +184,14 @@ export async function PUT(req: NextRequestWithAuth) {
 }
 
 // Delete a tool
-export async function DELETE(req: NextRequestWithAuth) {
-  const formData = await req.formData();
-
-  const { toolCode } = Object.fromEntries(
-    formData.entries() as IterableIterator<[keyof DeleteToolBody, string | undefined]>
-  );
+export async function DELETE(req: NextRequestWithAuth, {
+  params,
+}: {
+  params: {
+    param?: string;
+  };
+}) {
+  const toolCode = params.param;
 
   if (!toolCode) {
     return new NextResponse(
@@ -211,6 +210,13 @@ export async function DELETE(req: NextRequestWithAuth) {
       toolCode: toolCode as string,
     },
   });
+
+  // delete the image from the server
+  const imageExists = fs.existsSync(process.cwd() + `/public${tool.image}`);
+
+  if (imageExists) {
+    fs.unlinkSync(process.cwd() + `/public${tool.image}`);
+  }
 
   return new NextResponse(
     JSON.stringify(tool),
