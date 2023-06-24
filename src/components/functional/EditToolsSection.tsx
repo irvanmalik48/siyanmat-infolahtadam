@@ -78,7 +78,7 @@ export default function EditToolSection({ code }: { code: string }) {
 
                 imageUploadForm.append("image", imageData as File);
 
-                const imageUrl = await fetch("/api/upload?type=tool", {
+                const imageUrl = await fetch(`/api/upload?type=tool&toolCode=${values.toolCode}`, {
                   method: "POST",
                   body: imageUploadForm,
                 });
