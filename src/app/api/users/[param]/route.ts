@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { NextRequestWithAuth } from "next-auth/middleware";
+import fs from "fs";
 
 const prisma = new PrismaClient();
 
@@ -208,9 +209,16 @@ export async function DELETE(req: NextRequestWithAuth) {
     });
   }
 
-  await prisma.user.delete({
+  const deletedUser = await prisma.user.delete({
     where: { id: user.id },
   });
+
+  // remove user's image
+  const imageExists = fs.existsSync(process.cwd() + `/public${user.image}`);
+
+  if (imageExists) {
+    fs.unlinkSync(process.cwd() + `/public${user.image}`);
+  }
 
   return new NextResponse(JSON.stringify({ message: "User deleted" }), {
     status: 200,
