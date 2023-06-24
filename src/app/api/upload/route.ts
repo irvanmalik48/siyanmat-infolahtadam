@@ -1,27 +1,37 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import * as fs from "fs";
+import { Session, getServerSession } from "next-auth";
+import { NextRequestWithAuth } from "next-auth/middleware";
+import { PrismaClient, User } from "@prisma/client";
 
-interface UploadBody {
-  image: File;
-}
+const prisma = new PrismaClient();
 
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequestWithAuth) {
   const formData = await req.formData();
   const searchParams = req.nextUrl.searchParams;
+  const session = await getServerSession();
 
-  const { image } = Object.fromEntries(
-    formData.entries() as IterableIterator<[keyof UploadBody, File]>
-  );
+  const image = formData.get("image") as File;
+  let isEditingOtherUser = formData.has("email");
+  let otherUser: User | null = null;
+
+  if (isEditingOtherUser) {
+    otherUser = await prisma.user.findUnique({
+      where: {
+        email: formData.get("email") as string,
+      },
+    });
+  }
 
   let imageUrl;
-  
+
   if (searchParams.has("type")) {
     const type = searchParams.get("type");
 
     if (type === "user" || typeof type === "undefined") {
-      imageUrl = await uploadUserImage(image);
+      imageUrl = await uploadUserImage(image, isEditingOtherUser ? otherUser : session);
     } else if (type === "tool") {
-      imageUrl = await uploadToolImage(image);
+      imageUrl = await uploadToolImage(image, searchParams.get("toolCode") as string);
     }
   }
 
@@ -30,15 +40,35 @@ export async function POST(req: NextRequest, res: NextResponse) {
   });
 }
 
-async function uploadUserImage(image: File) {
-  return await uploadImage(image, "users");
+async function uploadUserImage(image: File, user: Session | User | null) {
+  if (!user) return null;
+
+  if ("user" in user) {
+    return await uploadImage(image, "users", user.user?.image as string);
+  }
+
+  if ("id" in user) {
+    return await uploadImage(image, "users", user.image as string);
+  }
+
+  return null;
 }
 
-async function uploadToolImage(image: File) {
-  return await uploadImage(image, "tools");
+async function uploadToolImage(image: File, toolCode?: string) {
+  let tool;
+
+  if (toolCode) {
+    tool = await prisma.tool.findUnique({
+      where: {
+        toolCode,
+      },
+    });
+  }
+
+  return await uploadImage(image, "tools", tool?.image as string);
 }
 
-async function uploadImage(image: File, directory: string) {
+async function uploadImage(image: File, directory: string, oldImageUrl?: string) {
   if (!image) return null;
 
   await handleUploadDirectory();
@@ -49,6 +79,12 @@ async function uploadImage(image: File, directory: string) {
 
   if (!definedDirectoryExists) {
     fs.mkdirSync(process.cwd() + `/public/uploads/${directory}`);
+  }
+
+  const oldImageUrlExists = fs.existsSync(process.cwd() + `/public${oldImageUrl}`);
+
+  if (oldImageUrlExists) {
+    fs.unlinkSync(process.cwd() + `/public${oldImageUrl}`);
   }
 
   const uuid = crypto.randomUUID();
