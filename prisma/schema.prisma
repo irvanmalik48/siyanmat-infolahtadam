@@ -48,10 +48,6 @@ model User {
   accounts Account[]
   sessions Session[]
 
-  activities Activity[]
-
-  logs Log[]
-
   @@unique([username, email])
 }
 
@@ -67,38 +63,22 @@ model Activity {
   id            String   @id @default(cuid())
   activityCode  String   @unique
   name          String
-  description   String?
+  description   String? @default("Tidak ada deskripsi")
   date          DateTime
-  operator      User     @relation(fields: [operatorUname], references: [username], onDelete: Cascade)
-  operatorUname String
+  operatorName  String
   tool          Tool     @relation(fields: [toolCode], references: [toolCode], onDelete: Cascade)
   toolCode      String
   toolUsage     Int
-
-  logs Log[]
 }
 
 model Tool {
   id           String  @id @default(cuid())
   toolCode     String  @unique
   name         String
+  brand        String  @default("Tidak ada merek")
   maxHourUsage Int
   image        String? @default("/placeholder_tool.png")
   isAvailable  Boolean @default(true)
 
   activities Activity[]
-
-  logs Log[]
-}
-
-model Log {
-  id           String   @id @default(cuid())
-  activity     Activity @relation(fields: [activityCode], references: [activityCode], onDelete: Cascade)
-  activityCode String
-  tool         Tool     @relation(fields: [toolCode], references: [toolCode], onDelete: Cascade)
-  toolCode     String
-  user         User     @relation(fields: [username], references: [username], onDelete: Cascade)
-  username     String
-  date         DateTime
-  usage        Int
 }
