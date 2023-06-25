@@ -8,7 +8,7 @@ interface ActivityBody {
   name: string;
   description: string;
   date: string;
-  operatorUname: string;
+  operatorName: string;
   toolCode: string;
   toolUsage: number;
 }
@@ -26,18 +26,23 @@ export async function GET(req: NextRequest, {
 
   let getAll = true;
 
-  if (activityCode !== "all") {
+  if (activityCode !== "get") {
     getAll = false;
   }
 
   let activities;
 
   if (getAll) {
-    activities = await prisma.activity.findMany();
+    activities = (await prisma.activity.findMany()).sort((a, b) => {
+      return a.date.getTime() - b.date.getTime();
+    });
   } else {
     activities = await prisma.activity.findFirst({
       where: {
         activityCode,
+      },
+      include: {
+        tool: true,
       },
     });
   }
@@ -60,14 +65,14 @@ export async function POST(req: NextRequest) {
     name,
     description,
     date,
-    operatorUname,
+    operatorName,
     toolCode,
     toolUsage,
   } = Object.fromEntries(
     formData.entries() as IterableIterator<[keyof ActivityBody, string]>
   );
 
-  if (!activityCode || !name || !description || !date || !operatorUname || !toolCode || !toolUsage) {
+  if (!activityCode || !name || !description || !date || !operatorName || !toolCode || !toolUsage) {
     return new NextResponse(
       JSON.stringify({
         error: "Missing fields",
@@ -87,7 +92,7 @@ export async function POST(req: NextRequest) {
       name,
       description,
       date: new Date(date),
-      operatorUname,
+      operatorName,
       toolCode,
       toolUsage: parseInt(toolUsage),
     },
@@ -111,14 +116,14 @@ export async function PATCH(req: NextRequest) {
     name,
     description,
     date,
-    operatorUname,
+    operatorName,
     toolCode,
     toolUsage,
   } = Object.fromEntries(
     formData.entries() as IterableIterator<[keyof ActivityBody, string]>
   );
 
-  if (!activityCode || !name || !description || !date || !operatorUname || !toolCode || !toolUsage) {
+  if (!activityCode || !name || !description || !date || !operatorName || !toolCode || !toolUsage) {
     return new NextResponse(
       JSON.stringify({
         error: "Missing fields",
@@ -140,7 +145,7 @@ export async function PATCH(req: NextRequest) {
       name,
       description,
       date: new Date(date),
-      operatorUname,
+      operatorName,
       toolCode,
       toolUsage: parseInt(toolUsage),
     },
