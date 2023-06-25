@@ -11,6 +11,7 @@ import { Tool } from "@prisma/client";
 interface ToolEditSubmit {
   toolCode: string;
   name: string;
+  brand: string;
   maxHourUsage: number;
   isAvailable: boolean;
 }
@@ -21,6 +22,7 @@ export default function EditToolSection({ code }: { code: string }) {
   const { data: tool, isLoading, mutate } = useStaleWhileRevalidate<Tool>(`/api/tools/${code}`);
   const [toolCodeError, setToolCodeError] = useState<string | undefined>();
   const [nameError, setNameError] = useState<string | undefined>();
+  const [brandError, setBrandError] = useState<string | undefined>();
   const [maxHourUsageError, setMaxHourUsageError] = useState<string | undefined>();
   const [imageError, setImageError] = useState<string | undefined>();
 
@@ -187,6 +189,7 @@ export default function EditToolSection({ code }: { code: string }) {
                 id: tool?.id as string,
                 toolCode: code,
                 name: tool?.name as string,
+                brand: tool?.brand as string,
                 maxHourUsage: tool?.maxHourUsage as number,
                 isAvailable: tool?.isAvailable as boolean,
               }}
@@ -221,6 +224,7 @@ export default function EditToolSection({ code }: { code: string }) {
                 const toolData: ToolEditSubmit = {
                   toolCode: values.toolCode,
                   name: values.name,
+                  brand: values.brand,
                   maxHourUsage: values.maxHourUsage,
                   isAvailable: values.isAvailable,
                 };
@@ -229,6 +233,7 @@ export default function EditToolSection({ code }: { code: string }) {
 
                 formData.append("toolCode", toolData.toolCode);
                 formData.append("name", toolData.name);
+                formData.append("brand", toolData.brand);
                 formData.append("maxHourUsage", toolData.maxHourUsage.toString());
                 formData.append("isAvailable", toolData.isAvailable.toString());
 
@@ -345,6 +350,54 @@ export default function EditToolSection({ code }: { code: string }) {
                     </AnimatePresence>
                   </motion.div>
                   <motion.div
+                    key="brand-container"
+                    className="flex flex-col items-start justify-start w-full gap-1"
+                    initial={{
+                      height: "70px",
+                    }}
+                    animate={{
+                      height: errors.brand && touched.brand ? "110px" : "70px",
+                    }}
+                    exit={{
+                      height: "70px",
+                    }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 500,
+                      height: {
+                        duration: 0.3,
+                      },
+                    }}
+                  >
+                    <label htmlFor="brand" className="font-semibold">
+                      Merek Alat
+                    </label>
+                    <Field
+                      id="brand"
+                      name="brand"
+                      type="text"
+                      className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                      placeholder="Masukkan merek alat (kosongkan jika tidak ada merek)"
+                    />
+                    <AnimatePresence
+                      onExitComplete={() => {
+                        setNameError(undefined);
+                      }}
+                    >
+                      {errors.brand && touched.brand && (
+                        <motion.div
+                          key="brand-error"
+                          className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                        >
+                          {brandError}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                  <motion.div
                     key="maxHourUsage-container"
                     className="flex flex-col items-start justify-start w-full gap-1"
                     initial={{
@@ -414,7 +467,10 @@ export default function EditToolSection({ code }: { code: string }) {
             </Formik>
           </>
         ) : (
-          <div className="w-full mt-8 h-[394px] animate-pulse p-5 bg-neutral-200 border-neutral-300 border rounded-xl" />
+          <>
+            <div className="h-[186px] bg-neutral-200 animate-pulse w-full p-5 mt-8 border rounded-xl border-neutral-300" />
+            <div className="w-full mt-5 h-[484px] animate-pulse p-5 bg-neutral-200 border-neutral-300 border rounded-xl" />
+          </>
         )
       }
     </>

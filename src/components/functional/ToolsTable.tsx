@@ -12,7 +12,9 @@ interface Tool {
   id: string;
   toolCode: string;
   name: string;
+  brand: string;
   maxHourUsage: number;
+  hourUsageLeft: number;
   image: string;
   isAvailable: boolean;
 }
@@ -64,7 +66,7 @@ export default function ToolsTable() {
 
   useEffect(() => {
     const fuse = new Fuse(tools as Tool[], {
-      keys: ["toolCode", "name"],
+      keys: ["toolCode", "name", "brand", "maxHourUsage", "hourUsageLeft"],
       threshold: 0.3,
     });
 
@@ -155,6 +157,7 @@ export default function ToolsTable() {
                     </th>
                     <th className="w-1/12 px-5 py-3 text-left">Kode Alat</th>
                     <th className="px-5 py-3 text-left">Nama Alat</th>
+                    <th className="px-5 py-3 text-center w-[16%]">Merek</th>
                     <th className="px-5 py-3 text-center w-[12%]">Sisa Masa Pakai</th>
                     <th className="px-5 py-3 text-center w-[12%]">Maks. Masa Pakai</th>
                     <th className="w-1/12 px-5 py-3 text-center">Status</th>
@@ -252,7 +255,10 @@ function ToolTableRow({ tool, index }: { tool: Tool, index: number }) {
         {tool.name}
       </td>
       <td className="px-5 py-3 text-center">
-        {tool.maxHourUsage}
+        {tool.brand}
+      </td>
+      <td className="px-5 py-3 text-center">
+        {tool.hourUsageLeft}
       </td>
       <td className="px-5 py-3 text-center">
         {tool.maxHourUsage}
@@ -276,6 +282,9 @@ function EmptyToolTableRow() {
         -
       </td>
       <td className="px-5 py-3">
+        -
+      </td>
+      <td className="px-5 py-3 text-center">
         -
       </td>
       <td className="px-5 py-3 text-center">

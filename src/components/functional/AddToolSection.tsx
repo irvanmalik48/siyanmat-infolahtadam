@@ -9,6 +9,7 @@ import Toast from "./Toast";
 interface ToolSubmit {
   toolCode: string;
   name: string;
+  brand: string;
   maxHourUsage: number;
   image: string;
   isAvailable: boolean;
@@ -19,6 +20,7 @@ const toolSuccessAtom = atom(false);
 export default function AddToolSection() {
   const [toolCodeError, setToolCodeError] = useState<string | undefined>();
   const [nameError, setNameError] = useState<string | undefined>();
+  const [brandError, setBrandError] = useState<string | undefined>();
   const [maxHourUsageError, setMaxHourUsageError] = useState<string | undefined>();
   const [imageError, setImageError] = useState<string | undefined>();
 
@@ -43,6 +45,7 @@ export default function AddToolSection() {
         initialValues={{
           toolCode: "",
           name: "",
+          brand: "",
           maxHourUsage: 0,
           image: undefined,
           isAvailable: true,
@@ -99,6 +102,7 @@ export default function AddToolSection() {
           const toolData: ToolSubmit = {
             toolCode: values.toolCode,
             name: values.name,
+            brand: values.brand,
             maxHourUsage: values.maxHourUsage,
             image: imageUrlJson.imageUrl,
             isAvailable: values.isAvailable,
@@ -108,6 +112,13 @@ export default function AddToolSection() {
 
           formData.append("toolCode", toolData.toolCode);
           formData.append("name", toolData.name);
+
+          if (toolData.brand !== "") {
+            formData.append("brand", toolData.brand);
+          } else {
+            formData.append("brand", "Tidak ada merek");
+          }
+
           formData.append("maxHourUsage", toolData.maxHourUsage.toString());
           formData.append("image", toolData.image);
           formData.append("isAvailable", toolData.isAvailable.toString());
@@ -224,6 +235,54 @@ export default function AddToolSection() {
                     exit={{ opacity: 0 }}
                   >
                     {nameError}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+            <motion.div
+              key="brand-container"
+              className="flex flex-col items-start justify-start w-full gap-1"
+              initial={{
+                height: "70px",
+              }}
+              animate={{
+                height: errors.brand && touched.brand ? "110px" : "70px",
+              }}
+              exit={{
+                height: "70px",
+              }}
+              transition={{
+                type: "spring",
+                stiffness: 500,
+                height: {
+                  duration: 0.3,
+                },
+              }}
+            >
+              <label htmlFor="brand" className="font-semibold">
+                Merek Alat
+              </label>
+              <Field
+                id="brand"
+                name="brand"
+                type="text"
+                className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                placeholder="Masukkan merek alat (kosongkan jika tidak ada merek)"
+              />
+              <AnimatePresence
+                onExitComplete={() => {
+                  setNameError(undefined);
+                }}
+              >
+                {errors.brand && touched.brand && (
+                  <motion.div
+                    key="brand-error"
+                    className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    {brandError}
                   </motion.div>
                 )}
               </AnimatePresence>
