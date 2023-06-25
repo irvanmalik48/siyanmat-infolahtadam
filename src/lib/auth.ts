@@ -10,6 +10,7 @@ const prisma = new PrismaClient();
 const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
+    maxAge: 24 * 60 * 60,
   },
   adapter: PrismaAdapter(prisma) as Adapter,
   providers: [
