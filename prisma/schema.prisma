@@ -60,25 +60,26 @@ model VerificationToken {
 }
 
 model Activity {
-  id            String   @id @default(cuid())
-  activityCode  String   @unique
-  name          String
-  description   String? @default("Tidak ada deskripsi")
-  date          DateTime
-  operatorName  String
-  tool          Tool     @relation(fields: [toolCode], references: [toolCode], onDelete: Cascade)
-  toolCode      String
-  toolUsage     Int
+  id           String   @id @default(cuid())
+  activityCode String   @unique
+  name         String
+  description  String?  @default("Tidak ada deskripsi")
+  date         DateTime
+  operatorName String
+  tool         Tool     @relation(fields: [toolCode], references: [toolCode], onDelete: Cascade)
+  toolCode     String
+  toolUsage    Int
 }
 
 model Tool {
-  id           String  @id @default(cuid())
-  toolCode     String  @unique
-  name         String
-  brand        String  @default("Tidak ada merek")
-  maxHourUsage Int
-  image        String? @default("/placeholder_tool.png")
-  isAvailable  Boolean @default(true)
+  id            String  @id @default(cuid())
+  toolCode      String  @unique
+  name          String
+  brand         String  @default("Tidak ada merek")
+  maxHourUsage  Int     @default(0)
+  hourUsageLeft Int     @default(0)
+  image         String? @default("/placeholder_tool.png")
+  isAvailable   Boolean @default(true)
 
   activities Activity[]
 }
