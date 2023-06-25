@@ -8,7 +8,9 @@ const prisma = new PrismaClient();
 interface CreateToolBody {
   toolCode: string;
   name: string;
+  brand: string;
   maxHourUsage: number;
+  hourUsageLeft: number;
   image?: File;
   isAvailable: boolean;
 }
@@ -16,7 +18,9 @@ interface CreateToolBody {
 interface UpdateToolBody {
   toolCode: string;
   name: string;
+  brand: string;
   maxHourUsage: number;
+  hourUsageLeft: number;
   isAvailable: boolean;
 }
 
@@ -47,7 +51,9 @@ export async function GET(req: NextRequest, {
         id: true,
         toolCode: true,
         name: true,
+        brand: true,
         maxHourUsage: true,
+        hourUsageLeft: true,
         image: false,
         isAvailable: true,
       }
@@ -72,11 +78,11 @@ export async function GET(req: NextRequest, {
 export async function POST(req: NextRequest) {
   const formData = await req.formData();
 
-  const { toolCode, name, maxHourUsage, image, isAvailable } = Object.fromEntries(
+  const { toolCode, name, brand, maxHourUsage, image, isAvailable } = Object.fromEntries(
     formData.entries() as IterableIterator<[keyof CreateToolBody, string | undefined]>
   );
 
-  if (!toolCode || !name || !maxHourUsage || !image || !isAvailable) {
+  if (!toolCode || !name || !brand || !maxHourUsage || !image || !isAvailable) {
     return new NextResponse(
       JSON.stringify({
         error: "Missing fields",
@@ -92,7 +98,9 @@ export async function POST(req: NextRequest) {
     data: {
       toolCode: toolCode as string,
       name: name as string,
+      brand: brand as string,
       maxHourUsage: Number(maxHourUsage),
+      hourUsageLeft: Number(maxHourUsage),
       image: image as string,
       isAvailable: isAvailable === "true" ? true : false,
     },
@@ -110,11 +118,11 @@ export async function POST(req: NextRequest) {
 export async function PATCH(req: NextRequestWithAuth) {
   const formData = await req.formData();
 
-  const { toolCode, name, maxHourUsage, isAvailable } = Object.fromEntries(
+  const { toolCode, name, brand, maxHourUsage, hourUsageLeft, isAvailable } = Object.fromEntries(
     formData.entries() as IterableIterator<[keyof UpdateToolBody, string | undefined]>
   );
 
-  if (!toolCode || !name || !maxHourUsage || !isAvailable) {
+  if (!toolCode || !name || !brand || !maxHourUsage || !hourUsageLeft || !isAvailable) {
     return new NextResponse(
       JSON.stringify({
         error: "Missing fields",
@@ -133,7 +141,9 @@ export async function PATCH(req: NextRequestWithAuth) {
     data: {
       toolCode: toolCode as string,
       name: name as string,
+      brand: brand as string,
       maxHourUsage: Number(maxHourUsage),
+      hourUsageLeft: Number(hourUsageLeft),
       isAvailable: isAvailable === "true" ? true : false,
     },
   });
