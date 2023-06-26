@@ -33,7 +33,16 @@ export async function GET(req: NextRequest, {
   let activities;
 
   if (getAll) {
-    activities = (await prisma.activity.findMany()).sort((a, b) => {
+    activities = (await prisma.activity.findMany({
+      include: {
+        tool: {
+          select: {
+            toolCode: true,
+            name: true,
+          },
+        },
+      },
+    })).sort((a, b) => {
       return a.date.getTime() - b.date.getTime();
     });
   } else {
@@ -86,6 +95,26 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const tool = await prisma.tool.findFirst({
+    where: {
+      toolCode,
+    },
+  });
+
+  if (!tool) {
+    return new NextResponse(
+      JSON.stringify({
+        error: "Tool not found",
+      }),
+      {
+        status: 404,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  }
+
   const activity = await prisma.activity.create({
     data: {
       activityCode,
@@ -95,6 +124,15 @@ export async function POST(req: NextRequest) {
       operatorName,
       toolCode,
       toolUsage: parseInt(toolUsage),
+    },
+  });
+
+  await prisma.tool.update({
+    where: {
+      toolCode,
+    },
+    data: {
+      hourUsageLeft: tool.hourUsageLeft - parseInt(toolUsage),
     },
   });
 
@@ -137,6 +175,47 @@ export async function PATCH(req: NextRequest) {
     );
   }
 
+  const oldActivity = await prisma.activity.findFirst({
+    where: {
+      activityCode,
+    },
+    select: {
+      toolUsage: true,
+      toolCode: true,
+    },
+  });
+
+  const tool = await prisma.tool.findFirst({
+    where: {
+      toolCode,
+    },
+  });
+
+  if (!tool) {
+    return new NextResponse(
+      JSON.stringify({
+        error: "Tool not found",
+      }),
+      {
+        status: 404,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  }
+
+  if (toolCode !== oldActivity?.toolCode) {
+    await prisma.tool.update({
+      where: {
+        toolCode: oldActivity?.toolCode,
+      },
+      data: {
+        hourUsageLeft: tool.hourUsageLeft + (oldActivity?.toolUsage as number),
+      },
+    });
+  }
+
   const activity = await prisma.activity.update({
     where: {
       activityCode,
@@ -148,6 +227,15 @@ export async function PATCH(req: NextRequest) {
       operatorName,
       toolCode,
       toolUsage: parseInt(toolUsage),
+    },
+  });
+
+  await prisma.tool.update({
+    where: {
+      toolCode,
+    },
+    data: {
+      hourUsageLeft: tool.hourUsageLeft - parseInt(toolUsage) + (oldActivity?.toolUsage as number),
     },
   });
 
@@ -170,6 +258,8 @@ export async function DELETE(req: NextRequest) {
     formData.entries() as IterableIterator<[keyof ActivityBody, string]>
   );
 
+  const alsoEraseToolUsage = formData.get("alsoEraseToolUsage") === "true";
+
   if (!activityCode) {
     return new NextResponse(
       JSON.stringify({
@@ -189,6 +279,37 @@ export async function DELETE(req: NextRequest) {
       activityCode,
     },
   });
+
+  if (alsoEraseToolUsage) {
+    const tool = await prisma.tool.findFirst({
+      where: {
+        toolCode: activity.toolCode,
+      },
+    });
+
+    if (!tool) {
+      return new NextResponse(
+        JSON.stringify({
+          error: "Tool not found",
+        }),
+        {
+          status: 404,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    await prisma.tool.update({
+      where: {
+        toolCode: activity.toolCode,
+      },
+      data: {
+        hourUsageLeft: tool.hourUsageLeft + activity.toolUsage,
+      },
+    });
+  }
 
   return new NextResponse(
     JSON.stringify(activity),
