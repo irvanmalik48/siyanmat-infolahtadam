@@ -336,7 +336,7 @@ export default function AddActivitySection() {
                     {
                       tools?.map((tool) => (
                         <option key={tool.id} value={tool.toolCode}>
-                          {tool.name}
+                          {tool.name} - {tool.brand}
                         </option>
                       ))
                     }
