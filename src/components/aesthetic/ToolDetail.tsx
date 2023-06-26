@@ -13,6 +13,7 @@ interface Tool {
   name: string;
   brand: string;
   maxHourUsage: number;
+  hourUsageLeft: number;
   image: string;
   isAvailable: boolean;
 }
@@ -125,11 +126,13 @@ export default function ToolDetail({ code }: { code: string }) {
               </p>
             </div>
             <div className="flex flex-col w-full gap-1">
-              <label className="font-semibold" htmlFor="toolMaxHourUsage">
+              <label className="font-semibold" htmlFor="hourUsageLeft">
                 Sisa Usia Alat
               </label>
-              <p id="toolMaxHourUsage" className="w-full">
-                {tool?.maxHourUsage}
+              <p id="hourUsageLeft" className="w-full">
+                {tool?.hourUsageLeft} jam
+                {" "}(sisa {Math.round((tool?.hourUsageLeft as number / (tool?.maxHourUsage as number)) * 100)}%)
+                {" "}dari {tool?.maxHourUsage} jam
               </p>
             </div>
             <div className="flex flex-col w-full gap-1">
