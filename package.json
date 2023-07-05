@@ -17,6 +17,8 @@
     "@types/react-dom": "18.2.5",
     "autoprefixer": "10.4.14",
     "bcrypt": "^5.1.0",
+    "exceljs": "^4.3.0",
+    "file-saver": "^2.0.5",
     "formik": "^2.4.2",
     "framer-motion": "^10.12.16",
     "fuse.js": "^6.6.2",
@@ -28,12 +30,14 @@
     "prisma": "^4.15.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "sharp": "^0.32.1",
     "swr": "^2.1.5",
     "tailwindcss": "3.3.2",
     "typescript": "5.1.3"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
+    "@types/file-saver": "^2.0.5",
     "prettier": "^2.8.8",
     "prettier-plugin-tailwindcss": "^0.3.0"
   }
