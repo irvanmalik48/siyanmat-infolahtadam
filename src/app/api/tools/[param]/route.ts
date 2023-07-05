@@ -12,7 +12,7 @@ interface CreateToolBody {
   maxHourUsage: number;
   hourUsageLeft: number;
   image?: File;
-  isAvailable: boolean;
+  condition: string;
 }
 
 interface UpdateToolBody {
@@ -21,7 +21,7 @@ interface UpdateToolBody {
   brand: string;
   maxHourUsage: number;
   hourUsageLeft: number;
-  isAvailable: boolean;
+  condition: string;
 }
 
 interface UpdateToolImageBody {
@@ -55,7 +55,7 @@ export async function GET(req: NextRequest, {
         maxHourUsage: true,
         hourUsageLeft: true,
         image: false,
-        isAvailable: true,
+        condition: true,
       }
     });
   } else {
@@ -78,14 +78,26 @@ export async function GET(req: NextRequest, {
 export async function POST(req: NextRequest) {
   const formData = await req.formData();
 
-  const { toolCode, name, brand, maxHourUsage, image, isAvailable } = Object.fromEntries(
+  const { toolCode, name, brand, maxHourUsage, image, condition } = Object.fromEntries(
     formData.entries() as IterableIterator<[keyof CreateToolBody, string | undefined]>
   );
 
-  if (!toolCode || !name || !brand || !maxHourUsage || !image || !isAvailable) {
+  if (!toolCode || !name || !brand || !maxHourUsage || !image || !condition) {
     return new NextResponse(
       JSON.stringify({
         error: "Missing fields",
+      }),
+      {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
+
+  if (!["B", "RR", "RB"].includes(condition.toUpperCase())) {
+    return new NextResponse(
+      JSON.stringify({
+        error: "Invalid condition",
       }),
       {
         status: 400,
@@ -102,7 +114,7 @@ export async function POST(req: NextRequest) {
       maxHourUsage: Number(maxHourUsage),
       hourUsageLeft: Number(maxHourUsage),
       image: image as string,
-      isAvailable: isAvailable === "true" ? true : false,
+      condition: (condition as string).toUpperCase(),
     },
   });
 
@@ -118,11 +130,11 @@ export async function POST(req: NextRequest) {
 export async function PATCH(req: NextRequestWithAuth) {
   const formData = await req.formData();
 
-  const { toolCode, name, brand, maxHourUsage, hourUsageLeft, isAvailable } = Object.fromEntries(
+  const { toolCode, name, brand, maxHourUsage, hourUsageLeft, condition } = Object.fromEntries(
     formData.entries() as IterableIterator<[keyof UpdateToolBody, string | undefined]>
   );
 
-  if (!toolCode || !name || !brand || !maxHourUsage || !hourUsageLeft || !isAvailable) {
+  if (!toolCode || !name || !brand || !maxHourUsage || !hourUsageLeft || !condition) {
     return new NextResponse(
       JSON.stringify({
         error: "Missing fields",
@@ -144,7 +156,7 @@ export async function PATCH(req: NextRequestWithAuth) {
       brand: brand as string,
       maxHourUsage: Number(maxHourUsage),
       hourUsageLeft: Number(hourUsageLeft),
-      isAvailable: isAvailable === "true" ? true : false,
+      condition: (condition as string).toUpperCase(),
     },
   });
 

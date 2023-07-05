@@ -4,14 +4,14 @@ import EditActivitySection from "@/components/functional/EditActivitySection";
 export async function generateMetadata({
   params: {
     code,
-  },
-  parent
+  }
 }: {
   params: {
     code: string;
   },
+},
   parent: ResolvingMetadata
-}): Promise<Metadata> {
+): Promise<Metadata> {
   const toolCode = code;
 
   return {

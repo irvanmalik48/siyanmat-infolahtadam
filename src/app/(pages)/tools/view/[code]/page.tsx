@@ -4,14 +4,14 @@ import ToolDetail from "@/components/aesthetic/ToolDetail";
 export async function generateMetadata({
   params: {
     code,
-  },
-  parent
+  }
 }: {
   params: {
     code: string;
   },
+},
   parent: ResolvingMetadata
-}): Promise<Metadata> {
+): Promise<Metadata> {
   const toolCode = code;
 
   return {
