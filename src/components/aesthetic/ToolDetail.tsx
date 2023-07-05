@@ -15,7 +15,20 @@ interface Tool {
   maxHourUsage: number;
   hourUsageLeft: number;
   image: string;
-  isAvailable: boolean;
+  condition: string;
+}
+
+function getProperLabelByCondition(condition: string) {
+  switch (condition) {
+    case "B":
+      return "B (Baik)";
+    case "RR":
+      return "RR (Rusak Ringan)";
+    case "RB":
+      return "RB (Rusak Berat)";
+    default:
+      return "N/A";
+  }
 }
 
 export default function ToolDetail({ code }: { code: string }) {
@@ -136,11 +149,11 @@ export default function ToolDetail({ code }: { code: string }) {
               </p>
             </div>
             <div className="flex flex-col w-full gap-1">
-              <label className="font-semibold" htmlFor="toolIsAvailable">
-                Tersedia
+              <label className="font-semibold" htmlFor="toolCondition">
+                Kondisi Alat
               </label>
-              <p id="toolIsAvailable" className="w-full">
-                {tool?.isAvailable ? "Ya" : "Tidak"}
+              <p id="toolCondition" className="w-full">
+                {getProperLabelByCondition(tool?.condition as string)}
               </p>
             </div>
             <div className="flex items-center justify-end w-full gap-3">

@@ -13,7 +13,8 @@ interface ToolEditSubmit {
   name: string;
   brand: string;
   maxHourUsage: number;
-  isAvailable: boolean;
+  hourUsageLeft: number;
+  condition: string;
 }
 
 const toolSuccessAtom = atom(false);
@@ -22,7 +23,7 @@ export default function EditToolSection({ code }: { code: string }) {
   const { data: tool, isLoading, mutate } = useStaleWhileRevalidate<Tool>(`/api/tools/${code}`);
   const [toolCodeError, setToolCodeError] = useState<string | undefined>();
   const [nameError, setNameError] = useState<string | undefined>();
-  const [brandError, setBrandError] = useState<string | undefined>();
+  const [hourUsageLeftError, setHourUsageLeftError] = useState<string | undefined>();
   const [maxHourUsageError, setMaxHourUsageError] = useState<string | undefined>();
   const [imageError, setImageError] = useState<string | undefined>();
 
@@ -191,13 +192,15 @@ export default function EditToolSection({ code }: { code: string }) {
                 name: tool?.name as string,
                 brand: tool?.brand as string,
                 maxHourUsage: tool?.maxHourUsage as number,
-                isAvailable: tool?.isAvailable as boolean,
+                hourUsageLeft: tool?.hourUsageLeft as number,
+                condition: tool?.condition as string,
               }}
               validate={(values) => {
                 const errors: {
                   toolCode?: string;
                   name?: string;
                   maxHourUsage?: string;
+                  hourUsageLeft?: string;
                   image?: string;
                 } = {};
 
@@ -216,6 +219,11 @@ export default function EditToolSection({ code }: { code: string }) {
                   setMaxHourUsageError(errors.maxHourUsage);
                 }
 
+                if (values.maxHourUsage === 0) {
+                  errors.maxHourUsage = "Maksimal jam penggunaan tidak boleh 0";
+                  setMaxHourUsageError(errors.maxHourUsage);
+                }
+
                 return errors;
               }}
 
@@ -226,7 +234,8 @@ export default function EditToolSection({ code }: { code: string }) {
                   name: values.name,
                   brand: values.brand,
                   maxHourUsage: values.maxHourUsage,
-                  isAvailable: values.isAvailable,
+                  hourUsageLeft: values.hourUsageLeft,
+                  condition: values.condition,
                 };
 
                 const formData = new FormData();
@@ -235,7 +244,8 @@ export default function EditToolSection({ code }: { code: string }) {
                 formData.append("name", toolData.name);
                 formData.append("brand", toolData.brand);
                 formData.append("maxHourUsage", toolData.maxHourUsage.toString());
-                formData.append("isAvailable", toolData.isAvailable.toString());
+                formData.append("hourUsageLeft", toolData.hourUsageLeft.toString());
+                formData.append("condition", toolData.condition);
 
                 const response = await fetch("/api/tools/update", {
                   method: "PATCH",
@@ -349,25 +359,8 @@ export default function EditToolSection({ code }: { code: string }) {
                       )}
                     </AnimatePresence>
                   </motion.div>
-                  <motion.div
-                    key="brand-container"
+                  <div
                     className="flex flex-col items-start justify-start w-full gap-1"
-                    initial={{
-                      height: "70px",
-                    }}
-                    animate={{
-                      height: errors.brand && touched.brand ? "110px" : "70px",
-                    }}
-                    exit={{
-                      height: "70px",
-                    }}
-                    transition={{
-                      type: "spring",
-                      stiffness: 500,
-                      height: {
-                        duration: 0.3,
-                      },
-                    }}
                   >
                     <label htmlFor="brand" className="font-semibold">
                       Merek Alat
@@ -379,24 +372,7 @@ export default function EditToolSection({ code }: { code: string }) {
                       className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
                       placeholder="Masukkan merek alat (kosongkan jika tidak ada merek)"
                     />
-                    <AnimatePresence
-                      onExitComplete={() => {
-                        setNameError(undefined);
-                      }}
-                    >
-                      {errors.brand && touched.brand && (
-                        <motion.div
-                          key="brand-error"
-                          className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                        >
-                          {brandError}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
+                  </div>
                   <motion.div
                     key="maxHourUsage-container"
                     className="flex flex-col items-start justify-start w-full gap-1"
@@ -444,15 +420,67 @@ export default function EditToolSection({ code }: { code: string }) {
                       )}
                     </AnimatePresence>
                   </motion.div>
-                  <label htmlFor="isAvailable" className="flex items-center justify-start gap-2 select-none">
+                  <motion.div
+                    key="hourUsageLeft-container"
+                    className="flex flex-col items-start justify-start w-full gap-1"
+                    initial={{
+                      height: "70px",
+                    }}
+                    animate={{
+                      height: errors.hourUsageLeft && touched.hourUsageLeft ? "110px" : "70px",
+                    }}
+                    exit={{
+                      height: "70px",
+                    }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 500,
+                      height: {
+                        duration: 0.3,
+                      },
+                    }}
+                  >
+                    <label htmlFor="hourUsageLeft" className="font-semibold">
+                      Sisa Usia Pemakaian (jam)
+                    </label>
                     <Field
-                      className="rounded text-celtic-500"
-                      type="checkbox"
-                      name="isAvailable"
-                      id="isAvailable"
+                      id="hourUsageLeft"
+                      name="hourUsageLeft"
+                      type="number"
+                      className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
                     />
-                    <span className="ml-2">Peralatan layak guna</span>
-                  </label>
+                    <AnimatePresence
+                      onExitComplete={() => {
+                        setMaxHourUsageError(undefined);
+                      }}
+                    >
+                      {errors.hourUsageLeft && touched.hourUsageLeft && (
+                        <motion.div
+                          key="hourUsageLeft-error"
+                          className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                        >
+                          {hourUsageLeftError}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                  <div
+                    className="flex flex-col items-start justify-start w-full gap-1"
+                  >
+                    <label htmlFor="condition" className="font-semibold">
+                      Kondisi Alat
+                    </label>
+                    <Field
+                      id="condition"
+                      name="condition"
+                      type="text"
+                      className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                      placeholder="Masukkan kondisi alat (B/RB/RR)"
+                    />
+                  </div>
                   <button
                     type="submit"
                     disabled={isSubmitting}

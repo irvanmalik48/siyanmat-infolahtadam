@@ -281,7 +281,7 @@ function ActivityTableRow({ activity: activity, index }: { activity: Activity, i
           {activity.toolCode}
         </Link>
       </td>
-      <td className="px-5 py-3">
+      <td className="px-5 py-3 overflow-x-hidden truncate">
         {activity.tool.name}
       </td>
       <td className="px-5 py-3 text-center">

@@ -3,7 +3,8 @@
 import { useStaleWhileRevalidate } from "@/lib/swr";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { Home, UserCircle, LogOut, Shapes, Calendar, Printer, Users } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Home, UserCircle, LogOut, Shapes, Calendar, Download } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 
@@ -33,13 +34,8 @@ const links = [
   },
   {
     href: "/export",
-    icon: <Printer size={20} />,
-    children: "Cetak Laporan",
-  },
-  {
-    href: "/users",
-    icon: <Users size={20} />,
-    children: "Pengguna",
+    icon: <Download size={20} />,
+    children: "Ekspor",
   },
   {
     href: "/profile",
@@ -60,6 +56,8 @@ export default function Sidebar() {
 }
 
 function SidebarNav() {
+  const router = useRouter();
+
   return (
     <nav className="flex flex-col w-full gap-2 px-3 text-white">
       {links.map((link) => (
@@ -68,7 +66,9 @@ function SidebarNav() {
         </SidebarNavLink>
       ))}
       <SidebarNavLink type="button" icon={<LogOut size={20} />} onClick={async () => {
-        await signOut();
+        await signOut().then(() => {
+          router.push("/login");
+        });
       }}>
         Logout
       </SidebarNavLink>

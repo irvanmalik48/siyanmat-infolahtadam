@@ -16,13 +16,39 @@ interface Tool {
   maxHourUsage: number;
   hourUsageLeft: number;
   image: string;
-  isAvailable: boolean;
+  condition: string;
 }
 
 const filterByAtom = atom<string>("all");
 const processedToolsAtom = atom<Tool[] | undefined>(undefined);
 const searchQueryAtom = atom<string>("");
 const searchResultsAtom = atom<Tool[] | undefined>(undefined);
+
+function getColorByCondition(condition: string) {
+  switch (condition) {
+    case "B":
+      return "bg-green-200 text-green-700";
+    case "RR":
+      return "bg-yellow-200 text-yellow-700";
+    case "RB":
+      return "bg-red-200 text-red-700";
+    default:
+      return "bg-neutral-200 text-neutral-700";
+  }
+}
+
+function getProperLabelByCondition(condition: string) {
+  switch (condition) {
+    case "B":
+      return "Baik";
+    case "RR":
+      return "Rusak Ringan";
+    case "RB":
+      return "Rusak Berat";
+    default:
+      return "Tidak diketahui";
+  }
+}
 
 export default function ToolsTable() {
   const [page, setPage] = useState(1);
@@ -53,14 +79,19 @@ export default function ToolsTable() {
       setProcessedTools(tools);
     }
 
-    if (!isLoading && tools && filterBy === "available") {
-      setMaxPages(Math.ceil(tools?.filter((tool) => tool.isAvailable).length / 10));
-      setProcessedTools(tools?.filter((tool) => tool.isAvailable));
+    if (!isLoading && tools && filterBy === "baik") {
+      setMaxPages(Math.ceil(tools?.filter((tool) => tool.condition.startsWith("B")).length / 10));
+      setProcessedTools(tools?.filter((tool) => tool.condition.startsWith("B")));
     }
 
-    if (!isLoading && tools && filterBy === "unavailable") {
-      setMaxPages(Math.ceil(tools?.filter((tool) => !tool.isAvailable).length / 10));
-      setProcessedTools(tools?.filter((tool) => !tool.isAvailable));
+    if (!isLoading && tools && filterBy === "rusak-ringan") {
+      setMaxPages(Math.ceil(tools?.filter((tool) => tool.condition.includes("RR")).length / 10));
+      setProcessedTools(tools?.filter((tool) => tool.condition.includes("RR")));
+    }
+
+    if (!isLoading && tools && filterBy === "rusak-berat") {
+      setMaxPages(Math.ceil(tools?.filter((tool) => tool.condition.includes("RB")).length / 10));
+      setProcessedTools(tools?.filter((tool) => tool.condition.includes("RB")));
     }
   }, [filterBy]);
 
@@ -114,8 +145,9 @@ export default function ToolsTable() {
               }}
             >
               <option value="all">Semua</option>
-              <option value="available">Tersedia</option>
-              <option value="unavailable">Tidak Tersedia</option>
+              <option value="baik">Kondisi baik</option>
+              <option value="rusak-ringan">Rusak ringan</option>
+              <option value="rusak-berat">Rusak berat</option>
             </select>
           </div>
         </div>
@@ -264,8 +296,8 @@ function ToolTableRow({ tool, index }: { tool: Tool, index: number }) {
         {tool.maxHourUsage}
       </td>
       <td className="px-5 py-3 text-center">
-        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${tool.isAvailable ? "bg-green-200 text-green-700" : "bg-red-200 text-red-700"}`}>
-          {tool.isAvailable ? "Available" : "Unavailable"}
+        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getColorByCondition(tool.condition)}`}>
+          {tool.condition}
         </span>
       </td>
     </tr>

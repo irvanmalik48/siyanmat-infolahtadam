@@ -5,8 +5,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { atom, useAtom } from "jotai";
 import { useStaleWhileRevalidate } from "@/lib/swr";
-import Toast from "./Toast";
 import { Tool } from "@prisma/client";
+import Toast from "./Toast";
 
 interface ActivitySubmit {
   activityCode: string;
@@ -221,7 +221,7 @@ export default function AddActivitySection() {
                   />
                   <AnimatePresence
                     onExitComplete={() => {
-                      setActivityCodeError(undefined);
+                      setNameError(undefined);
                     }}
                   >
                     {errors.name && touched.name && (
@@ -284,7 +284,7 @@ export default function AddActivitySection() {
                   />
                   <AnimatePresence
                     onExitComplete={() => {
-                      setActivityCodeError(undefined);
+                      setDateError(undefined);
                     }}
                   >
                     {errors.date && touched.date && (

@@ -49,13 +49,13 @@ export default function LoginForm() {
       }}
     >
       {({ isSubmitting, errors, touched }) => (
-        <Form className="m-auto flex w-full max-w-xl flex-col items-center justify-center gap-5 rounded-xl border border-neutral-300 p-5">
-          <h1 className="w-full text-center text-2xl font-bold">
+        <Form className="flex flex-col items-center justify-center w-full max-w-xl gap-5 p-5 m-auto bg-white rounded-xl">
+          <h1 className="w-full text-2xl font-bold text-center">
             Silahkan masuk untuk melanjutkan
           </h1>
           <motion.div
             key="username-container"
-            className="flex w-full flex-col items-start justify-start gap-1"
+            className="flex flex-col items-start justify-start w-full gap-1"
             initial={{
               height: "70px",
             }}
@@ -80,7 +80,7 @@ export default function LoginForm() {
               id="username"
               name="username"
               type="text"
-              className="w-full rounded-lg border border-neutral-300 px-5 py-2 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+              className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
               placeholder="Masukkan username"
             />
             <AnimatePresence
@@ -91,7 +91,7 @@ export default function LoginForm() {
               {errors.username && touched.username && (
                 <motion.div
                   key="username-error"
-                  className="w-full rounded-lg bg-red-400 bg-opacity-10 px-5 py-2 text-sm text-red-500"
+                  className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -101,13 +101,13 @@ export default function LoginForm() {
               )}
             </AnimatePresence>
           </motion.div>
-          <div className="flex w-full flex-col items-start justify-center gap-1">
+          <div className="flex flex-col items-start justify-center w-full gap-1">
             <label htmlFor="password" className="font-semibold">
               Password
             </label>
             <motion.div
               key="password-container"
-              className="flex w-full flex-col items-start justify-start gap-1"
+              className="flex flex-col items-start justify-start w-full gap-1"
               initial={{
                 height: "70px",
               }}
@@ -125,18 +125,18 @@ export default function LoginForm() {
                 },
               }}
             >
-              <div className="flex w-full items-center justify-start gap-2">
+              <div className="flex items-center justify-start w-full gap-2">
                 <Field
                   id="password"
                   name="password"
                   type={visible ? "text" : "password"}
-                  className="w-full rounded-lg border border-neutral-300 px-5 py-2 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                  className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
                   placeholder="Masukkan password"
                 />
                 <button
                   type="button"
                   onClick={() => setVisible(!visible)}
-                  className="flex h-10 w-10 items-center justify-center rounded-lg border border-neutral-300 transition hover:bg-neutral-100 active:bg-neutral-200"
+                  className="flex items-center justify-center w-10 h-10 transition border rounded-lg border-neutral-300 hover:bg-neutral-100 active:bg-neutral-200"
                 >
                   {visible ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
@@ -149,7 +149,7 @@ export default function LoginForm() {
                 {errors.password && touched.password && (
                   <motion.div
                     key="password-error"
-                    className="w-full rounded-lg bg-red-400 bg-opacity-10 px-5 py-2 text-sm text-red-500"
+                    className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -163,7 +163,7 @@ export default function LoginForm() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="mt-5 w-fit self-end rounded-full bg-celtic-800 px-7 py-2 font-semibold text-white transition hover:bg-celtic-700 disabled:brightness-75"
+            className="self-end py-2 mt-5 font-semibold text-white transition rounded-full w-fit bg-celtic-800 px-7 hover:bg-celtic-700 disabled:brightness-75"
           >
             {isSubmitting ? "Loading..." : "Masuk"}
           </button>
