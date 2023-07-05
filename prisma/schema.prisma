@@ -6,8 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "sqlite"
+  url       = env("DATABASE_URL")
 }
 
 model Account {
@@ -41,7 +41,7 @@ model User {
   id       String    @id @default(cuid())
   username String    @unique
   email    String    @unique
-  password String
+  password String    
   name     String?
   image    String?   @default("/placeholder_portrait.png")
   role     String    @default("viewer")
@@ -62,7 +62,7 @@ model VerificationToken {
 model Activity {
   id           String   @id @default(cuid())
   activityCode String   @unique
-  name         String
+  name         String   
   description  String?  @default("Tidak ada deskripsi")
   date         DateTime
   operatorName String
@@ -79,7 +79,7 @@ model Tool {
   maxHourUsage  Int     @default(0)
   hourUsageLeft Int     @default(0)
   image         String? @default("/placeholder_tool.png")
-  isAvailable   Boolean @default(true)
+  condition     String  @default("B")
 
   activities Activity[]
 }
