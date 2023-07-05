@@ -44,6 +44,7 @@ export default function ToolDetail({ code }: { code: string }) {
 
     await fetch(`/api/activities/${code}`, {
       method: "DELETE",
+      body: formData,
     });
 
     setDeleteDialogOpen(false);
