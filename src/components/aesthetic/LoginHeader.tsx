@@ -27,6 +27,9 @@ export default function LoginHeader() {
           className="w-28 md:w-36"
         />
       </div>
+      <p className="w-full text-4xl font-bold text-center">
+        SIYANMAT
+      </p>
     </section>
   );
 }

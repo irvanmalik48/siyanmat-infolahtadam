@@ -106,7 +106,7 @@ export default function ToolDetail({ code }: { code: string }) {
       {
         !isLoading ? (
           <section className="flex flex-col w-full gap-5 p-5 mt-8 border rounded-xl border-neutral-300">
-            <img src={tool?.image} className="object-contain w-full border rounded-lg lg:h-[400px] border-neutral-300 bg-neutral-500" alt={`Gambar ${code}`} />
+            <img src={`/api/images${tool?.image}`} className="object-contain w-full border rounded-lg lg:h-[400px] border-neutral-300 bg-neutral-500" alt={`Gambar ${code}`} />
             <div className="flex flex-col w-full gap-1">
               <label className="font-semibold" htmlFor="toolCode">
                 Kode Alat

@@ -48,7 +48,7 @@ export default function ToolDetail({ code }: { code: string }) {
     });
 
     setDeleteDialogOpen(false);
-    router.push(`/activities/view/${activity?.activityCode}`);
+    router.push(`/activities`);
   }
 
   return (
