@@ -83,7 +83,15 @@ export async function GET(req: NextRequest,
 }
 
 // This will be used for updating the user's profile
-export async function PATCH(req: NextRequestWithAuth) {
+export async function PATCH(req: NextRequestWithAuth, {
+  params: {
+    param,
+  },
+}: {
+  params: {
+    param: string;
+  };
+}) {
   const formData = await req.formData();
 
   const { username, name, email, role } = Object.fromEntries(
