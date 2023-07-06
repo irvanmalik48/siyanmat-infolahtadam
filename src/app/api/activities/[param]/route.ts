@@ -146,7 +146,16 @@ export async function POST(req: NextRequest) {
   );
 }
 
-export async function PATCH(req: NextRequest) {
+export async function PATCH(req: NextRequest, {
+  params: {
+    param,
+  },
+}: {
+  params: {
+    param?: string;
+  };
+}) {
+  const activityCodeFromParams = param;
   const formData = await req.formData();
 
   const {
@@ -218,9 +227,10 @@ export async function PATCH(req: NextRequest) {
 
   const activity = await prisma.activity.update({
     where: {
-      activityCode,
+      activityCode: activityCodeFromParams as string,
     },
     data: {
+      activityCode,
       name,
       description,
       date: new Date(date),
@@ -249,16 +259,16 @@ export async function PATCH(req: NextRequest) {
   );
 }
 
-export async function DELETE(req: NextRequest) {
-  const formData = await req.formData();
-
-  const {
-    activityCode,
-  } = Object.fromEntries(
-    formData.entries() as IterableIterator<[keyof ActivityBody, string]>
-  );
-
-  const alsoEraseToolUsage = formData.get("alsoEraseToolUsage") === "true";
+export async function DELETE(req: NextRequest, {
+  params: {
+    param,
+  },
+}: {
+  params: {
+    param?: string;
+  };
+}) {
+  const activityCode = param;
 
   if (!activityCode) {
     return new NextResponse(
@@ -279,37 +289,6 @@ export async function DELETE(req: NextRequest) {
       activityCode,
     },
   });
-
-  if (alsoEraseToolUsage) {
-    const tool = await prisma.tool.findFirst({
-      where: {
-        toolCode: activity.toolCode,
-      },
-    });
-
-    if (!tool) {
-      return new NextResponse(
-        JSON.stringify({
-          error: "Tool not found",
-        }),
-        {
-          status: 404,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
-
-    await prisma.tool.update({
-      where: {
-        toolCode: activity.toolCode,
-      },
-      data: {
-        hourUsageLeft: tool.hourUsageLeft + activity.toolUsage,
-      },
-    });
-  }
 
   return new NextResponse(
     JSON.stringify(activity),

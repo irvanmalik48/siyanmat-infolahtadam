@@ -127,7 +127,16 @@ export async function POST(req: NextRequest) {
 }
 
 // Update a tool
-export async function PATCH(req: NextRequestWithAuth) {
+export async function PATCH(req: NextRequestWithAuth, {
+  params: {
+    param,
+  },
+}: {
+  params: {
+    param?: string;
+  };
+}) {
+  const toolCodeFromParams = param;
   const formData = await req.formData();
 
   const { toolCode, name, brand, maxHourUsage, hourUsageLeft, condition } = Object.fromEntries(
@@ -146,9 +155,29 @@ export async function PATCH(req: NextRequestWithAuth) {
     );
   }
 
+  console.log(toolCode, name, brand, maxHourUsage, hourUsageLeft, condition);
+
+  const prevTool = await prisma.tool.findFirst({
+    where: {
+      toolCode: toolCodeFromParams as string,
+    },
+  });
+
+  if (!prevTool) {
+    return new NextResponse(
+      JSON.stringify({
+        error: "Tool not found",
+      }),
+      {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
+
   const tool = await prisma.tool.update({
     where: {
-      toolCode: toolCode as string,
+      toolCode: toolCodeFromParams as string,
     },
     data: {
       toolCode: toolCode as string,
@@ -156,6 +185,7 @@ export async function PATCH(req: NextRequestWithAuth) {
       brand: brand as string,
       maxHourUsage: Number(maxHourUsage),
       hourUsageLeft: Number(hourUsageLeft),
+      image: prevTool.image,
       condition: (condition as string).toUpperCase(),
     },
   });
