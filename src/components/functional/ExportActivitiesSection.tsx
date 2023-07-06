@@ -107,7 +107,7 @@ export default function ExportActivitiesSection() {
           // tell browser to download the file from the response
           // without creating a new anchor element
           // the body of the response is a Buffer
-          FileSaver.saveAs(blob, `${exportData.title}.xlsx`);
+          FileSaver.saveAs(blob, `${exportData.title}.${exportData.formatFile}}`);
 
           setSubmitting(false);
           setOnSuccess(true);

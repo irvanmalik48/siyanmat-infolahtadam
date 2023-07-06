@@ -7,6 +7,8 @@ import { atom, useAtom } from "jotai";
 import { useStaleWhileRevalidate } from "@/lib/swr";
 import Toast from "./Toast";
 import { Tool } from "@prisma/client";
+import { useRouter } from "next/navigation";
+import { mutate as definedMutator } from "swr";
 
 interface ActivitySubmit {
   activityCode: string;
@@ -23,6 +25,7 @@ const toolSuccessAtom = atom(false);
 export default function EditActivitySection({ code }: { code: string }) {
   const { data: activity, isLoading: isLoading } = useStaleWhileRevalidate<ActivitySubmit & { tool: Tool }>(`/api/activities/${code}`);
   const { data: tools, isLoading: isLoadingTools } = useStaleWhileRevalidate<Tool[]>("/api/tools/get");
+  const router = useRouter();
 
   const [activityCodeError, setActivityCodeError] = useState<string | undefined>("");
   const [nameError, setNameError] = useState<string | undefined>("");
@@ -122,22 +125,19 @@ export default function EditActivitySection({ code }: { code: string }) {
               formData.append("toolCode", activityData.toolCode);
               formData.append("toolUsage", activityData.toolUsage.toString());
 
-              const response = await fetch("/api/activities/add", {
-                method: "POST",
+              const response = await fetch(`/api/activities/${code}`, {
+                method: "PATCH",
                 body: formData,
               });
 
               const responseJson = await response.json();
 
-              if (responseJson.error) {
-                if (responseJson.error === "TOOL_CODE_EXISTS") {
-                  setActivityCodeError("Kode aktivitas sudah ada");
-                }
-              }
+              await definedMutator("/api/activities/get");
 
               setSubmitting(false);
               setOnSuccess(true);
               resetForm();
+              router.push("/activities");
             }}
           >
             {({ isSubmitting, errors, touched }) => (

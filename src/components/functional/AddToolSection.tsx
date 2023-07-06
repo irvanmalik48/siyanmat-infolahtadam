@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { atom, useAtom } from "jotai";
 import Toast from "./Toast";
+import { mutate as definedMutator } from "swr";
 
 interface ToolSubmit {
   toolCode: string;
@@ -138,6 +139,7 @@ export default function AddToolSection() {
           setSubmitting(false);
           setOnSuccess(true);
           resetForm();
+          definedMutator("/api/tools/get?all");
         }}
       >
         {({ isSubmitting, errors, touched }) => (

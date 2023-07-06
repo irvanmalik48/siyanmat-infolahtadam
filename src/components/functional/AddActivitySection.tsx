@@ -7,6 +7,7 @@ import { atom, useAtom } from "jotai";
 import { useStaleWhileRevalidate } from "@/lib/swr";
 import { Tool } from "@prisma/client";
 import Toast from "./Toast";
+import { mutate as definedMutator } from "swr";
 
 interface ActivitySubmit {
   activityCode: string;
@@ -137,6 +138,7 @@ export default function AddActivitySection() {
               setSubmitting(false);
               setOnSuccess(true);
               resetForm();
+              definedMutator("/api/activities/get");
             }}
           >
             {({ isSubmitting, errors, touched }) => (

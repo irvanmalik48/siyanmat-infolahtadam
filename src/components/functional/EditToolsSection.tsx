@@ -7,6 +7,8 @@ import { atom, useAtom } from "jotai";
 import { useStaleWhileRevalidate } from "@/lib/swr";
 import Toast from "./Toast";
 import { Tool } from "@prisma/client";
+import { useRouter } from "next/navigation";
+import { mutate as definedMutator } from "swr";
 
 interface ToolEditSubmit {
   toolCode: string;
@@ -26,6 +28,7 @@ export default function EditToolSection({ code }: { code: string }) {
   const [hourUsageLeftError, setHourUsageLeftError] = useState<string | undefined>();
   const [maxHourUsageError, setMaxHourUsageError] = useState<string | undefined>();
   const [imageError, setImageError] = useState<string | undefined>();
+  const router = useRouter();
 
   const [fileData, setFileData] = useState<File>();
 
@@ -105,6 +108,7 @@ export default function EditToolSection({ code }: { code: string }) {
                 setOnSuccess(true);
                 resetForm();
                 setSubmitting(false);
+                router.push("/tools");
               }}
             >
               {({ isSubmitting, errors, touched }) => (
@@ -247,7 +251,7 @@ export default function EditToolSection({ code }: { code: string }) {
                 formData.append("hourUsageLeft", toolData.hourUsageLeft.toString());
                 formData.append("condition", toolData.condition);
 
-                const response = await fetch("/api/tools/update", {
+                const response = await fetch(`/api/tools/${code}`, {
                   method: "PATCH",
                   body: formData,
                 });
@@ -256,9 +260,12 @@ export default function EditToolSection({ code }: { code: string }) {
 
                 await mutate(responseJson);
 
+                await definedMutator("/api/tools/get?all");
+
                 setSubmitting(false);
                 setOnSuccess(true);
                 resetForm();
+                router.push("/tools");
               }}
             >
               {({ isSubmitting, errors, touched }) => (

@@ -40,9 +40,7 @@ export default function ActivitiesTable() {
   const [processedActivities, setProcessedActivities] = useAtom(processedActivitiesAtom);
   const [searchResults, setSearchResults] = useAtom(searchResultsAtom);
 
-  const { data: activities, isLoading, isValidating } = useStaleWhileRevalidate<Activity[]>("/api/activities/get", {
-    refreshInterval: 10000,
-  });
+  const { data: activities, isLoading, isValidating } = useStaleWhileRevalidate<Activity[]>("/api/activities/get");
 
   useEffect(() => {
     if ((!isLoading || !isValidating) && activities) {

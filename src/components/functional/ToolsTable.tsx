@@ -37,19 +37,6 @@ function getColorByCondition(condition: string) {
   }
 }
 
-function getProperLabelByCondition(condition: string) {
-  switch (condition) {
-    case "B":
-      return "Baik";
-    case "RR":
-      return "Rusak Ringan";
-    case "RB":
-      return "Rusak Berat";
-    default:
-      return "Tidak diketahui";
-  }
-}
-
 export default function ToolsTable() {
   const [page, setPage] = useState(1);
   const [start, setStart] = useState(page * 10 - 10);
@@ -62,9 +49,7 @@ export default function ToolsTable() {
   const [processedTools, setProcessedTools] = useAtom(processedToolsAtom);
   const [searchResults, setSearchResults] = useAtom(searchResultsAtom);
 
-  const { data: tools, isLoading, isValidating } = useStaleWhileRevalidate<Tool[]>("/api/tools/get?all", {
-    refreshInterval: 10000,
-  });
+  const { data: tools, isLoading, isValidating } = useStaleWhileRevalidate<Tool[]>("/api/tools/get?all");
 
   useEffect(() => {
     if ((!isLoading || !isValidating) && tools) {

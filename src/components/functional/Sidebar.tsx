@@ -4,8 +4,7 @@ import { useStaleWhileRevalidate } from "@/lib/swr";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Home, UserCircle, LogOut, Shapes, Calendar, Download } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { Home, UserCircle, Shapes, Calendar, Download } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 interface SafeUser {
@@ -65,13 +64,6 @@ function SidebarNav() {
           {link.children}
         </SidebarNavLink>
       ))}
-      <SidebarNavLink type="button" icon={<LogOut size={20} />} onClick={async () => {
-        await signOut().then(() => {
-          router.push("/login");
-        });
-      }}>
-        Logout
-      </SidebarNavLink>
     </nav>
   );
 }
