@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { parse } from "path";
 
 const prisma = new PrismaClient();
 
@@ -35,11 +36,10 @@ export async function GET(req: NextRequest, {
   if (getAll) {
     activities = (await prisma.activity.findMany({
       include: {
-        tool: {
-          select: {
-            toolCode: true,
-            name: true,
-          },
+        tools: {
+          include: {
+            tool: true,
+          }
         },
       },
     })).sort((a, b) => {
@@ -51,7 +51,11 @@ export async function GET(req: NextRequest, {
         activityCode,
       },
       include: {
-        tool: true,
+        tools: {
+          include: {
+            tool: true,
+          }
+        },
       },
     });
   }
@@ -95,16 +99,20 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const tool = await prisma.tool.findFirst({
+  const splittedToolCodes = toolCode.split(",");
+
+  const tools = await prisma.tool.findMany({
     where: {
-      toolCode,
+      toolCode: {
+        in: splittedToolCodes,
+      },
     },
   });
 
-  if (!tool) {
+  if (!tools || tools.length === 0) {
     return new NextResponse(
       JSON.stringify({
-        error: "Tool not found",
+        error: "Tool(s) not found",
       }),
       {
         status: 404,
@@ -122,17 +130,31 @@ export async function POST(req: NextRequest) {
       description,
       date: new Date(date),
       operatorName,
-      toolCode,
       toolUsage: parseInt(toolUsage),
+      tools: {
+        create: tools.map((tool) => {
+          return {
+            tool: {
+              connect: {
+                toolCode: tool.toolCode,
+              },
+            },
+          };
+        })
+      }
     },
   });
 
-  await prisma.tool.update({
+  await prisma.tool.updateMany({
     where: {
-      toolCode,
+      toolCode: {
+        in: splittedToolCodes,
+      },
     },
     data: {
-      hourUsageLeft: tool.hourUsageLeft - parseInt(toolUsage),
+      hourUsageLeft: {
+        decrement: parseInt(toolUsage),
+      },
     },
   });
 
@@ -184,19 +206,31 @@ export async function PATCH(req: NextRequest, {
     );
   }
 
+  const splittedToolCodes = toolCode.split(",");
+
   const oldActivity = await prisma.activity.findFirst({
     where: {
       activityCode,
     },
     select: {
       toolUsage: true,
-      toolCode: true,
+      tools: {
+        select: {
+          tool: {
+            select: {
+              toolCode: true,
+            }
+          }
+        }
+      },
     },
   });
 
-  const tool = await prisma.tool.findFirst({
+  const tool = await prisma.tool.findMany({
     where: {
-      toolCode,
+      toolCode: {
+        in: splittedToolCodes,
+      }
     },
   });
 
@@ -214,17 +248,6 @@ export async function PATCH(req: NextRequest, {
     );
   }
 
-  if (toolCode !== oldActivity?.toolCode) {
-    await prisma.tool.update({
-      where: {
-        toolCode: oldActivity?.toolCode,
-      },
-      data: {
-        hourUsageLeft: tool.hourUsageLeft + (oldActivity?.toolUsage as number),
-      },
-    });
-  }
-
   const activity = await prisma.activity.update({
     where: {
       activityCode: activityCodeFromParams as string,
@@ -235,19 +258,79 @@ export async function PATCH(req: NextRequest, {
       description,
       date: new Date(date),
       operatorName,
-      toolCode,
       toolUsage: parseInt(toolUsage),
+      tools: {
+        deleteMany: {
+          toolId: {
+            notIn: splittedToolCodes,
+          },
+        },
+        create: tool.map((tool) => {
+          return {
+            tool: {
+              connect: {
+                toolCode: tool.toolCode,
+              },
+            },
+          };
+        }),
+      }
+    },
+    include: {
+      tools: {
+        include: {
+          tool: true,
+        }
+      },
     },
   });
 
-  await prisma.tool.update({
-    where: {
-      toolCode,
-    },
-    data: {
-      hourUsageLeft: tool.hourUsageLeft - parseInt(toolUsage) + (oldActivity?.toolUsage as number),
-    },
-  });
+  // Update tool usage
+  const oldToolUsage = oldActivity?.toolUsage;
+
+  if (oldToolUsage && oldToolUsage !== parseInt(toolUsage)) {
+    const diff = parseInt(toolUsage) - oldToolUsage;
+
+    await prisma.tool.updateMany({
+      where: {
+        toolCode: {
+          in: splittedToolCodes,
+        },
+      },
+      data: {
+        hourUsageLeft: {
+          decrement: parseInt(toolUsage),
+        },
+      },
+    });
+
+    await prisma.tool.updateMany({
+      where: {
+        toolCode: {
+          in: oldActivity?.tools.map((tool) => tool.tool.toolCode),
+        },
+      },
+      data: {
+        hourUsageLeft: {
+          decrement: (diff * -1),
+        },
+      },
+    });
+
+  } else {
+    await prisma.tool.updateMany({
+      where: {
+        toolCode: {
+          notIn: activity.tools.map((tool) => tool.tool.toolCode),
+        },
+      },
+      data: {
+        hourUsageLeft: {
+          decrement: parseInt(toolUsage),
+        },
+      },
+    });
+  }
 
   return new NextResponse(
     JSON.stringify(activity),

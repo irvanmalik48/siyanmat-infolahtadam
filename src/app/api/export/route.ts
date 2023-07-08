@@ -64,7 +64,11 @@ export async function POST(req: NextRequest) {
         },
       },
       include: {
-        tool: true,
+        tools: {
+          include: {
+            tool: true,
+          },
+        },
       },
     });
   } else if (data.type === "tool") {
@@ -138,7 +142,6 @@ export async function POST(req: NextRequest) {
         { name: "Deskripsi" },
         { name: "Tanggal Kegiatan" },
         { name: "Operator" },
-        { name: "Kode Peralatan" },
         { name: "Nama Peralatan" },
         { name: "Waktu Guna (jam)" },
       ],
@@ -150,8 +153,7 @@ export async function POST(req: NextRequest) {
           activity.description,
           activity.date,
           activity.operatorName,
-          activity.tool.toolCode,
-          activity.tool.name,
+          activity.tools.map((tool: any) => tool.tool.name).join(", "),
           activity.toolUsage,
         ]
       }),
@@ -242,12 +244,12 @@ export async function POST(req: NextRequest) {
       rows: dataFlow["activities"].map((activity: any, index: any) => {
         return [
           index + 1,
-          activity.activityCode,
-          activity.name,
-          activity.description,
-          activity.date,
-          activity.operatorName,
-          activity.toolUsage,
+          activity["activity"].activityCode,
+          activity["activity"].name,
+          activity["activity"].description,
+          activity["activity"].date,
+          activity["activity"].operatorName,
+          activity["activity"].toolUsage,
         ];
       }),
     });
@@ -266,8 +268,8 @@ export async function POST(req: NextRequest) {
       ref: "A1",
       headerRow: true,
       style: {
-        theme: "TableStyleMedium2",
-        showRowStripes: true,
+        theme: undefined,
+        showRowStripes: false,
       },
       columns: [
         { name: "No" },
@@ -303,20 +305,15 @@ export async function POST(req: NextRequest) {
   workbook.title = data.title as string;
 
   const xlsxFile = await workbook.xlsx.writeBuffer();
-  const csvFile = await workbook.csv.writeBuffer({
-    formatterOptions: {
-      headers: true,
-    }
-  });
 
   // send back response as file for the client to download
   return new NextResponse(
-    data.formatFile === "csv" ? csvFile : xlsxFile,
+    xlsxFile,
     {
       status: 200,
       headers: {
-        "Content-Type": data.formatFile === "csv" ? "text/csv" : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        "Content-Disposition": `attachment; filename=${data.title}.${data.formatFile}}`,
+        "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "Content-Disposition": `attachment; filename=${data.title}.${data.formatFile}`,
       },
     },
   );
