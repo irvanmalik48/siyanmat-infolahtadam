@@ -66,9 +66,9 @@ model Activity {
   description  String?  @default("Tidak ada deskripsi")
   date         DateTime
   operatorName String
-  tool         Tool     @relation(fields: [toolCode], references: [toolCode], onDelete: Cascade)
-  toolCode     String
   toolUsage    Int
+
+  tools        ActivityAndTool[]
 }
 
 model Tool {
@@ -81,5 +81,14 @@ model Tool {
   image         String? @default("/placeholder_tool.png")
   condition     String  @default("B")
 
-  activities Activity[]
+  activities    ActivityAndTool[]
+}
+
+model ActivityAndTool {
+  activity    Activity @relation(fields: [activityId], references: [id], onDelete: SetDefault)
+  activityId  String   @default("")
+  tool        Tool     @relation(fields: [toolId], references: [id], onDelete: SetDefault)
+  toolId      String   @default("")
+
+  @@id([activityId, toolId])
 }
