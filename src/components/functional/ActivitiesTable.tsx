@@ -7,6 +7,7 @@ import { atom, useAtom } from "jotai";
 import Fuse from "fuse.js";
 import { AnimatePresence, motion } from "framer-motion";
 import { RefreshCw } from "lucide-react";
+import { Tool } from "@prisma/client";
 
 interface Activity {
   id: string;
@@ -17,10 +18,11 @@ interface Activity {
   operatorName: string;
   toolCode: string;
   toolUsage: number;
-  tool: {
-    toolCode: string;
-    name: string;
-  }
+  tools: {
+    activityId: string;
+    toolId: string;
+    tool: Tool;
+  }[];
 }
 
 const sortByAtom = atom<string>("date");
@@ -63,10 +65,6 @@ export default function ActivitiesTable() {
       setProcessedActivities(activities?.sort((a, b) => a.activityCode.localeCompare(b.activityCode)));
     }
 
-    if (!isLoading && activities && sortBy === "toolCode") {
-      setProcessedActivities(activities?.sort((a, b) => a.toolCode.localeCompare(b.toolCode)));
-    }
-
     if (!isLoading && activities && sortBy === "operatorName") {
       setProcessedActivities(activities?.sort((a, b) => a.operatorName.localeCompare(b.operatorName)));
     }
@@ -74,7 +72,7 @@ export default function ActivitiesTable() {
 
   useEffect(() => {
     const fuse = new Fuse(activities as Activity[], {
-      keys: ["name", "activityCode", "toolCode", "date", "operatorName"],
+      keys: ["name", "activityCode", "date", "operatorName"],
       threshold: 0.3,
     });
 
@@ -169,7 +167,6 @@ export default function ActivitiesTable() {
                     <th className="px-5 py-3 text-left">Nama Giat</th>
                     <th className="px-5 py-3 text-center w-[16%]">Tanggal</th>
                     <th className="px-5 py-3 text-center w-[16%]">Nama Operator</th>
-                    <th className="w-1/12 px-5 py-3 text-center">Kode Alat</th>
                     <th className="px-5 py-3 text-left">Nama Alat</th>
                     <th className="w-[12%] px-5 py-3 text-center">Waktu Guna (jam)</th>
                   </tr>
@@ -271,16 +268,13 @@ function ActivityTableRow({ activity: activity, index }: { activity: Activity, i
       <td className="px-5 py-3 text-center">
         {activity.operatorName}
       </td>
-      <td className="px-5 py-3 text-center">
-        <Link
-          href={`/tools/view/${activity.toolCode}`}
-          className="font-semibold text-celtic-800 hover:text-celtic-700"
-        >
-          {activity.toolCode}
-        </Link>
-      </td>
       <td className="px-5 py-3 overflow-x-hidden truncate">
-        {activity.tool.name}
+        {activity.tools.map((tool, index) => (
+          <span key={tool.tool.id}>
+            {tool.tool.name}
+            {index !== activity.tools.length - 1 && ", "}
+          </span>
+        ))}
       </td>
       <td className="px-5 py-3 text-center">
         {activity.toolUsage}
@@ -299,9 +293,6 @@ function EmptyActivityTableRow() {
         -
       </td>
       <td className="px-5 py-3">
-        -
-      </td>
-      <td className="px-5 py-3 text-center">
         -
       </td>
       <td className="px-5 py-3 text-center">

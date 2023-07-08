@@ -15,7 +15,7 @@ interface ActivitySubmit {
   description: string;
   date: string;
   operatorName: string;
-  toolCode: string;
+  toolCode: string[];
   toolUsage: number;
 }
 
@@ -28,8 +28,9 @@ export default function AddActivitySection() {
   const [nameError, setNameError] = useState<string | undefined>("");
   const [dateError, setDateError] = useState<string | undefined>("");
   const [operatorNameError, setOperatorNameError] = useState<string | undefined>("");
-  const [toolCodeError, setToolCodeError] = useState<string | undefined>("");
   const [toolUsageError, setToolUsageError] = useState<string | undefined>("");
+
+  const [amountOfTools, setAmountOfTools] = useState<number>(0);
 
   const [onSuccess, setOnSuccess] = useAtom(toolSuccessAtom);
 
@@ -55,7 +56,7 @@ export default function AddActivitySection() {
               description: "",
               date: new Date().toISOString().slice(0, 10),
               operatorName: "",
-              toolCode: "",
+              toolCode: [],
               toolUsage: 0,
             }}
             validate={(values) => {
@@ -88,11 +89,6 @@ export default function AddActivitySection() {
                 setOperatorNameError(errors.operatorName);
               }
 
-              if (!values.toolCode || values.toolCode === "") {
-                errors.toolCode = "Silahkan pilih alat";
-                setToolCodeError(errors.toolCode);
-              }
-
               if (!values.toolUsage) {
                 errors.toolUsage = "Nominal jam pakai harus diisi";
                 setToolUsageError(errors.toolUsage);
@@ -119,7 +115,7 @@ export default function AddActivitySection() {
               formData.append("description", activityData.description === "" ? "Tidak ada deskripsi" : activityData.description);
               formData.append("date", activityData.date);
               formData.append("operatorName", activityData.operatorName);
-              formData.append("toolCode", activityData.toolCode);
+              formData.append("toolCode", activityData.toolCode.join(","));
               formData.append("toolUsage", activityData.toolUsage.toString());
 
               const response = await fetch("/api/activities/add", {
@@ -141,7 +137,7 @@ export default function AddActivitySection() {
               definedMutator("/api/activities/get");
             }}
           >
-            {({ isSubmitting, errors, touched }) => (
+            {({ isSubmitting, values, errors, touched }) => (
               <Form className="flex flex-col w-full gap-5 p-5 mt-8 border rounded-xl border-neutral-300">
                 <motion.div
                   key="activityCode-container"
@@ -302,65 +298,45 @@ export default function AddActivitySection() {
                     )}
                   </AnimatePresence>
                 </motion.div>
-                <motion.div
-                  key="toolCode-container"
+                <div
                   className="flex flex-col items-start justify-start w-full gap-1"
-                  initial={{
-                    height: "70px",
-                  }}
-                  animate={{
-                    height: errors.toolCode && touched.toolCode ? "110px" : "70px",
-                  }}
-                  exit={{
-                    height: "70px",
-                  }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 500,
-                    height: {
-                      duration: 0.3,
-                    },
-                  }}
                 >
-                  <label htmlFor="toolCode" className="font-semibold">
+                  <label htmlFor="toolCode[]" className="font-semibold">
                     Alat yang Digunakan
                   </label>
-                  <Field
-                    id="toolCode"
-                    name="toolCode"
-                    as="select"
-                    className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
-                    defaultValue=""
-                  >
-                    <option value="">
-                      Pilih alat
-                    </option>
-                    {
-                      tools?.map((tool) => (
-                        <option key={tool.id} value={tool.toolCode}>
-                          {tool.name} - {tool.brand}
+                  {
+                    Array.from({ length: amountOfTools }, (_, i) => i).map((i) => (
+                      <Field
+                        key={i}
+                        id="toolCode[]"
+                        name={`toolCode[${i}]`}
+                        as="select"
+                        className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                        defaultValue=""
+                      >
+                        <option value="">
+                          Pilih alat {i + 1}
                         </option>
-                      ))
-                    }
-                  </Field>
-                  <AnimatePresence
-                    onExitComplete={() => {
-                      setToolCodeError(undefined);
+                        {
+                          tools?.map((tool) => (
+                            <option key={tool.id} value={tool.toolCode}>
+                              {tool.name} - {tool.brand}
+                            </option>
+                          ))
+                        }
+                      </Field>
+                    ))
+                  }
+                  <button
+                    disabled={isSubmitting}
+                    className="self-end w-full py-2 font-semibold text-white transition rounded-full px-7 bg-celtic-800 hover:bg-celtic-700 disabled:brightness-50"
+                    onClick={() => {
+                      setAmountOfTools(amountOfTools + 1);
                     }}
                   >
-                    {errors.toolCode && touched.toolCode && (
-                      <motion.div
-                        key="toolCode-error"
-                        className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                      >
-                        {toolCodeError}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
+                    Tambah Alat
+                  </button>
+                </div>
                 <motion.div
                   key="operatorName-container"
                   className="flex flex-col items-start justify-start w-full gap-1"

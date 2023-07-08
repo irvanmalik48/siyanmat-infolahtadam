@@ -19,7 +19,7 @@ const links = [
   {
     href: "/",
     icon: <Home size={20} />,
-    children: "Dashboard",
+    children: "Home",
   },
   {
     href: "/activities",

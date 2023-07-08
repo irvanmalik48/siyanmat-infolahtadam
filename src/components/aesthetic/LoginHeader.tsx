@@ -15,10 +15,10 @@ export default function LoginHeader() {
         </div>
         <article className="flex flex-col items-center justify-center md:gap-1">
           <h1 className="text-lg font-bold md:text-3xl">
-            Sistem Pelayanan Materiil
+            Aplikasi Pelayanan Materiil
           </h1>
           <p className="font-semibold md:text-lg">
-            Infolahtadam Kodam II/Sriwijaya
+            Infolahtadam II/Sriwijaya
           </p>
         </article>
         <Image

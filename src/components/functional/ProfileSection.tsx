@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Formik, Field, Form } from "formik";
 import { signOut } from "next-auth/react";
 import { useStaleWhileRevalidate } from "@/lib/swr";
-import { Crown, Shield, Users, Upload } from "lucide-react";
+import { Upload } from "lucide-react";
 import { atom, useAtom } from "jotai";
 import { useEffect, useReducer } from "react";
 import { useRouter } from "next/navigation";
@@ -97,20 +97,6 @@ export default function ProfileSection() {
             <h2 className="text-lg font-medium text-neutral-500">
               {data?.username}
             </h2>
-            <div className="flex items-center justify-start gap-2 px-4 py-1 border rounded-full border-neutral-300">
-              {data?.role === "superadmin" && (
-                <Crown className="w-5 h-5 text-supernova-600" />
-              )}
-              {data?.role === "admin" && (
-                <Shield className="w-5 h-5 text-celtic-800" />
-              )}
-              {data?.role === "viewer" && (
-                <Users className="w-5 h-5 text-black" />
-              )}
-              <p className="text-sm font-semibold">
-                {roles[data?.role as keyof typeof roles]}
-              </p>
-            </div>
           </div>
           <div className="flex items-center justify-end w-full gap-2">
             <button

@@ -24,7 +24,6 @@ export default function ExportToolsSection() {
   const [titleError, setTitleError] = useState<string | undefined>();
   const [sortByError, setSortByError] = useState<string | undefined>();
   const [toolCodeError, setToolCodeError] = useState<string | undefined>();
-  const [formatFileError, setFormatFileError] = useState<string | undefined>();
 
   const [onSuccess, setOnSuccess] = useAtom(exportSuccessAtom);
 
@@ -47,7 +46,7 @@ export default function ExportToolsSection() {
             initialValues={{
               title: "",
               sortBy: "",
-              formatFile: "",
+              formatFile: "xlsx",
               toolCode: "all",
             }}
             validate={(values) => {
@@ -65,11 +64,6 @@ export default function ExportToolsSection() {
               if (values.toolCode === "all" && values.sortBy === "") {
                 errors.sortBy = "Silahkan pilih metode pengurutan";
                 setSortByError(errors.sortBy);
-              }
-
-              if (values.formatFile === "") {
-                errors.formatFile = "Silahkan pilih format file";
-                setFormatFileError(errors.formatFile);
               }
 
               return errors;
@@ -101,7 +95,7 @@ export default function ExportToolsSection() {
               // tell browser to download the file from the response
               // without creating a new anchor element
               // the body of the response is a Buffer
-              FileSaver.saveAs(blob, `${exportData.title}.${exportData.formatFile}}`);
+              FileSaver.saveAs(blob, `${exportData.title}.${exportData.formatFile}`);
 
               setSubmitting(false);
               setOnSuccess(true);
@@ -276,64 +270,6 @@ export default function ExportToolsSection() {
                         exit={{ opacity: 0 }}
                       >
                         {sortByError}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-                <motion.div
-                  key="formatFile-container"
-                  className="flex flex-col items-start justify-start w-full gap-1"
-                  initial={{
-                    height: "70px",
-                  }}
-                  animate={{
-                    height: errors.formatFile && touched.formatFile ? "110px" : "70px",
-                  }}
-                  exit={{
-                    height: "70px",
-                  }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 500,
-                    height: {
-                      duration: 0.3,
-                    },
-                  }}
-                >
-                  <label htmlFor="formatFile" className="font-semibold">
-                    Format
-                  </label>
-                  <Field
-                    id="formatFile"
-                    name="formatFile"
-                    as="select"
-                    className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
-                    defaultValue=""
-                  >
-                    <option value="">
-                      Pilih format file
-                    </option>
-                    <option value="xlsx">
-                      Excel (*.xlsx)
-                    </option>
-                    <option value="csv">
-                      CSV (*.csv)
-                    </option>
-                  </Field>
-                  <AnimatePresence
-                    onExitComplete={() => {
-                      setSortByError(undefined);
-                    }}
-                  >
-                    {errors.formatFile && touched.formatFile && (
-                      <motion.div
-                        key="formatFile-error"
-                        className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                      >
-                        {formatFileError}
                       </motion.div>
                     )}
                   </AnimatePresence>

@@ -15,9 +15,10 @@ interface Activity {
   description: string;
   date: string;
   operatorName: string;
-  toolCode: string;
   toolUsage: number;
-  tool: Tool;
+  tools: {
+    tool: Tool;
+  }[]
 }
 
 export default function ToolDetail({ code }: { code: string }) {
@@ -136,37 +137,40 @@ export default function ToolDetail({ code }: { code: string }) {
               <label className="font-semibold" htmlFor="tool">
                 Alat yang Digunakan
               </label>
-              <Link
-                id="tool"
-                href={`/tools/view/${activity?.toolCode}`}
-                className="flex flex-col w-full gap-5 p-5 transition border rounded-lg border-neutral-300 hover:bg-celtic-50 hover:bg-opacity-50 group hover:border-celtic-800 hover:ring-4 hover:ring-celtic-800 hover:ring-opacity-50"
-              >
-                <img src={activity?.tool.image as string} className="object-contain w-full border rounded-lg lg:h-[360px] border-neutral-300 bg-neutral-500" alt={`Gambar ${code}`} />
-                <div className="flex flex-col w-full gap-1">
-                  <label className="font-semibold" htmlFor="toolCode">Kode Alat</label>
-                  <p id="toolCode" className="w-full">
-                    {activity?.toolCode}
-                  </p>
-                </div>
-                <div className="flex flex-col w-full gap-1">
-                  <label className="font-semibold" htmlFor="toolName">Nama Alat</label>
-                  <p id="toolName" className="w-full">
-                    {activity?.tool.name}
-                  </p>
-                </div>
-                <div className="flex flex-col w-full gap-1">
-                  <label className="font-semibold" htmlFor="toolBrand">Merek Alat</label>
-                  <p id="toolBrand" className="w-full">
-                    {activity?.tool.brand}
-                  </p>
-                </div>
-                <div className="flex flex-col w-full gap-1">
-                  <label className="font-semibold" htmlFor="toolUsage">Nominal Waktu Penggunaan (jam)</label>
-                  <p id="toolUsage" className="w-full">
-                    {activity?.toolUsage}
-                  </p>
-                </div>
-              </Link>
+              {
+                activity?.tools.map((tool) => (
+                  <Link
+                    id="tool"
+                    href={`/tools/view/${tool.tool.toolCode}`}
+                    className="flex flex-col w-full gap-5 p-5 transition border rounded-lg border-neutral-300 hover:bg-celtic-50 hover:bg-opacity-50 group hover:border-celtic-800 hover:ring-4 hover:ring-celtic-800 hover:ring-opacity-50"
+                  >
+                    <div className="flex flex-col w-full gap-1">
+                      <label className="font-semibold" htmlFor="toolCode">Kode Alat</label>
+                      <p id="toolCode" className="w-full">
+                        {tool.tool.toolCode}
+                      </p>
+                    </div>
+                    <div className="flex flex-col w-full gap-1">
+                      <label className="font-semibold" htmlFor="toolName">Nama Alat</label>
+                      <p id="toolName" className="w-full">
+                        {tool.tool.name}
+                      </p>
+                    </div>
+                    <div className="flex flex-col w-full gap-1">
+                      <label className="font-semibold" htmlFor="toolBrand">Merek Alat</label>
+                      <p id="toolBrand" className="w-full">
+                        {tool.tool.brand}
+                      </p>
+                    </div>
+                    <div className="flex flex-col w-full gap-1">
+                      <label className="font-semibold" htmlFor="toolUsage">Nominal Waktu Penggunaan (jam)</label>
+                      <p id="toolUsage" className="w-full">
+                        {tool.tool.hourUsageLeft}
+                      </p>
+                    </div>
+                  </Link>
+                ))
+              }
             </div>
             <div className="flex items-center justify-end w-full gap-3">
               <Link

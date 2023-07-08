@@ -5,12 +5,12 @@ const links = [
   {
     href: "/activities",
     icon: <Calendar size={28} />,
-    children: "Atur Kegiatan",
+    children: "Kegiatan",
   },
   {
     href: "/tools",
     icon: <Shapes size={28} />,
-    children: "Atur Peralatan",
+    children: "Peralatan",
   },
   {
     href: "/export",
@@ -28,7 +28,7 @@ export default function QuickNav() {
   return (
     <section className="grid w-full grid-cols-2 gap-5 p-5 mt-8 border rounded-xl border-neutral-300">
       <h2 className="w-full col-span-2 text-lg font-bold text-center">
-        Silahkan pilih menu yang ingin Anda akses
+        Silahkan pilih menu:
       </h2>
       {links.map((link) => (
         <NavigationCard key={link.href} href={link.href} icon={link.icon}>
