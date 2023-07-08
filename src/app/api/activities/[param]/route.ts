@@ -378,13 +378,61 @@ export async function DELETE(
     );
   }
 
-  const activity = await prisma.activity.delete({
+  const activity = await prisma.activity.findFirst({
+    where: {
+      activityCode,
+    },
+    include: {
+      tools: {
+        include: {
+          tool: true,
+        },
+      },
+    },
+  });
+
+  if (!activity) {
+    return new NextResponse(
+      JSON.stringify({
+        error: "Activity not found",
+      }),
+      {
+        status: 404,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  }
+
+  await prisma.tool.updateMany({
+    where: {
+      toolCode: {
+        in: activity.tools.map((tool) => tool.tool.toolCode),
+      },
+    },
+    data: {
+      hourUsageLeft: {
+        increment: activity.toolUsage,
+      },
+    },
+  });
+
+  await prisma.activityAndTool.deleteMany({
+    where: {
+      activity: {
+        activityCode,
+      }
+    }
+  })
+
+  const activityToBeDeleted = await prisma.activity.delete({
     where: {
       activityCode,
     },
   });
 
-  return new NextResponse(JSON.stringify(activity), {
+  return new NextResponse(JSON.stringify(activityToBeDeleted), {
     headers: {
       "Content-Type": "application/json",
     },
