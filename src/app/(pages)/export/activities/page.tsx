@@ -7,8 +7,10 @@ export const metadata = {
 
 export default function Tools() {
   return (
-    <section className="w-full max-w-4xl px-5 mx-auto">
-      <h1 className="w-full text-4xl font-bold leading-snug mt-14">Ekspor Laporan Kegiatan</h1>
+    <section className="mx-auto w-full max-w-4xl px-5">
+      <h1 className="mt-14 w-full text-4xl font-bold leading-snug">
+        Ekspor Laporan Kegiatan
+      </h1>
       <ExportActivitiesSection />
     </section>
   );

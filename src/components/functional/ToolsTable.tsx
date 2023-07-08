@@ -49,11 +49,17 @@ export default function ToolsTable() {
   const [processedTools, setProcessedTools] = useAtom(processedToolsAtom);
   const [searchResults, setSearchResults] = useAtom(searchResultsAtom);
 
-  const { data: tools, isLoading, isValidating } = useStaleWhileRevalidate<Tool[]>("/api/tools/get?all");
+  const {
+    data: tools,
+    isLoading,
+    isValidating,
+  } = useStaleWhileRevalidate<Tool[]>("/api/tools/get?all");
 
   useEffect(() => {
     if ((!isLoading || !isValidating) && tools) {
-      setProcessedTools(tools.sort((a, b) => a.toolCode.localeCompare(b.toolCode)));
+      setProcessedTools(
+        tools.sort((a, b) => a.toolCode.localeCompare(b.toolCode))
+      );
       setMaxPages(Math.ceil(tools?.length / 10));
     }
   }, [isLoading, isValidating]);
@@ -65,17 +71,31 @@ export default function ToolsTable() {
     }
 
     if (!isLoading && tools && filterBy === "baik") {
-      setMaxPages(Math.ceil(tools?.filter((tool) => tool.condition.startsWith("B")).length / 10));
-      setProcessedTools(tools?.filter((tool) => tool.condition.startsWith("B")));
+      setMaxPages(
+        Math.ceil(
+          tools?.filter((tool) => tool.condition.startsWith("B")).length / 10
+        )
+      );
+      setProcessedTools(
+        tools?.filter((tool) => tool.condition.startsWith("B"))
+      );
     }
 
     if (!isLoading && tools && filterBy === "rusak-ringan") {
-      setMaxPages(Math.ceil(tools?.filter((tool) => tool.condition.includes("RR")).length / 10));
+      setMaxPages(
+        Math.ceil(
+          tools?.filter((tool) => tool.condition.includes("RR")).length / 10
+        )
+      );
       setProcessedTools(tools?.filter((tool) => tool.condition.includes("RR")));
     }
 
     if (!isLoading && tools && filterBy === "rusak-berat") {
-      setMaxPages(Math.ceil(tools?.filter((tool) => tool.condition.includes("RB")).length / 10));
+      setMaxPages(
+        Math.ceil(
+          tools?.filter((tool) => tool.condition.includes("RB")).length / 10
+        )
+      );
       setProcessedTools(tools?.filter((tool) => tool.condition.includes("RB")));
     }
   }, [filterBy]);
@@ -88,19 +108,25 @@ export default function ToolsTable() {
 
     if (!isLoading && tools && searchQuery !== "") {
       setSearchResults(fuse.search(searchQuery).map((result) => result.item));
-      const maxPageNumberAfterSearch = Math.ceil(searchResults?.length as number / 10);
+      const maxPageNumberAfterSearch = Math.ceil(
+        (searchResults?.length as number) / 10
+      );
 
-      setMaxPages(isNaN(maxPageNumberAfterSearch) || maxPageNumberAfterSearch <= 1 ? 1 : maxPageNumberAfterSearch);
+      setMaxPages(
+        isNaN(maxPageNumberAfterSearch) || maxPageNumberAfterSearch <= 1
+          ? 1
+          : maxPageNumberAfterSearch
+      );
     } else {
       setSearchResults(undefined);
-      setMaxPages(Math.ceil(tools?.length as number / 10));
+      setMaxPages(Math.ceil((tools?.length as number) / 10));
     }
   }, [searchQuery]);
 
   return (
-    <div className="flex flex-col w-full gap-5 mt-8">
-      <div className="flex items-end justify-between w-full gap-5">
-        <div className="flex items-center gap-3 w-fit">
+    <div className="mt-8 flex w-full flex-col gap-5">
+      <div className="flex w-full items-end justify-between gap-5">
+        <div className="flex w-fit items-center gap-3">
           <div className="flex flex-col gap-1">
             <label htmlFor="search" className="font-semibold">
               Pencarian Alat
@@ -113,7 +139,7 @@ export default function ToolsTable() {
               onChange={(e) => {
                 setSearchQuery(e.target.value);
               }}
-              className="px-3 py-2 text-sm transition bg-white border rounded-lg appearance-none w-72 border-neutral-300 focus:outline-none focus:ring-4 focus:ring-celtic-800 focus:ring-opacity-50 focus:border-celtic-800"
+              className="w-72 appearance-none rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm transition focus:border-celtic-800 focus:outline-none focus:ring-4 focus:ring-celtic-800 focus:ring-opacity-50"
             />
           </div>
           <div className="flex flex-col gap-1">
@@ -123,7 +149,7 @@ export default function ToolsTable() {
             <select
               name="filter"
               id="filter"
-              className="w-48 px-3 py-2 text-sm transition bg-white border rounded-lg appearance-none border-neutral-300 focus:outline-none focus:ring-4 focus:ring-celtic-800 focus:ring-opacity-50 focus:border-celtic-800"
+              className="w-48 appearance-none rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm transition focus:border-celtic-800 focus:outline-none focus:ring-4 focus:ring-celtic-800 focus:ring-opacity-50"
               defaultValue={"all"}
               onChange={(e) => {
                 setFilterBy(e.target.value);
@@ -138,128 +164,127 @@ export default function ToolsTable() {
         </div>
         <div className="flex items-center justify-end gap-5">
           <AnimatePresence>
-            {
-              !isValidating && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="flex items-center gap-2 text-sm text-neutral-500"
-                >
-                  <RefreshCw size={16} className="text-neutral-500 animate-spin" />
-                  <span className="font-semibold">Autorefreshing...</span>
-                </motion.div>
-              )
-            }
+            {!isValidating && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex items-center gap-2 text-sm text-neutral-500"
+              >
+                <RefreshCw
+                  size={16}
+                  className="animate-spin text-neutral-500"
+                />
+                <span className="font-semibold">Autorefreshing...</span>
+              </motion.div>
+            )}
           </AnimatePresence>
           <Link
             href="/tools/add"
-            className="py-2 font-semibold text-white transition rounded-full w-fit bg-celtic-800 px-7 hover:bg-celtic-700 disabled:brightness-75"
+            className="w-fit rounded-full bg-celtic-800 px-7 py-2 font-semibold text-white transition hover:bg-celtic-700 disabled:brightness-75"
           >
             Tambah
           </Link>
         </div>
       </div>
-      {
-        isLoading ? (
-          <div className="w-full h-[537px] rounded-xl border border-neutral-300 bg-neutral-200 animate-pulse" />
-        ) : (
-          <div className="w-full overflow-hidden border rounded-xl border-neutral-300">
-            <div className="w-full overflow-x-auto">
-              <table className="w-full table-auto lg:table-fixed">
-                <thead className="bg-celtic-800">
-                  <tr className="text-sm font-semibold text-white">
-                    <th className="px-5 py-3 w-[5%] text-center">
-                      No.
-                    </th>
-                    <th className="w-1/12 px-5 py-3 text-left">Kode Alat</th>
-                    <th className="px-5 py-3 text-left">Nama Alat</th>
-                    <th className="px-5 py-3 text-center w-[16%]">Merek</th>
-                    <th className="px-5 py-3 text-center w-[12%]">Sisa Masa Pakai</th>
-                    <th className="px-5 py-3 text-center w-[12%]">Maks. Masa Pakai</th>
-                    <th className="w-1/12 px-5 py-3 text-center">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-neutral-300">
-                  {
-                    typeof searchResults === "undefined" && processedTools?.slice(start, end).map((tool, index) => (
+      {isLoading ? (
+        <div className="h-[537px] w-full animate-pulse rounded-xl border border-neutral-300 bg-neutral-200" />
+      ) : (
+        <div className="w-full overflow-hidden rounded-xl border border-neutral-300">
+          <div className="w-full overflow-x-auto">
+            <table className="w-full table-auto lg:table-fixed">
+              <thead className="bg-celtic-800">
+                <tr className="text-sm font-semibold text-white">
+                  <th className="w-[5%] px-5 py-3 text-center">No.</th>
+                  <th className="w-1/12 px-5 py-3 text-left">Kode Alat</th>
+                  <th className="px-5 py-3 text-left">Nama Alat</th>
+                  <th className="w-[16%] px-5 py-3 text-center">Merek</th>
+                  <th className="w-[12%] px-5 py-3 text-center">
+                    Sisa Masa Pakai
+                  </th>
+                  <th className="w-[12%] px-5 py-3 text-center">
+                    Maks. Masa Pakai
+                  </th>
+                  <th className="w-1/12 px-5 py-3 text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-neutral-300">
+                {typeof searchResults === "undefined" &&
+                  processedTools
+                    ?.slice(start, end)
+                    .map((tool, index) => (
                       <ToolTableRow
                         key={tool.id}
                         index={index + start}
                         tool={tool}
                       />
-                    ))
-                  }
-                  {
-                    typeof searchResults !== "undefined" && searchResults?.slice(start, end).map((tool, index) => (
+                    ))}
+                {typeof searchResults !== "undefined" &&
+                  searchResults
+                    ?.slice(start, end)
+                    .map((tool, index) => (
                       <ToolTableRow
                         key={tool.id}
                         index={index + start}
                         tool={tool}
                       />
-                    ))
-                  }
-                  {
-                    typeof searchResults === "undefined" && processedTools && processedTools?.slice(start, end).length < 10 && (
-                      Array(10 - processedTools.slice(start, end).length).fill("").map((_, index) => (
-                        <EmptyToolTableRow key={index} />
-                      ))
-                    )
-                  }
-                  {
-                    typeof searchResults !== "undefined" && searchResults && searchResults?.slice(start, end).length < 10 && (
-                      Array(10 - searchResults.slice(start, end).length).fill("").map((_, index) => (
-                        <EmptyToolTableRow key={index} />
-                      ))
-                    )
-                  }
-                </tbody>
-              </table>
-            </div>
-            <div className="flex items-center justify-center w-full px-5 py-2 bg-celtic-800">
-              <div className="flex items-center justify-between w-full max-w-[20rem]">
-                <button
-                  disabled={page === 1 || maxPages === 1}
-                  className="px-3 py-1 text-sm font-semibold text-white transition rounded-full bg-celtic-700 hover:bg-celtic-600 disabled:brightness-75"
-                  onClick={() => {
-                    setPage(page - 1);
-                    setStart(start - 10);
-                    setEnd(end - 10);
-                  }}
-                >
-                  Sebelumnya
-                </button>
-                <div className="flex items-center gap-2 text-sm font-semibold text-white">
-                  <span>{page}</span>
-                  <span>/</span>
-                  <span>{maxPages}</span>
-                </div>
-                <button
-                  disabled={page === maxPages || maxPages === 1}
-                  className="px-3 py-1 text-sm font-semibold text-white transition rounded-full bg-celtic-700 hover:bg-celtic-600 disabled:brightness-75"
-                  onClick={() => {
-                    setPage(page + 1);
-                    setStart(start + 10);
-                    setEnd(end + 10);
-                  }}
-                >
-                  Selanjutnya
-                </button>
+                    ))}
+                {typeof searchResults === "undefined" &&
+                  processedTools &&
+                  processedTools?.slice(start, end).length < 10 &&
+                  Array(10 - processedTools.slice(start, end).length)
+                    .fill("")
+                    .map((_, index) => <EmptyToolTableRow key={index} />)}
+                {typeof searchResults !== "undefined" &&
+                  searchResults &&
+                  searchResults?.slice(start, end).length < 10 &&
+                  Array(10 - searchResults.slice(start, end).length)
+                    .fill("")
+                    .map((_, index) => <EmptyToolTableRow key={index} />)}
+              </tbody>
+            </table>
+          </div>
+          <div className="flex w-full items-center justify-center bg-celtic-800 px-5 py-2">
+            <div className="flex w-full max-w-[20rem] items-center justify-between">
+              <button
+                disabled={page === 1 || maxPages === 1}
+                className="rounded-full bg-celtic-700 px-3 py-1 text-sm font-semibold text-white transition hover:bg-celtic-600 disabled:brightness-75"
+                onClick={() => {
+                  setPage(page - 1);
+                  setStart(start - 10);
+                  setEnd(end - 10);
+                }}
+              >
+                Sebelumnya
+              </button>
+              <div className="flex items-center gap-2 text-sm font-semibold text-white">
+                <span>{page}</span>
+                <span>/</span>
+                <span>{maxPages}</span>
               </div>
+              <button
+                disabled={page === maxPages || maxPages === 1}
+                className="rounded-full bg-celtic-700 px-3 py-1 text-sm font-semibold text-white transition hover:bg-celtic-600 disabled:brightness-75"
+                onClick={() => {
+                  setPage(page + 1);
+                  setStart(start + 10);
+                  setEnd(end + 10);
+                }}
+              >
+                Selanjutnya
+              </button>
             </div>
           </div>
-        )
-      }
+        </div>
+      )}
     </div>
-  )
+  );
 }
 
-function ToolTableRow({ tool, index }: { tool: Tool, index: number }) {
+function ToolTableRow({ tool, index }: { tool: Tool; index: number }) {
   return (
     <tr className="text-sm text-neutral-700">
-      <td className="px-5 py-3 text-center">
-        {index + 1}
-      </td>
+      <td className="px-5 py-3 text-center">{index + 1}</td>
       <td className="px-5 py-3">
         <Link
           href={`/tools/view/${tool.toolCode}`}
@@ -268,51 +293,33 @@ function ToolTableRow({ tool, index }: { tool: Tool, index: number }) {
           {tool.toolCode}
         </Link>
       </td>
-      <td className="px-5 py-3">
-        {tool.name}
-      </td>
+      <td className="px-5 py-3">{tool.name}</td>
+      <td className="px-5 py-3 text-center">{tool.brand}</td>
+      <td className="px-5 py-3 text-center">{tool.hourUsageLeft}</td>
+      <td className="px-5 py-3 text-center">{tool.maxHourUsage}</td>
       <td className="px-5 py-3 text-center">
-        {tool.brand}
-      </td>
-      <td className="px-5 py-3 text-center">
-        {tool.hourUsageLeft}
-      </td>
-      <td className="px-5 py-3 text-center">
-        {tool.maxHourUsage}
-      </td>
-      <td className="px-5 py-3 text-center">
-        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getColorByCondition(tool.condition)}`}>
+        <span
+          className={`rounded-full px-2 py-1 text-xs font-semibold ${getColorByCondition(
+            tool.condition
+          )}`}
+        >
           {tool.condition}
         </span>
       </td>
     </tr>
-  )
+  );
 }
 
 function EmptyToolTableRow() {
   return (
-    <tr className="text-sm text-neutral-100 bg-neutral-100">
-      <td className="px-5 py-3 text-center">
-        -
-      </td>
-      <td className="px-5 py-3">
-        -
-      </td>
-      <td className="px-5 py-3">
-        -
-      </td>
-      <td className="px-5 py-3 text-center">
-        -
-      </td>
-      <td className="px-5 py-3 text-center">
-        -
-      </td>
-      <td className="px-5 py-3 text-center">
-        -
-      </td>
-      <td className="px-5 py-3 text-center">
-        -
-      </td>
+    <tr className="bg-neutral-100 text-sm text-neutral-100">
+      <td className="px-5 py-3 text-center">-</td>
+      <td className="px-5 py-3">-</td>
+      <td className="px-5 py-3">-</td>
+      <td className="px-5 py-3 text-center">-</td>
+      <td className="px-5 py-3 text-center">-</td>
+      <td className="px-5 py-3 text-center">-</td>
+      <td className="px-5 py-3 text-center">-</td>
     </tr>
-  )
+  );
 }

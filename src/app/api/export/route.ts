@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
     sortBy: formData.get("sortBy") as string,
     data: reqData,
     formatFile: formData.get("formatFile") as string,
-  }
+  };
 
   if (!data) {
     return new NextResponse(
@@ -155,7 +155,7 @@ export async function POST(req: NextRequest) {
           activity.operatorName,
           activity.tools.map((tool: any) => tool.tool.name).join(", "),
           activity.toolUsage,
-        ]
+        ];
       }),
     });
 
@@ -289,8 +289,8 @@ export async function POST(req: NextRequest) {
           tool.maxHourUsage,
           tool.hourUsageLeft,
           tool.condition,
-        ]
-      })
+        ];
+      }),
     });
 
     sheet.getRow(1).font = { bold: true };
@@ -307,14 +307,12 @@ export async function POST(req: NextRequest) {
   const xlsxFile = await workbook.xlsx.writeBuffer();
 
   // send back response as file for the client to download
-  return new NextResponse(
-    xlsxFile,
-    {
-      status: 200,
-      headers: {
-        "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        "Content-Disposition": `attachment; filename=${data.title}.${data.formatFile}`,
-      },
+  return new NextResponse(xlsxFile, {
+    status: 200,
+    headers: {
+      "Content-Type":
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "Content-Disposition": `attachment; filename=${data.title}.${data.formatFile}`,
     },
-  );
+  });
 }

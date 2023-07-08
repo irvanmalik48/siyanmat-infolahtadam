@@ -28,15 +28,13 @@ export default function ExportActivitiesSection() {
   return (
     <>
       <AnimatePresence>
-        {
-          onSuccess && (
-            <Toast
-              key="activity-success"
-              message="Laporan berhasil diekspor!"
-              atom={exportSuccessAtom}
-            />
-          )
-        }
+        {onSuccess && (
+          <Toast
+            key="activity-success"
+            message="Laporan berhasil diekspor!"
+            atom={exportSuccessAtom}
+          />
+        )}
       </AnimatePresence>
       <Formik
         initialValues={{
@@ -45,7 +43,9 @@ export default function ExportActivitiesSection() {
           startDate: new Date(
             // a week ago
             Date.now() - 7 * 24 * 60 * 60 * 1000
-          ).toISOString().slice(0, 10),
+          )
+            .toISOString()
+            .slice(0, 10),
           endDate: new Date().toISOString().slice(0, 10),
           formatFile: "xlsx",
         }}
@@ -68,7 +68,6 @@ export default function ExportActivitiesSection() {
 
           return errors;
         }}
-
         onSubmit={async (values, { setSubmitting, resetForm }) => {
           const exportData: LaporanSubmit = {
             title: values.title,
@@ -83,7 +82,7 @@ export default function ExportActivitiesSection() {
           const data = JSON.stringify({
             startDate: exportData.startDate,
             endDate: exportData.endDate,
-          })
+          });
 
           formData.append("title", exportData.title);
           formData.append("type", "activities");
@@ -101,7 +100,10 @@ export default function ExportActivitiesSection() {
           // tell browser to download the file from the response
           // without creating a new anchor element
           // the body of the response is a Buffer
-          FileSaver.saveAs(blob, `${exportData.title}.${exportData.formatFile}`);
+          FileSaver.saveAs(
+            blob,
+            `${exportData.title}.${exportData.formatFile}`
+          );
 
           setSubmitting(false);
           setOnSuccess(true);
@@ -109,10 +111,10 @@ export default function ExportActivitiesSection() {
         }}
       >
         {({ isSubmitting, errors, touched }) => (
-          <Form className="flex flex-col w-full gap-5 p-5 mt-8 border rounded-xl border-neutral-300">
+          <Form className="mt-8 flex w-full flex-col gap-5 rounded-xl border border-neutral-300 p-5">
             <motion.div
               key="title-container"
-              className="flex flex-col items-start justify-start w-full gap-1"
+              className="flex w-full flex-col items-start justify-start gap-1"
               initial={{
                 height: "70px",
               }}
@@ -137,7 +139,7 @@ export default function ExportActivitiesSection() {
                 id="title"
                 name="title"
                 type="text"
-                className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                className="w-full rounded-lg border border-neutral-300 px-5 py-2 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
                 placeholder="Masukkan nama laporan"
               />
               <AnimatePresence
@@ -148,7 +150,7 @@ export default function ExportActivitiesSection() {
                 {errors.title && touched.title && (
                   <motion.div
                     key="name-error"
-                    className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
+                    className="w-full rounded-lg bg-red-400 bg-opacity-10 px-5 py-2 text-sm text-red-500"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -160,12 +162,13 @@ export default function ExportActivitiesSection() {
             </motion.div>
             <motion.div
               key="startDate-container"
-              className="flex flex-col items-start justify-start w-full gap-1"
+              className="flex w-full flex-col items-start justify-start gap-1"
               initial={{
                 height: "70px",
               }}
               animate={{
-                height: errors.startDate && touched.startDate ? "110px" : "70px",
+                height:
+                  errors.startDate && touched.startDate ? "110px" : "70px",
               }}
               exit={{
                 height: "70px",
@@ -185,7 +188,7 @@ export default function ExportActivitiesSection() {
                 id="startDate"
                 name="startDate"
                 type="date"
-                className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                className="w-full rounded-lg border border-neutral-300 px-5 py-2 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
                 defaultValue={new Date().toISOString().slice(0, 10)}
               />
               <AnimatePresence
@@ -196,7 +199,7 @@ export default function ExportActivitiesSection() {
                 {errors.startDate && touched.startDate && (
                   <motion.div
                     key="date-error"
-                    className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
+                    className="w-full rounded-lg bg-red-400 bg-opacity-10 px-5 py-2 text-sm text-red-500"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -208,7 +211,7 @@ export default function ExportActivitiesSection() {
             </motion.div>
             <motion.div
               key="endDate-container"
-              className="flex flex-col items-start justify-start w-full gap-1"
+              className="flex w-full flex-col items-start justify-start gap-1"
               initial={{
                 height: "70px",
               }}
@@ -233,7 +236,7 @@ export default function ExportActivitiesSection() {
                 id="endDate"
                 name="endDate"
                 type="date"
-                className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                className="w-full rounded-lg border border-neutral-300 px-5 py-2 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
                 defaultValue={new Date().toISOString().slice(0, 10)}
               />
               <AnimatePresence
@@ -244,7 +247,7 @@ export default function ExportActivitiesSection() {
                 {errors.endDate && touched.endDate && (
                   <motion.div
                     key="date-error"
-                    className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
+                    className="w-full rounded-lg bg-red-400 bg-opacity-10 px-5 py-2 text-sm text-red-500"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -256,7 +259,7 @@ export default function ExportActivitiesSection() {
             </motion.div>
             <motion.div
               key="sortBy-container"
-              className="flex flex-col items-start justify-start w-full gap-1"
+              className="flex w-full flex-col items-start justify-start gap-1"
               initial={{
                 height: "70px",
               }}
@@ -281,28 +284,15 @@ export default function ExportActivitiesSection() {
                 id="sortBy"
                 name="sortBy"
                 as="select"
-                className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                className="w-full rounded-lg border border-neutral-300 px-5 py-2 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
                 defaultValue=""
               >
-                <option value="">
-                  Pilih cara pengurutan
-                </option>
-                <option value="date">
-                  Tanggal
-                </option>
-                <option value="activityCode">
-                  Kode Kegiatan
-                </option>
-                <option value="toolCodeFromActivity">
-                  Kode Alat
-                </option>
-                <option value="name">
-                  Nama Kegiatan
-                </option>
-                <option value="operatorName">
-                  Nama Operator
-                </option>
-
+                <option value="">Pilih cara pengurutan</option>
+                <option value="date">Tanggal</option>
+                <option value="activityCode">Kode Kegiatan</option>
+                <option value="toolCodeFromActivity">Kode Alat</option>
+                <option value="name">Nama Kegiatan</option>
+                <option value="operatorName">Nama Operator</option>
               </Field>
               <AnimatePresence
                 onExitComplete={() => {
@@ -312,7 +302,7 @@ export default function ExportActivitiesSection() {
                 {errors.sortBy && touched.sortBy && (
                   <motion.div
                     key="sortBy-error"
-                    className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
+                    className="w-full rounded-lg bg-red-400 bg-opacity-10 px-5 py-2 text-sm text-red-500"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -325,15 +315,13 @@ export default function ExportActivitiesSection() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="self-end py-2 font-semibold text-white transition rounded-full px-7 w-fit bg-celtic-800 hover:bg-celtic-700 disabled:brightness-50"
+              className="w-fit self-end rounded-full bg-celtic-800 px-7 py-2 font-semibold text-white transition hover:bg-celtic-700 disabled:brightness-50"
             >
-              {
-                isSubmitting ? "Memproses..." : "Cetak"
-              }
+              {isSubmitting ? "Memproses..." : "Cetak"}
             </button>
           </Form>
         )}
       </Formik>
     </>
-  )
+  );
 }

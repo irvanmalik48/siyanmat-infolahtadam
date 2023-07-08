@@ -32,7 +32,9 @@ function getProperLabelByCondition(condition: string) {
 }
 
 export default function ToolDetail({ code }: { code: string }) {
-  const { data: tool, isLoading } = useStaleWhileRevalidate<Tool>(`/api/tools/${code}`);
+  const { data: tool, isLoading } = useStaleWhileRevalidate<Tool>(
+    `/api/tools/${code}`
+  );
   const router = useRouter();
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
@@ -48,8 +50,7 @@ export default function ToolDetail({ code }: { code: string }) {
   async function handleActualDelete() {
     const formData = new FormData();
 
-    if (tool?.toolCode)
-      formData.append("toolCode", tool.toolCode);
+    if (tool?.toolCode) formData.append("toolCode", tool.toolCode);
 
     formData.set("delete", "true");
 
@@ -68,7 +69,7 @@ export default function ToolDetail({ code }: { code: string }) {
         {deleteDialogOpen && (
           <motion.dialog
             key="upload-profile-pic-dialog"
-            className="fixed inset-0 flex items-center justify-center w-full h-full p-5 bg-black bg-opacity-50"
+            className="fixed inset-0 flex h-full w-full items-center justify-center bg-black bg-opacity-50 p-5"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -83,16 +84,16 @@ export default function ToolDetail({ code }: { code: string }) {
               <p className="text-center">
                 Apakah Anda yakin ingin menghapus alat ini?
               </p>
-              <div className="flex items-center justify-center w-full gap-2 mt-5">
+              <div className="mt-5 flex w-full items-center justify-center gap-2">
                 <button
-                  className="flex items-center justify-center gap-2 px-5 py-2 font-semibold text-white transition bg-red-700 rounded-full w-fit hover:bg-red-600 disabled:brightness-75"
+                  className="flex w-fit items-center justify-center gap-2 rounded-full bg-red-700 px-5 py-2 font-semibold text-white transition hover:bg-red-600 disabled:brightness-75"
                   onClick={handleCloseDialog}
                 >
                   <XCircle size={20} />
                   <span>Cancel</span>
                 </button>
                 <button
-                  className="flex items-center justify-center gap-2 px-5 py-2 font-semibold text-white transition rounded-full bg-celtic-800 w-fit hover:bg-celtic-700 disabled:brightness-75"
+                  className="flex w-fit items-center justify-center gap-2 rounded-full bg-celtic-800 px-5 py-2 font-semibold text-white transition hover:bg-celtic-700 disabled:brightness-75"
                   onClick={handleActualDelete}
                 >
                   <CheckCircle size={20} />
@@ -103,81 +104,87 @@ export default function ToolDetail({ code }: { code: string }) {
           </motion.dialog>
         )}
       </AnimatePresence>
-      {
-        !isLoading ? (
-          <section className="flex flex-col w-full gap-5 p-5 mt-8 border rounded-xl border-neutral-300">
-            <img src={`/api/images${tool?.image}`} className="object-contain w-full border rounded-lg lg:h-[400px] border-neutral-300 bg-neutral-500" alt={`Gambar ${code}`} />
-            <div className="flex flex-col w-full gap-1">
-              <label className="font-semibold" htmlFor="toolCode">
-                Kode Alat
-              </label>
-              <p id="toolCode" className="w-full">
-                {tool?.toolCode}
-              </p>
-            </div>
-            <div className="flex flex-col w-full gap-1">
-              <label className="font-semibold" htmlFor="toolName">
-                Nama Alat
-              </label>
-              <p id="toolName" className="w-full">
-                {tool?.name}
-              </p>
-            </div>
-            <div className="flex flex-col w-full gap-1">
-              <label className="font-semibold" htmlFor="brand">
-                Merek
-              </label>
-              <p id="brand" className="w-full">
-                {tool?.brand}
-              </p>
-            </div>
-            <div className="flex flex-col w-full gap-1">
-              <label className="font-semibold" htmlFor="toolMaxHourUsage">
-                Maksimal Jam Pemakaian
-              </label>
-              <p id="toolMaxHourUsage" className="w-full">
-                {tool?.maxHourUsage}
-              </p>
-            </div>
-            <div className="flex flex-col w-full gap-1">
-              <label className="font-semibold" htmlFor="hourUsageLeft">
-                Sisa Usia Alat
-              </label>
-              <p id="hourUsageLeft" className="w-full">
-                {tool?.hourUsageLeft} jam
-                {" "}(sisa {Math.round((tool?.hourUsageLeft as number / (tool?.maxHourUsage as number)) * 100)}%)
-                {" "}dari {tool?.maxHourUsage} jam
-              </p>
-            </div>
-            <div className="flex flex-col w-full gap-1">
-              <label className="font-semibold" htmlFor="toolCondition">
-                Kondisi Alat
-              </label>
-              <p id="toolCondition" className="w-full">
-                {getProperLabelByCondition(tool?.condition as string)}
-              </p>
-            </div>
-            <div className="flex items-center justify-end w-full gap-3">
-              <Link
-                href={`/tools/edit/${code}`}
-                className="flex items-center justify-center gap-3 py-2 font-semibold text-white transition rounded-full w-fit bg-celtic-800 px-7 hover:bg-celtic-700 disabled:brightness-75"
-              >
-                <Pencil size={20} />
-                <span>Edit</span>
-              </Link>
-              <button
-                className="flex items-center justify-center gap-3 py-2 font-semibold text-white transition bg-red-700 rounded-full w-fit px-7 hover:bg-red-600 disabled:brightness-75"
-                onClick={handleDelete}
-              >
-                <Trash size={20} />
-                <span>Hapus</span>
-              </button>
-            </div>
-          </section>
-        ) : (
-          <div className="h-[1032px] bg-neutral-200 animate-pulse w-full p-5 border mt-8 rounded-xl border-neutral-300" />
-        )
-      }
+      {!isLoading ? (
+        <section className="mt-8 flex w-full flex-col gap-5 rounded-xl border border-neutral-300 p-5">
+          <img
+            src={`/api/images${tool?.image}`}
+            className="w-full rounded-lg border border-neutral-300 bg-neutral-500 object-contain lg:h-[400px]"
+            alt={`Gambar ${code}`}
+          />
+          <div className="flex w-full flex-col gap-1">
+            <label className="font-semibold" htmlFor="toolCode">
+              Kode Alat
+            </label>
+            <p id="toolCode" className="w-full">
+              {tool?.toolCode}
+            </p>
+          </div>
+          <div className="flex w-full flex-col gap-1">
+            <label className="font-semibold" htmlFor="toolName">
+              Nama Alat
+            </label>
+            <p id="toolName" className="w-full">
+              {tool?.name}
+            </p>
+          </div>
+          <div className="flex w-full flex-col gap-1">
+            <label className="font-semibold" htmlFor="brand">
+              Merek
+            </label>
+            <p id="brand" className="w-full">
+              {tool?.brand}
+            </p>
+          </div>
+          <div className="flex w-full flex-col gap-1">
+            <label className="font-semibold" htmlFor="toolMaxHourUsage">
+              Maksimal Jam Pemakaian
+            </label>
+            <p id="toolMaxHourUsage" className="w-full">
+              {tool?.maxHourUsage}
+            </p>
+          </div>
+          <div className="flex w-full flex-col gap-1">
+            <label className="font-semibold" htmlFor="hourUsageLeft">
+              Sisa Usia Alat
+            </label>
+            <p id="hourUsageLeft" className="w-full">
+              {tool?.hourUsageLeft} jam (sisa{" "}
+              {Math.round(
+                ((tool?.hourUsageLeft as number) /
+                  (tool?.maxHourUsage as number)) *
+                  100
+              )}
+              %) dari {tool?.maxHourUsage} jam
+            </p>
+          </div>
+          <div className="flex w-full flex-col gap-1">
+            <label className="font-semibold" htmlFor="toolCondition">
+              Kondisi Alat
+            </label>
+            <p id="toolCondition" className="w-full">
+              {getProperLabelByCondition(tool?.condition as string)}
+            </p>
+          </div>
+          <div className="flex w-full items-center justify-end gap-3">
+            <Link
+              href={`/tools/edit/${code}`}
+              className="flex w-fit items-center justify-center gap-3 rounded-full bg-celtic-800 px-7 py-2 font-semibold text-white transition hover:bg-celtic-700 disabled:brightness-75"
+            >
+              <Pencil size={20} />
+              <span>Edit</span>
+            </Link>
+            <button
+              className="flex w-fit items-center justify-center gap-3 rounded-full bg-red-700 px-7 py-2 font-semibold text-white transition hover:bg-red-600 disabled:brightness-75"
+              onClick={handleDelete}
+            >
+              <Trash size={20} />
+              <span>Hapus</span>
+            </button>
+          </div>
+        </section>
+      ) : (
+        <div className="mt-8 h-[1032px] w-full animate-pulse rounded-xl border border-neutral-300 bg-neutral-200 p-5" />
+      )}
     </>
-  )
+  );
 }

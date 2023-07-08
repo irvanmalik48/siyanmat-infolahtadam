@@ -29,13 +29,16 @@ interface UpdateToolImageBody {
   image: string;
 }
 
-export async function GET(req: NextRequest, {
-  params,
-}: {
-  params: {
-    param?: string;
-  };
-}) {
+export async function GET(
+  req: NextRequest,
+  {
+    params,
+  }: {
+    params: {
+      param?: string;
+    };
+  }
+) {
   const toolCode = params.param;
   let getAll = true;
 
@@ -56,7 +59,7 @@ export async function GET(req: NextRequest, {
         hourUsageLeft: true,
         image: false,
         condition: true,
-      }
+      },
     });
   } else {
     tools = await prisma.tool.findFirst({
@@ -66,21 +69,21 @@ export async function GET(req: NextRequest, {
     });
   }
 
-  return new NextResponse(
-    JSON.stringify(tools),
-    {
-      headers: { "Content-Type": "application/json" },
-    }
-  );
+  return new NextResponse(JSON.stringify(tools), {
+    headers: { "Content-Type": "application/json" },
+  });
 }
 
 // Create a new tool
 export async function POST(req: NextRequest) {
   const formData = await req.formData();
 
-  const { toolCode, name, brand, maxHourUsage, image, condition } = Object.fromEntries(
-    formData.entries() as IterableIterator<[keyof CreateToolBody, string | undefined]>
-  );
+  const { toolCode, name, brand, maxHourUsage, image, condition } =
+    Object.fromEntries(
+      formData.entries() as IterableIterator<
+        [keyof CreateToolBody, string | undefined]
+      >
+    );
 
   if (!toolCode || !name || !brand || !maxHourUsage || !image || !condition) {
     return new NextResponse(
@@ -118,32 +121,40 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  return new NextResponse(
-    JSON.stringify(tool),
-    {
-      headers: { "Content-Type": "application/json" },
-    }
-  );
+  return new NextResponse(JSON.stringify(tool), {
+    headers: { "Content-Type": "application/json" },
+  });
 }
 
 // Update a tool
-export async function PATCH(req: NextRequestWithAuth, {
-  params: {
-    param,
-  },
-}: {
-  params: {
-    param?: string;
-  };
-}) {
+export async function PATCH(
+  req: NextRequestWithAuth,
+  {
+    params: { param },
+  }: {
+    params: {
+      param?: string;
+    };
+  }
+) {
   const toolCodeFromParams = param;
   const formData = await req.formData();
 
-  const { toolCode, name, brand, maxHourUsage, hourUsageLeft, condition } = Object.fromEntries(
-    formData.entries() as IterableIterator<[keyof UpdateToolBody, string | undefined]>
-  );
+  const { toolCode, name, brand, maxHourUsage, hourUsageLeft, condition } =
+    Object.fromEntries(
+      formData.entries() as IterableIterator<
+        [keyof UpdateToolBody, string | undefined]
+      >
+    );
 
-  if (!toolCode || !name || !brand || !maxHourUsage || !hourUsageLeft || !condition) {
+  if (
+    !toolCode ||
+    !name ||
+    !brand ||
+    !maxHourUsage ||
+    !hourUsageLeft ||
+    !condition
+  ) {
     return new NextResponse(
       JSON.stringify({
         error: "Missing fields",
@@ -190,12 +201,9 @@ export async function PATCH(req: NextRequestWithAuth, {
     },
   });
 
-  return new NextResponse(
-    JSON.stringify(tool),
-    {
-      headers: { "Content-Type": "application/json" },
-    }
-  );
+  return new NextResponse(JSON.stringify(tool), {
+    headers: { "Content-Type": "application/json" },
+  });
 }
 
 // Update a tool's image
@@ -203,7 +211,9 @@ export async function PUT(req: NextRequestWithAuth) {
   const formData = await req.formData();
 
   const { toolCode, image } = Object.fromEntries(
-    formData.entries() as IterableIterator<[keyof UpdateToolImageBody, string | undefined]>
+    formData.entries() as IterableIterator<
+      [keyof UpdateToolImageBody, string | undefined]
+    >
   );
 
   if (!toolCode || !image) {
@@ -227,22 +237,22 @@ export async function PUT(req: NextRequestWithAuth) {
     },
   });
 
-  return new NextResponse(
-    JSON.stringify(tool),
-    {
-      headers: { "Content-Type": "application/json" },
-    }
-  );
+  return new NextResponse(JSON.stringify(tool), {
+    headers: { "Content-Type": "application/json" },
+  });
 }
 
 // Delete a tool
-export async function DELETE(req: NextRequestWithAuth, {
-  params,
-}: {
-  params: {
-    param?: string;
-  };
-}) {
+export async function DELETE(
+  req: NextRequestWithAuth,
+  {
+    params,
+  }: {
+    params: {
+      param?: string;
+    };
+  }
+) {
   const toolCode = params.param;
 
   if (!toolCode) {
@@ -270,10 +280,7 @@ export async function DELETE(req: NextRequestWithAuth, {
     fs.unlinkSync(process.cwd() + `/public${tool.image}`);
   }
 
-  return new NextResponse(
-    JSON.stringify(tool),
-    {
-      headers: { "Content-Type": "application/json" },
-    }
-  );
+  return new NextResponse(JSON.stringify(tool), {
+    headers: { "Content-Type": "application/json" },
+  });
 }

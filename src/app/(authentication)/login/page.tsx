@@ -12,18 +12,18 @@ export const metadata = {
 export default function Login() {
   return (
     <>
-      <div className="fixed top-0 left-0 z-0 w-full h-full">
+      <div className="fixed left-0 top-0 z-0 h-full w-full">
         <Image
           src={BackgroundLogin}
           alt="Background Login"
-          className="object-cover w-full h-full"
+          className="h-full w-full object-cover"
           placeholder="blur"
         />
       </div>
-      <main className="relative z-10 flex flex-col items-center justify-between w-full max-w-4xl min-h-screen px-5 mx-auto bg-white bg-opacity-75 backdrop-blur-md">
+      <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-4xl flex-col items-center justify-between bg-white bg-opacity-75 px-5 backdrop-blur-md">
         <div className="w-full">
           <LoginHeader />
-          <section className="w-full px-5 py-12 my-auto">
+          <section className="my-auto w-full px-5 py-12">
             <LoginForm />
           </section>
         </div>

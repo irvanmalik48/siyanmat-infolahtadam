@@ -8,15 +8,15 @@ export default function PageLayout({
   children: React.ReactNode;
 }) {
   return (
-    <main className="flex items-center justify-start w-full h-screen overflow-hidden">
+    <main className="flex h-screen w-full items-center justify-start overflow-hidden">
       <Sidebar />
       <section
         id="content"
-        className="self-stretch w-full min-h-screen overflow-y-scroll"
+        className="min-h-screen w-full self-stretch overflow-y-scroll"
       >
         <Breadcrumb />
         {children}
-        <div className="w-full h-28" />
+        <div className="h-28 w-full" />
         <Footer />
       </section>
     </main>

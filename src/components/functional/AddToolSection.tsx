@@ -21,7 +21,9 @@ const toolSuccessAtom = atom(false);
 export default function AddToolSection() {
   const [toolCodeError, setToolCodeError] = useState<string | undefined>();
   const [nameError, setNameError] = useState<string | undefined>();
-  const [maxHourUsageError, setMaxHourUsageError] = useState<string | undefined>();
+  const [maxHourUsageError, setMaxHourUsageError] = useState<
+    string | undefined
+  >();
   const [imageError, setImageError] = useState<string | undefined>();
 
   const [fileData, setFileData] = useState<File>();
@@ -31,15 +33,13 @@ export default function AddToolSection() {
   return (
     <>
       <AnimatePresence>
-        {
-          onSuccess && (
-            <Toast
-              key="tool-success"
-              message="Alat berhasil ditambahkan"
-              atom={toolSuccessAtom}
-            />
-          )
-        }
+        {onSuccess && (
+          <Toast
+            key="tool-success"
+            message="Alat berhasil ditambahkan"
+            atom={toolSuccessAtom}
+          />
+        )}
       </AnimatePresence>
       <Formik
         initialValues={{
@@ -69,7 +69,8 @@ export default function AddToolSection() {
           }
 
           if (values.maxHourUsage < 0) {
-            errors.maxHourUsage = "Maksimal jam penggunaan tidak boleh kurang dari 0";
+            errors.maxHourUsage =
+              "Maksimal jam penggunaan tidak boleh kurang dari 0";
             setMaxHourUsageError(errors.maxHourUsage);
           }
 
@@ -80,7 +81,6 @@ export default function AddToolSection() {
 
           return errors;
         }}
-
         onSubmit={async (values, { setSubmitting, resetForm }) => {
           const imageData = fileData;
 
@@ -143,10 +143,10 @@ export default function AddToolSection() {
         }}
       >
         {({ isSubmitting, errors, touched }) => (
-          <Form className="flex flex-col w-full gap-5 p-5 mt-8 border rounded-xl border-neutral-300">
+          <Form className="mt-8 flex w-full flex-col gap-5 rounded-xl border border-neutral-300 p-5">
             <motion.div
               key="toolCode-container"
-              className="flex flex-col items-start justify-start w-full gap-1"
+              className="flex w-full flex-col items-start justify-start gap-1"
               initial={{
                 height: "70px",
               }}
@@ -171,7 +171,7 @@ export default function AddToolSection() {
                 id="toolCode"
                 name="toolCode"
                 type="text"
-                className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                className="w-full rounded-lg border border-neutral-300 px-5 py-2 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
                 placeholder="Masukkan kode alat (i.e. AL-0001)"
               />
               <AnimatePresence
@@ -182,7 +182,7 @@ export default function AddToolSection() {
                 {errors.toolCode && touched.toolCode && (
                   <motion.div
                     key="toolCode-error"
-                    className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
+                    className="w-full rounded-lg bg-red-400 bg-opacity-10 px-5 py-2 text-sm text-red-500"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -194,7 +194,7 @@ export default function AddToolSection() {
             </motion.div>
             <motion.div
               key="name-container"
-              className="flex flex-col items-start justify-start w-full gap-1"
+              className="flex w-full flex-col items-start justify-start gap-1"
               initial={{
                 height: "70px",
               }}
@@ -219,7 +219,7 @@ export default function AddToolSection() {
                 id="name"
                 name="name"
                 type="text"
-                className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                className="w-full rounded-lg border border-neutral-300 px-5 py-2 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
                 placeholder="Masukkan nama alat"
               />
               <AnimatePresence
@@ -230,7 +230,7 @@ export default function AddToolSection() {
                 {errors.name && touched.name && (
                   <motion.div
                     key="name-error"
-                    className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
+                    className="w-full rounded-lg bg-red-400 bg-opacity-10 px-5 py-2 text-sm text-red-500"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -240,9 +240,7 @@ export default function AddToolSection() {
                 )}
               </AnimatePresence>
             </motion.div>
-            <div
-              className="flex flex-col items-start justify-start w-full gap-1"
-            >
+            <div className="flex w-full flex-col items-start justify-start gap-1">
               <label htmlFor="brand" className="font-semibold">
                 Merek Alat
               </label>
@@ -250,18 +248,21 @@ export default function AddToolSection() {
                 id="brand"
                 name="brand"
                 type="text"
-                className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                className="w-full rounded-lg border border-neutral-300 px-5 py-2 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
                 placeholder="Masukkan merek alat (kosongkan jika tidak ada merek)"
               />
             </div>
             <motion.div
               key="maxHourUsage-container"
-              className="flex flex-col items-start justify-start w-full gap-1"
+              className="flex w-full flex-col items-start justify-start gap-1"
               initial={{
                 height: "70px",
               }}
               animate={{
-                height: errors.maxHourUsage && touched.maxHourUsage ? "110px" : "70px",
+                height:
+                  errors.maxHourUsage && touched.maxHourUsage
+                    ? "110px"
+                    : "70px",
               }}
               exit={{
                 height: "70px",
@@ -281,7 +282,7 @@ export default function AddToolSection() {
                 id="maxHourUsage"
                 name="maxHourUsage"
                 type="number"
-                className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                className="w-full rounded-lg border border-neutral-300 px-5 py-2 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
               />
               <AnimatePresence
                 onExitComplete={() => {
@@ -291,7 +292,7 @@ export default function AddToolSection() {
                 {errors.maxHourUsage && touched.maxHourUsage && (
                   <motion.div
                     key="maxHourUsage-error"
-                    className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
+                    className="w-full rounded-lg bg-red-400 bg-opacity-10 px-5 py-2 text-sm text-red-500"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -303,7 +304,7 @@ export default function AddToolSection() {
             </motion.div>
             <motion.div
               key="image-container"
-              className="flex flex-col items-start justify-start w-full gap-1"
+              className="flex w-full flex-col items-start justify-start gap-1"
               initial={{
                 height: "86px",
               }}
@@ -324,12 +325,12 @@ export default function AddToolSection() {
               <label htmlFor="image" className="font-semibold">
                 Gambar Alat
               </label>
-              <div className="w-full transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50">
+              <div className="w-full rounded-lg border border-neutral-300 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50">
                 <Field
                   id="image"
                   name="image"
                   type="file"
-                  className="w-full p-2 outline-none file:hover:bg-celtic-700 file:cursor-pointer file:transition file:font-sans file:font-semibold file:border-none file:rounded-full file:bg-celtic-800 file:text-white file:px-5 file:py-2 file:inline-block file:mr-3"
+                  className="w-full p-2 outline-none file:mr-3 file:inline-block file:cursor-pointer file:rounded-full file:border-none file:bg-celtic-800 file:px-5 file:py-2 file:font-sans file:font-semibold file:text-white file:transition file:hover:bg-celtic-700"
                   placeholder="Masukkan gambar alat"
                   onChange={(event: any) => {
                     if (event.currentTarget.files) {
@@ -355,7 +356,7 @@ export default function AddToolSection() {
                 {errors.image && touched.image && (
                   <motion.div
                     key="image-error"
-                    className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
+                    className="w-full rounded-lg bg-red-400 bg-opacity-10 px-5 py-2 text-sm text-red-500"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -365,9 +366,7 @@ export default function AddToolSection() {
                 )}
               </AnimatePresence>
             </motion.div>
-            <div
-              className="flex flex-col items-start justify-start w-full gap-1"
-            >
+            <div className="flex w-full flex-col items-start justify-start gap-1">
               <label htmlFor="condition" className="font-semibold">
                 Kondisi Alat
               </label>
@@ -375,22 +374,20 @@ export default function AddToolSection() {
                 id="condition"
                 name="condition"
                 type="text"
-                className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                className="w-full rounded-lg border border-neutral-300 px-5 py-2 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
                 placeholder="Masukkan kondisi alat (B/RB/RR)"
               />
             </div>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="self-end py-2 font-semibold text-white transition rounded-full px-7 w-fit bg-celtic-800 hover:bg-celtic-700 disabled:brightness-50"
+              className="w-fit self-end rounded-full bg-celtic-800 px-7 py-2 font-semibold text-white transition hover:bg-celtic-700 disabled:brightness-50"
             >
-              {
-                isSubmitting ? "Menyimpan..." : "Simpan"
-              }
+              {isSubmitting ? "Menyimpan..." : "Simpan"}
             </button>
           </Form>
         )}
       </Formik>
     </>
-  )
+  );
 }

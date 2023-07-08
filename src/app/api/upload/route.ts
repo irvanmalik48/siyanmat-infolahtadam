@@ -29,9 +29,15 @@ export async function POST(req: NextRequestWithAuth) {
     const type = searchParams.get("type");
 
     if (type === "user" || typeof type === "undefined") {
-      imageUrl = await uploadUserImage(image, isEditingOtherUser ? otherUser : session);
+      imageUrl = await uploadUserImage(
+        image,
+        isEditingOtherUser ? otherUser : session
+      );
     } else if (type === "tool") {
-      imageUrl = await uploadToolImage(image, searchParams.get("toolCode") as string);
+      imageUrl = await uploadToolImage(
+        image,
+        searchParams.get("toolCode") as string
+      );
     }
   }
 
@@ -68,7 +74,11 @@ async function uploadToolImage(image: File, toolCode?: string) {
   return await uploadImage(image, "tools", tool?.image as string);
 }
 
-async function uploadImage(image: File, directory: string, oldImageUrl?: string) {
+async function uploadImage(
+  image: File,
+  directory: string,
+  oldImageUrl?: string
+) {
   if (!image) return null;
 
   await handleUploadDirectory();
@@ -81,7 +91,9 @@ async function uploadImage(image: File, directory: string, oldImageUrl?: string)
     fs.mkdirSync(process.cwd() + `/public/uploads/${directory}`);
   }
 
-  const oldImageUrlExists = fs.existsSync(process.cwd() + `/public${oldImageUrl}`);
+  const oldImageUrlExists = fs.existsSync(
+    process.cwd() + `/public${oldImageUrl}`
+  );
 
   if (oldImageUrlExists) {
     fs.unlinkSync(process.cwd() + `/public${oldImageUrl}`);

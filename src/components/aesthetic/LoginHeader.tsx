@@ -4,9 +4,9 @@ import InfolahtadamLogo from "@/assets/logo-infolahtadam.webp";
 
 export default function LoginHeader() {
   return (
-    <section className="grid w-full grid-cols-1 px-5 py-8 place-content-center">
-      <div className="flex items-center justify-center w-full gap-5">
-        <div className="flex items-center justify-center w-auto md:w-36">
+    <section className="grid w-full grid-cols-1 place-content-center px-5 py-8">
+      <div className="flex w-full items-center justify-center gap-5">
+        <div className="flex w-auto items-center justify-center md:w-36">
           <Image
             src={Logo}
             alt="Kodam II/Sriwijaya Logo"
@@ -17,9 +17,7 @@ export default function LoginHeader() {
           <h1 className="text-lg font-bold md:text-3xl">
             Aplikasi Pelayanan Materiil
           </h1>
-          <p className="font-semibold md:text-lg">
-            Infolahtadam II/Sriwijaya
-          </p>
+          <p className="font-semibold md:text-lg">Infolahtadam II/Sriwijaya</p>
         </article>
         <Image
           src={InfolahtadamLogo}
@@ -27,9 +25,7 @@ export default function LoginHeader() {
           className="w-28 md:w-36"
         />
       </div>
-      <p className="w-full text-4xl font-bold text-center">
-        SIYANMAT
-      </p>
+      <p className="w-full text-center text-4xl font-bold">SIYANMAT</p>
     </section>
   );
 }

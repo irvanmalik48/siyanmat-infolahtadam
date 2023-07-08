@@ -22,7 +22,8 @@ interface DeleteUserBody {
   username: string;
 }
 
-export async function GET(req: NextRequest,
+export async function GET(
+  req: NextRequest,
   {
     params,
   }: {
@@ -60,7 +61,7 @@ export async function GET(req: NextRequest,
       ),
       {
         headers: { "Content-Type": "application/json" },
-      },
+      }
     );
   }
 
@@ -83,15 +84,16 @@ export async function GET(req: NextRequest,
 }
 
 // This will be used for updating the user's profile
-export async function PATCH(req: NextRequestWithAuth, {
-  params: {
-    param,
-  },
-}: {
-  params: {
-    param: string;
-  };
-}) {
+export async function PATCH(
+  req: NextRequestWithAuth,
+  {
+    params: { param },
+  }: {
+    params: {
+      param: string;
+    };
+  }
+) {
   const formData = await req.formData();
 
   const { username, name, email, role } = Object.fromEntries(
@@ -99,10 +101,10 @@ export async function PATCH(req: NextRequestWithAuth, {
   );
 
   if (!username || !name || !email) {
-    return new NextResponse(
-      JSON.stringify({ message: "Missing fields" }),
-      { status: 400, headers: { "Content-Type": "application/json" } }
-    );
+    return new NextResponse(JSON.stringify({ message: "Missing fields" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   const user = await prisma.user.findFirst({

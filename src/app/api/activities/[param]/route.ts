@@ -14,15 +14,16 @@ interface ActivityBody {
   toolUsage: number;
 }
 
-export async function GET(req: NextRequest, {
-  params: {
-    param,
-  },
-}: {
-  params: {
-    param?: string;
-  };
-}) {
+export async function GET(
+  req: NextRequest,
+  {
+    params: { param },
+  }: {
+    params: {
+      param?: string;
+    };
+  }
+) {
   const activityCode = param;
 
   let getAll = true;
@@ -34,15 +35,17 @@ export async function GET(req: NextRequest, {
   let activities;
 
   if (getAll) {
-    activities = (await prisma.activity.findMany({
-      include: {
-        tools: {
-          include: {
-            tool: true,
-          }
+    activities = (
+      await prisma.activity.findMany({
+        include: {
+          tools: {
+            include: {
+              tool: true,
+            },
+          },
         },
-      },
-    })).sort((a, b) => {
+      })
+    ).sort((a, b) => {
       return a.date.getTime() - b.date.getTime();
     });
   } else {
@@ -54,20 +57,17 @@ export async function GET(req: NextRequest, {
         tools: {
           include: {
             tool: true,
-          }
+          },
         },
       },
     });
   }
 
-  return new NextResponse(
-    JSON.stringify(activities),
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  return new NextResponse(JSON.stringify(activities), {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 }
 
 export async function POST(req: NextRequest) {
@@ -85,7 +85,15 @@ export async function POST(req: NextRequest) {
     formData.entries() as IterableIterator<[keyof ActivityBody, string]>
   );
 
-  if (!activityCode || !name || !description || !date || !operatorName || !toolCode || !toolUsage) {
+  if (
+    !activityCode ||
+    !name ||
+    !description ||
+    !date ||
+    !operatorName ||
+    !toolCode ||
+    !toolUsage
+  ) {
     return new NextResponse(
       JSON.stringify({
         error: "Missing fields",
@@ -140,8 +148,8 @@ export async function POST(req: NextRequest) {
               },
             },
           };
-        })
-      }
+        }),
+      },
     },
   });
 
@@ -158,25 +166,23 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  return new NextResponse(
-    JSON.stringify(activity),
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  return new NextResponse(JSON.stringify(activity), {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 }
 
-export async function PATCH(req: NextRequest, {
-  params: {
-    param,
-  },
-}: {
-  params: {
-    param?: string;
-  };
-}) {
+export async function PATCH(
+  req: NextRequest,
+  {
+    params: { param },
+  }: {
+    params: {
+      param?: string;
+    };
+  }
+) {
   const activityCodeFromParams = param;
   const formData = await req.formData();
 
@@ -192,7 +198,15 @@ export async function PATCH(req: NextRequest, {
     formData.entries() as IterableIterator<[keyof ActivityBody, string]>
   );
 
-  if (!activityCode || !name || !description || !date || !operatorName || !toolCode || !toolUsage) {
+  if (
+    !activityCode ||
+    !name ||
+    !description ||
+    !date ||
+    !operatorName ||
+    !toolCode ||
+    !toolUsage
+  ) {
     return new NextResponse(
       JSON.stringify({
         error: "Missing fields",
@@ -219,9 +233,9 @@ export async function PATCH(req: NextRequest, {
           tool: {
             select: {
               toolCode: true,
-            }
-          }
-        }
+            },
+          },
+        },
       },
     },
   });
@@ -230,7 +244,7 @@ export async function PATCH(req: NextRequest, {
     where: {
       toolCode: {
         in: splittedToolCodes,
-      }
+      },
     },
   });
 
@@ -274,13 +288,13 @@ export async function PATCH(req: NextRequest, {
             },
           };
         }),
-      }
+      },
     },
     include: {
       tools: {
         include: {
           tool: true,
-        }
+        },
       },
     },
   });
@@ -312,11 +326,10 @@ export async function PATCH(req: NextRequest, {
       },
       data: {
         hourUsageLeft: {
-          decrement: (diff * -1),
+          decrement: diff * -1,
         },
       },
     });
-
   } else {
     await prisma.tool.updateMany({
       where: {
@@ -332,25 +345,23 @@ export async function PATCH(req: NextRequest, {
     });
   }
 
-  return new NextResponse(
-    JSON.stringify(activity),
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  return new NextResponse(JSON.stringify(activity), {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 }
 
-export async function DELETE(req: NextRequest, {
-  params: {
-    param,
-  },
-}: {
-  params: {
-    param?: string;
-  };
-}) {
+export async function DELETE(
+  req: NextRequest,
+  {
+    params: { param },
+  }: {
+    params: {
+      param?: string;
+    };
+  }
+) {
   const activityCode = param;
 
   if (!activityCode) {
@@ -373,12 +384,9 @@ export async function DELETE(req: NextRequest, {
     },
   });
 
-  return new NextResponse(
-    JSON.stringify(activity),
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  return new NextResponse(JSON.stringify(activity), {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 }

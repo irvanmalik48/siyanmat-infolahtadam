@@ -16,8 +16,8 @@ const links = [
 
 export default function QuickNavExport() {
   return (
-    <section className="grid w-full grid-cols-2 gap-5 p-5 mt-8 border rounded-xl border-neutral-300">
-      <h2 className="w-full col-span-2 text-lg font-bold text-center">
+    <section className="mt-8 grid w-full grid-cols-2 gap-5 rounded-xl border border-neutral-300 p-5">
+      <h2 className="col-span-2 w-full text-center text-lg font-bold">
         Silahkan pilih jenis laporan:
       </h2>
       {links.map((link) => (
