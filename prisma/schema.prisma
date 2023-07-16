@@ -77,7 +77,6 @@ model Tool {
   name          String
   brand         String  @default("Tidak ada merek")
   maxHourUsage  Int     @default(0)
-  hourUsageLeft Int     @default(0)
   image         String? @default("/placeholder_tool.png")
   condition     String  @default("B")
 
