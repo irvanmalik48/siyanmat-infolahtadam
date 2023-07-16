@@ -5,23 +5,24 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { atom, useAtom } from "jotai";
 import Toast from "./Toast";
-import FileSaver from "file-saver";
+import printJS from "print-js";
 
 interface LaporanSubmit {
-  title: string;
   sortBy: string;
   startDate: string;
   endDate: string;
-  formatFile: string;
+  signName: string;
+  nrp: string;
 }
 
 const exportSuccessAtom = atom(false);
 
 export default function ExportActivitiesSection() {
-  const [titleError, setTitleError] = useState<string | undefined>();
   const [sortByError, setSortByError] = useState<string | undefined>();
   const [startDateError, setStartDateError] = useState<string | undefined>();
   const [endDateError, setEndDateError] = useState<string | undefined>();
+  const [signNameError, setSignNameError] = useState<string | undefined>();
+  const [nrpError, setNrpError] = useState<string | undefined>();
 
   const [onSuccess, setOnSuccess] = useAtom(exportSuccessAtom);
 
@@ -38,7 +39,6 @@ export default function ExportActivitiesSection() {
       </AnimatePresence>
       <Formik
         initialValues={{
-          title: "",
           sortBy: "",
           startDate: new Date(
             // a week ago
@@ -47,63 +47,73 @@ export default function ExportActivitiesSection() {
             .toISOString()
             .slice(0, 10),
           endDate: new Date().toISOString().slice(0, 10),
-          formatFile: "xlsx",
+          signName: "",
+          nrp: "",
         }}
         validate={(values) => {
           const errors: {
-            title?: string;
             sortBy?: string;
             formatFile?: string;
+            signName?: string;
+            nrp?: string;
           } = {};
 
-          if (values.title === "") {
-            errors.title = "Judul tidak boleh kosong";
-            setTitleError(errors.title);
+          if (values.sortBy === "") {
+            errors.sortBy = "Anda harus memilih metode pengurutan";
+            setSortByError(errors.sortBy);
           }
 
-          if (values.sortBy === "") {
-            errors.sortBy = "Silahkan pilih metode pengurutan";
-            setSortByError(errors.sortBy);
+          if (values.signName === "") {
+            errors.signName = "Kolom ini tidak boleh kosong";
+            setSignNameError(errors.signName);
+          }
+
+          if (values.nrp === "") {
+            errors.nrp = "Kolom ini tidak boleh kosong";
+            setSignNameError(errors.nrp);
           }
 
           return errors;
         }}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
           const exportData: LaporanSubmit = {
-            title: values.title,
             sortBy: values.sortBy,
             startDate: values.startDate,
             endDate: values.endDate,
-            formatFile: values.formatFile,
+            signName: values.signName,
+            nrp: values.nrp
           };
 
           const formData = new FormData();
 
-          const data = JSON.stringify({
-            startDate: exportData.startDate,
-            endDate: exportData.endDate,
-          });
-
-          formData.append("title", exportData.title);
           formData.append("type", "activities");
           formData.append("sortBy", exportData.sortBy);
-          formData.append("formatFile", exportData.formatFile);
-          formData.append("data", data);
+          formData.append("signName", exportData.signName);
+          formData.append("startDate", exportData.startDate);
+          formData.append("endDate", exportData.endDate);
+          formData.append("nrp", exportData.nrp);
 
-          const response = await fetch("/api/export", {
+          const response = await fetch("/api/export/activity/pdf", {
             method: "POST",
             body: formData,
           });
 
-          const blob = await response.blob();
+          const blob = await response.text();
 
           // tell browser to download the file from the response
           // without creating a new anchor element
           // the body of the response is a Buffer
-          FileSaver.saveAs(
-            blob,
-            `${exportData.title}.${exportData.formatFile}`
-          );
+          // FileSaver.saveAs(
+          //   blob,
+          //   `${exportData.title}.pdf`
+          // );
+
+          printJS({
+            printable: blob,
+            type: "raw-html",
+            style: "@page { size: A4; margin-top: 2.03cm; margin-bottom: 1.27cm; margin-left: 2.54cm; margin-right: 1.52cm } body { font-family: sans-serif; }",
+
+          })
 
           setSubmitting(false);
           setOnSuccess(true);
@@ -111,58 +121,10 @@ export default function ExportActivitiesSection() {
         }}
       >
         {({ isSubmitting, errors, touched }) => (
-          <Form className="mt-8 flex w-full flex-col gap-5 rounded-xl border border-neutral-300 p-5">
-            <motion.div
-              key="title-container"
-              className="flex w-full flex-col items-start justify-start gap-1"
-              initial={{
-                height: "70px",
-              }}
-              animate={{
-                height: errors.title && touched.title ? "110px" : "70px",
-              }}
-              exit={{
-                height: "70px",
-              }}
-              transition={{
-                type: "spring",
-                stiffness: 500,
-                height: {
-                  duration: 0.3,
-                },
-              }}
-            >
-              <label htmlFor="title" className="font-semibold">
-                Nama Laporan
-              </label>
-              <Field
-                id="title"
-                name="title"
-                type="text"
-                className="w-full rounded-lg border border-neutral-300 px-5 py-2 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
-                placeholder="Masukkan nama laporan"
-              />
-              <AnimatePresence
-                onExitComplete={() => {
-                  setTitleError(undefined);
-                }}
-              >
-                {errors.title && touched.title && (
-                  <motion.div
-                    key="name-error"
-                    className="w-full rounded-lg bg-red-400 bg-opacity-10 px-5 py-2 text-sm text-red-500"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                  >
-                    {titleError}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
+          <Form className="flex flex-col w-full gap-5 p-5 mt-8 border rounded-xl border-neutral-300">
             <motion.div
               key="startDate-container"
-              className="flex w-full flex-col items-start justify-start gap-1"
+              className="flex flex-col items-start justify-start w-full gap-1"
               initial={{
                 height: "70px",
               }}
@@ -188,7 +150,7 @@ export default function ExportActivitiesSection() {
                 id="startDate"
                 name="startDate"
                 type="date"
-                className="w-full rounded-lg border border-neutral-300 px-5 py-2 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
                 defaultValue={new Date().toISOString().slice(0, 10)}
               />
               <AnimatePresence
@@ -199,7 +161,7 @@ export default function ExportActivitiesSection() {
                 {errors.startDate && touched.startDate && (
                   <motion.div
                     key="date-error"
-                    className="w-full rounded-lg bg-red-400 bg-opacity-10 px-5 py-2 text-sm text-red-500"
+                    className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -211,7 +173,7 @@ export default function ExportActivitiesSection() {
             </motion.div>
             <motion.div
               key="endDate-container"
-              className="flex w-full flex-col items-start justify-start gap-1"
+              className="flex flex-col items-start justify-start w-full gap-1"
               initial={{
                 height: "70px",
               }}
@@ -236,7 +198,7 @@ export default function ExportActivitiesSection() {
                 id="endDate"
                 name="endDate"
                 type="date"
-                className="w-full rounded-lg border border-neutral-300 px-5 py-2 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
                 defaultValue={new Date().toISOString().slice(0, 10)}
               />
               <AnimatePresence
@@ -247,7 +209,7 @@ export default function ExportActivitiesSection() {
                 {errors.endDate && touched.endDate && (
                   <motion.div
                     key="date-error"
-                    className="w-full rounded-lg bg-red-400 bg-opacity-10 px-5 py-2 text-sm text-red-500"
+                    className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -259,7 +221,7 @@ export default function ExportActivitiesSection() {
             </motion.div>
             <motion.div
               key="sortBy-container"
-              className="flex w-full flex-col items-start justify-start gap-1"
+              className="flex flex-col items-start justify-start w-full gap-1"
               initial={{
                 height: "70px",
               }}
@@ -284,13 +246,11 @@ export default function ExportActivitiesSection() {
                 id="sortBy"
                 name="sortBy"
                 as="select"
-                className="w-full rounded-lg border border-neutral-300 px-5 py-2 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
                 defaultValue=""
               >
                 <option value="">Pilih cara pengurutan</option>
                 <option value="date">Tanggal</option>
-                <option value="activityCode">Kode Kegiatan</option>
-                <option value="toolCodeFromActivity">Kode Alat</option>
                 <option value="name">Nama Kegiatan</option>
                 <option value="operatorName">Nama Operator</option>
               </Field>
@@ -302,7 +262,7 @@ export default function ExportActivitiesSection() {
                 {errors.sortBy && touched.sortBy && (
                   <motion.div
                     key="sortBy-error"
-                    className="w-full rounded-lg bg-red-400 bg-opacity-10 px-5 py-2 text-sm text-red-500"
+                    className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -312,10 +272,106 @@ export default function ExportActivitiesSection() {
                 )}
               </AnimatePresence>
             </motion.div>
+            <motion.div
+              key="signName-container"
+              className="flex flex-col items-start justify-start w-full gap-1"
+              initial={{
+                height: "70px",
+              }}
+              animate={{
+                height: errors.signName && touched.signName ? "110px" : "70px",
+              }}
+              exit={{
+                height: "70px",
+              }}
+              transition={{
+                type: "spring",
+                stiffness: 500,
+                height: {
+                  duration: 0.3,
+                },
+              }}
+            >
+              <label htmlFor="signName" className="font-semibold">
+                Nama Penandatangan
+              </label>
+              <Field
+                id="signName"
+                name="signName"
+                type="text"
+                className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                placeholder="Masukkan nama penandatangan"
+              />
+              <AnimatePresence
+                onExitComplete={() => {
+                  setSignNameError(undefined);
+                }}
+              >
+                {errors.signName && touched.signName && (
+                  <motion.div
+                    key="signName-error"
+                    className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    {signNameError}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+            <motion.div
+              key="nrp-container"
+              className="flex flex-col items-start justify-start w-full gap-1"
+              initial={{
+                height: "70px",
+              }}
+              animate={{
+                height: errors.nrp && touched.nrp ? "110px" : "70px",
+              }}
+              exit={{
+                height: "70px",
+              }}
+              transition={{
+                type: "spring",
+                stiffness: 500,
+                height: {
+                  duration: 0.3,
+                },
+              }}
+            >
+              <label htmlFor="nrp" className="font-semibold">
+                Jabatan, Korps, dan NRP
+              </label>
+              <Field
+                id="nrp"
+                name="nrp"
+                type="text"
+                className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                placeholder="Masukkan jabatan, korps, dan NRP"
+              />
+              <AnimatePresence
+                onExitComplete={() => {
+                  setNrpError(undefined);
+                }}
+              >
+                {errors.nrp && touched.nrp && (
+                  <motion.div
+                    key="nrp-error"
+                    className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    {nrpError}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-fit self-end rounded-full bg-celtic-800 px-7 py-2 font-semibold text-white transition hover:bg-celtic-700 disabled:brightness-50"
+              className="self-end py-2 font-semibold text-white transition rounded-full w-fit bg-celtic-800 px-7 hover:bg-celtic-700 disabled:brightness-50"
             >
               {isSubmitting ? "Memproses..." : "Cetak"}
             </button>

@@ -69,7 +69,7 @@ export default function ToolDetail({ code }: { code: string }) {
         {deleteDialogOpen && (
           <motion.dialog
             key="upload-profile-pic-dialog"
-            className="fixed inset-0 flex h-full w-full items-center justify-center bg-black bg-opacity-50 p-5"
+            className="fixed inset-0 flex items-center justify-center w-full h-full p-5 bg-black bg-opacity-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -84,16 +84,16 @@ export default function ToolDetail({ code }: { code: string }) {
               <p className="text-center">
                 Apakah Anda yakin ingin menghapus alat ini?
               </p>
-              <div className="mt-5 flex w-full items-center justify-center gap-2">
+              <div className="flex items-center justify-center w-full gap-2 mt-5">
                 <button
-                  className="flex w-fit items-center justify-center gap-2 rounded-full bg-red-700 px-5 py-2 font-semibold text-white transition hover:bg-red-600 disabled:brightness-75"
+                  className="flex items-center justify-center gap-2 px-5 py-2 font-semibold text-white transition bg-red-700 rounded-full w-fit hover:bg-red-600 disabled:brightness-75"
                   onClick={handleCloseDialog}
                 >
                   <XCircle size={20} />
                   <span>Cancel</span>
                 </button>
                 <button
-                  className="flex w-fit items-center justify-center gap-2 rounded-full bg-celtic-800 px-5 py-2 font-semibold text-white transition hover:bg-celtic-700 disabled:brightness-75"
+                  className="flex items-center justify-center gap-2 px-5 py-2 font-semibold text-white transition rounded-full w-fit bg-celtic-800 hover:bg-celtic-700 disabled:brightness-75"
                   onClick={handleActualDelete}
                 >
                   <CheckCircle size={20} />
@@ -105,13 +105,13 @@ export default function ToolDetail({ code }: { code: string }) {
         )}
       </AnimatePresence>
       {!isLoading ? (
-        <section className="mt-8 flex w-full flex-col gap-5 rounded-xl border border-neutral-300 p-5">
+        <section className="flex flex-col w-full gap-5 p-5 mt-8 border rounded-xl border-neutral-300">
           <img
             src={`/api/images${tool?.image}`}
             className="w-full rounded-lg border border-neutral-300 bg-neutral-500 object-contain lg:h-[400px]"
             alt={`Gambar ${code}`}
           />
-          <div className="flex w-full flex-col gap-1">
+          <div className="flex flex-col w-full gap-1">
             <label className="font-semibold" htmlFor="toolCode">
               Kode Alat
             </label>
@@ -119,7 +119,7 @@ export default function ToolDetail({ code }: { code: string }) {
               {tool?.toolCode}
             </p>
           </div>
-          <div className="flex w-full flex-col gap-1">
+          <div className="flex flex-col w-full gap-1">
             <label className="font-semibold" htmlFor="toolName">
               Nama Alat
             </label>
@@ -127,7 +127,7 @@ export default function ToolDetail({ code }: { code: string }) {
               {tool?.name}
             </p>
           </div>
-          <div className="flex w-full flex-col gap-1">
+          <div className="flex flex-col w-full gap-1">
             <label className="font-semibold" htmlFor="brand">
               Merek
             </label>
@@ -135,7 +135,7 @@ export default function ToolDetail({ code }: { code: string }) {
               {tool?.brand}
             </p>
           </div>
-          <div className="flex w-full flex-col gap-1">
+          <div className="flex flex-col w-full gap-1">
             <label className="font-semibold" htmlFor="toolMaxHourUsage">
               Maksimal Jam Pemakaian
             </label>
@@ -143,21 +143,15 @@ export default function ToolDetail({ code }: { code: string }) {
               {tool?.maxHourUsage}
             </p>
           </div>
-          <div className="flex w-full flex-col gap-1">
+          <div className="flex flex-col w-full gap-1">
             <label className="font-semibold" htmlFor="hourUsageLeft">
               Sisa Usia Alat
             </label>
             <p id="hourUsageLeft" className="w-full">
-              {tool?.hourUsageLeft} jam (sisa{" "}
-              {Math.round(
-                ((tool?.hourUsageLeft as number) /
-                  (tool?.maxHourUsage as number)) *
-                  100
-              )}
-              %) dari {tool?.maxHourUsage} jam
+              {tool?.hourUsageLeft} jam dari {tool?.maxHourUsage} jam
             </p>
           </div>
-          <div className="flex w-full flex-col gap-1">
+          <div className="flex flex-col w-full gap-1">
             <label className="font-semibold" htmlFor="toolCondition">
               Kondisi Alat
             </label>
@@ -165,16 +159,16 @@ export default function ToolDetail({ code }: { code: string }) {
               {getProperLabelByCondition(tool?.condition as string)}
             </p>
           </div>
-          <div className="flex w-full items-center justify-end gap-3">
+          <div className="flex items-center justify-end w-full gap-3">
             <Link
               href={`/tools/edit/${code}`}
-              className="flex w-fit items-center justify-center gap-3 rounded-full bg-celtic-800 px-7 py-2 font-semibold text-white transition hover:bg-celtic-700 disabled:brightness-75"
+              className="flex items-center justify-center gap-3 py-2 font-semibold text-white transition rounded-full w-fit bg-celtic-800 px-7 hover:bg-celtic-700 disabled:brightness-75"
             >
               <Pencil size={20} />
               <span>Edit</span>
             </Link>
             <button
-              className="flex w-fit items-center justify-center gap-3 rounded-full bg-red-700 px-7 py-2 font-semibold text-white transition hover:bg-red-600 disabled:brightness-75"
+              className="flex items-center justify-center gap-3 py-2 font-semibold text-white transition bg-red-700 rounded-full w-fit px-7 hover:bg-red-600 disabled:brightness-75"
               onClick={handleDelete}
             >
               <Trash size={20} />

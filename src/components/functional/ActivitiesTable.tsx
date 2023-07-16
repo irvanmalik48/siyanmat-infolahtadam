@@ -53,7 +53,7 @@ export default function ActivitiesTable() {
   useEffect(() => {
     if ((!isLoading || !isValidating) && activities) {
       setProcessedActivities(
-        activities.sort((a, b) => a.toolCode.localeCompare(b.toolCode))
+        activities.sort((a, b) => a.activityCode.localeCompare(b.activityCode))
       );
       setMaxPages(Math.ceil(activities?.length / 10));
     }
@@ -108,9 +108,9 @@ export default function ActivitiesTable() {
   }, [searchQuery]);
 
   return (
-    <div className="mt-8 flex w-full flex-col gap-5">
-      <div className="flex w-full items-end justify-between gap-5">
-        <div className="flex w-fit items-center gap-3">
+    <div className="flex flex-col w-full gap-5 mt-8">
+      <div className="flex items-end justify-between w-full gap-5">
+        <div className="flex items-center gap-3 w-fit">
           <div className="flex flex-col gap-1">
             <label htmlFor="search" className="font-semibold">
               Pencarian Kegiatan
@@ -123,7 +123,7 @@ export default function ActivitiesTable() {
               onChange={(e) => {
                 setSearchQuery(e.target.value);
               }}
-              className="w-72 appearance-none rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm transition focus:border-celtic-800 focus:outline-none focus:ring-4 focus:ring-celtic-800 focus:ring-opacity-50"
+              className="px-3 py-2 text-sm transition bg-white border rounded-lg appearance-none w-72 border-neutral-300 focus:border-celtic-800 focus:outline-none focus:ring-4 focus:ring-celtic-800 focus:ring-opacity-50"
             />
           </div>
           <div className="flex flex-col gap-1">
@@ -133,7 +133,7 @@ export default function ActivitiesTable() {
             <select
               name="sort"
               id="sort"
-              className="w-48 appearance-none rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm transition focus:border-celtic-800 focus:outline-none focus:ring-4 focus:ring-celtic-800 focus:ring-opacity-50"
+              className="w-48 px-3 py-2 text-sm transition bg-white border rounded-lg appearance-none border-neutral-300 focus:border-celtic-800 focus:outline-none focus:ring-4 focus:ring-celtic-800 focus:ring-opacity-50"
               defaultValue={"date"}
               onChange={(e) => {
                 setSortBy(e.target.value);
@@ -166,7 +166,7 @@ export default function ActivitiesTable() {
           </AnimatePresence>
           <Link
             href="/activities/add"
-            className="w-fit rounded-full bg-celtic-800 px-7 py-2 font-semibold text-white transition hover:bg-celtic-700 disabled:brightness-75"
+            className="py-2 font-semibold text-white transition rounded-full w-fit bg-celtic-800 px-7 hover:bg-celtic-700 disabled:brightness-75"
           >
             Tambah
           </Link>
@@ -175,7 +175,7 @@ export default function ActivitiesTable() {
       {isLoading ? (
         <div className="h-[537px] w-full animate-pulse rounded-xl border border-neutral-300 bg-neutral-200" />
       ) : (
-        <div className="w-full overflow-hidden rounded-xl border border-neutral-300">
+        <div className="w-full overflow-hidden border rounded-xl border-neutral-300">
           <div className="w-full overflow-x-auto">
             <table className="w-full table-auto lg:table-fixed">
               <thead className="bg-celtic-800">
@@ -229,11 +229,11 @@ export default function ActivitiesTable() {
               </tbody>
             </table>
           </div>
-          <div className="flex w-full items-center justify-center bg-celtic-800 px-5 py-2">
+          <div className="flex items-center justify-center w-full px-5 py-2 bg-celtic-800">
             <div className="flex w-full max-w-[20rem] items-center justify-between">
               <button
                 disabled={page === 1 || maxPages === 1}
-                className="rounded-full bg-celtic-700 px-3 py-1 text-sm font-semibold text-white transition hover:bg-celtic-600 disabled:brightness-75"
+                className="px-3 py-1 text-sm font-semibold text-white transition rounded-full bg-celtic-700 hover:bg-celtic-600 disabled:brightness-75"
                 onClick={() => {
                   setPage(page - 1);
                   setStart(start - 10);
@@ -249,7 +249,7 @@ export default function ActivitiesTable() {
               </div>
               <button
                 disabled={page === maxPages || maxPages === 1}
-                className="rounded-full bg-celtic-700 px-3 py-1 text-sm font-semibold text-white transition hover:bg-celtic-600 disabled:brightness-75"
+                className="px-3 py-1 text-sm font-semibold text-white transition rounded-full bg-celtic-700 hover:bg-celtic-600 disabled:brightness-75"
                 onClick={() => {
                   setPage(page + 1);
                   setStart(start + 10);
@@ -294,7 +294,7 @@ function ActivityTableRow({
         })}
       </td>
       <td className="px-5 py-3 text-center">{activity.operatorName}</td>
-      <td className="overflow-x-hidden truncate px-5 py-3">
+      <td className="px-5 py-3 overflow-x-hidden truncate">
         {activity.tools.map((tool, index) => (
           <span key={tool.tool.id}>
             {tool.tool.name}
@@ -309,7 +309,7 @@ function ActivityTableRow({
 
 function EmptyActivityTableRow() {
   return (
-    <tr className="bg-neutral-100 text-sm text-neutral-100">
+    <tr className="text-sm bg-neutral-100 text-neutral-100">
       <td className="px-5 py-3 text-center">-</td>
       <td className="px-5 py-3">-</td>
       <td className="px-5 py-3">-</td>

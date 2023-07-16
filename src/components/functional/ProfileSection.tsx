@@ -65,7 +65,7 @@ export default function ProfileSection() {
     <AnimatePresence initial={false}>
       <motion.section
         key="profile-section-main"
-        className="mt-8 flex w-full items-stretch justify-start gap-5 rounded-xl border border-neutral-300 p-5"
+        className="flex items-stretch justify-start w-full gap-5 p-5 mt-8 border rounded-xl border-neutral-300"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -79,28 +79,28 @@ export default function ProfileSection() {
           onClick={handleDialogOpen}
         >
           <img
-            src={data?.image as string}
+            src={`/api/images${data?.image}`}
             width={200}
             height={200}
-            className="z-0 h-full w-full transition group-hover:brightness-50"
+            className="z-0 w-full h-full transition group-hover:brightness-50"
             alt="Profile Picture"
           />
-          <div className="absolute inset-0 grid grid-cols-1 place-content-center gap-2 text-white opacity-0 transition group-hover:opacity-100">
-            <Upload className="mx-auto h-8 w-8" />
+          <div className="absolute inset-0 grid grid-cols-1 gap-2 text-white transition opacity-0 place-content-center group-hover:opacity-100">
+            <Upload className="w-8 h-8 mx-auto" />
             <p className="text-sm font-semibold">Ganti foto profil</p>
           </div>
         </button>
         <UploadProfilePicDialog />
-        <div className="ml-5 flex min-h-full w-full flex-col items-start justify-between self-stretch">
+        <div className="flex flex-col items-start self-stretch justify-between w-full min-h-full ml-5">
           <div className="flex flex-col items-start justify-start">
             <h1 className="text-2xl font-bold">{data?.name}</h1>
             <h2 className="text-lg font-medium text-neutral-500">
               {data?.username}
             </h2>
           </div>
-          <div className="flex w-full items-center justify-end gap-2">
+          <div className="flex items-center justify-end w-full gap-2">
             <button
-              className="w-fit rounded-full bg-red-700 px-7 py-2 font-semibold text-white transition hover:bg-red-600"
+              className="py-2 font-semibold text-white transition bg-red-700 rounded-full w-fit px-7 hover:bg-red-600"
               onClick={async () => {
                 await signOut().then(() => {
                   router.push("/login");
@@ -121,7 +121,7 @@ function ProfileSectionSkeleton() {
     <AnimatePresence initial={false}>
       <motion.section
         key="profile-section-skeleton"
-        className="mt-8 flex w-full items-stretch justify-start gap-5 rounded-xl border border-neutral-300 p-5"
+        className="flex items-stretch justify-start w-full gap-5 p-5 mt-8 border rounded-xl border-neutral-300"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -130,18 +130,18 @@ function ProfileSectionSkeleton() {
         }}
       >
         <div className="aspect-square w-[200px] animate-pulse overflow-hidden rounded-full border border-neutral-300" />
-        <div className="ml-5 flex min-h-full w-full flex-col items-start justify-between self-stretch">
-          <div className="flex w-full flex-col items-start justify-start">
-            <div className="h-7 w-1/2 animate-pulse rounded-full bg-neutral-300" />
-            <div className="mt-1 h-5 w-1/3 animate-pulse rounded-full bg-neutral-300" />
-            <div className="mt-2 flex items-center justify-start gap-2 rounded-full border border-neutral-300 px-4 py-1">
-              <div className="h-5 w-5 animate-pulse rounded-full bg-neutral-300" />
-              <div className="h-5 w-24 animate-pulse rounded-full bg-neutral-300" />
+        <div className="flex flex-col items-start self-stretch justify-between w-full min-h-full ml-5">
+          <div className="flex flex-col items-start justify-start w-full">
+            <div className="w-1/2 rounded-full h-7 animate-pulse bg-neutral-300" />
+            <div className="w-1/3 h-5 mt-1 rounded-full animate-pulse bg-neutral-300" />
+            <div className="flex items-center justify-start gap-2 px-4 py-1 mt-2 border rounded-full border-neutral-300">
+              <div className="w-5 h-5 rounded-full animate-pulse bg-neutral-300" />
+              <div className="w-24 h-5 rounded-full animate-pulse bg-neutral-300" />
             </div>
           </div>
-          <div className="flex w-full items-center justify-end gap-2">
-            <div className="h-10 w-1/5 animate-pulse rounded-full bg-neutral-300" />
-            <div className="h-10 w-1/4 animate-pulse rounded-full bg-neutral-300" />
+          <div className="flex items-center justify-end w-full gap-2">
+            <div className="w-1/5 h-10 rounded-full animate-pulse bg-neutral-300" />
+            <div className="w-1/4 h-10 rounded-full animate-pulse bg-neutral-300" />
           </div>
         </div>
       </motion.section>
@@ -154,7 +154,7 @@ function ProfileSectionError() {
     <AnimatePresence>
       <motion.section
         key="profile-section-error"
-        className="mt-8 flex w-full items-stretch justify-start gap-5 rounded-xl border border-neutral-300 p-5"
+        className="flex items-stretch justify-start w-full gap-5 p-5 mt-8 border rounded-xl border-neutral-300"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -164,19 +164,19 @@ function ProfileSectionError() {
         }}
       >
         <div className="aspect-square w-[200px] overflow-hidden rounded-full border border-neutral-300" />
-        <div className="ml-5 flex min-h-full w-full flex-col items-start justify-between self-stretch">
+        <div className="flex flex-col items-start self-stretch justify-between w-full min-h-full ml-5">
           <div className="flex flex-col items-start justify-start">
             <h1 className="text-2xl font-bold">Error</h1>
             <h2 className="text-lg font-medium text-neutral-500">Error</h2>
-            <div className="flex items-center justify-start gap-2 rounded-full border border-neutral-300 px-4 py-1">
+            <div className="flex items-center justify-start gap-2 px-4 py-1 border rounded-full border-neutral-300">
               <p className="text-sm font-semibold">Error</p>
             </div>
           </div>
-          <div className="flex w-full items-center justify-end gap-2">
-            <p className="w-fit rounded-full bg-red-700 px-7 py-2 font-semibold text-white transition hover:bg-red-600">
+          <div className="flex items-center justify-end w-full gap-2">
+            <p className="py-2 font-semibold text-white transition bg-red-700 rounded-full w-fit px-7 hover:bg-red-600">
               Error
             </p>
-            <p className="w-fit rounded-full bg-celtic-800 px-7 py-2 font-semibold text-white transition hover:bg-celtic-700">
+            <p className="py-2 font-semibold text-white transition rounded-full w-fit bg-celtic-800 px-7 hover:bg-celtic-700">
               Error
             </p>
           </div>
@@ -319,7 +319,7 @@ function UploadProfilePicDialog() {
         {dialogOpen && (
           <motion.dialog
             key="upload-profile-pic-dialog"
-            className="fixed inset-0 flex h-full w-full items-center justify-center bg-black bg-opacity-50 p-5"
+            className="fixed inset-0 flex items-center justify-center w-full h-full p-5 bg-black bg-opacity-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -377,9 +377,9 @@ function UploadProfilePicDialog() {
               >
                 {({ isSubmitting }) => (
                   <>
-                    <Form className="mt-5 flex w-full flex-col items-center justify-center gap-5">
+                    <Form className="flex flex-col items-center justify-center w-full gap-5 mt-5">
                       <label
-                        className="flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-neutral-300 p-5 transition"
+                        className="flex flex-col items-center justify-center w-full gap-2 p-5 transition border cursor-pointer rounded-xl border-neutral-300"
                         onDragEnter={handleDragEnter}
                         onDragLeave={handleDragLeave}
                         onDragOver={handleDragOver}
@@ -399,15 +399,15 @@ function UploadProfilePicDialog() {
                             <img
                               src={URL.createObjectURL(state.file)}
                               alt="profile-pic"
-                              className="h-24 w-24 rounded-lg"
+                              className="w-24 h-24 rounded-lg"
                             />
-                            <p className="max-w-48 mt-2 overflow-hidden truncate rounded-full bg-celtic-800 bg-opacity-10 px-5 py-2">
+                            <p className="px-5 py-2 mt-2 overflow-hidden truncate rounded-full max-w-48 bg-celtic-800 bg-opacity-10">
                               {state.file.name}
                             </p>
                           </>
                         ) : (
                           <>
-                            <Upload className="h-8 w-8" />
+                            <Upload className="w-8 h-8" />
                             <p className="text-sm font-semibold">
                               {onDragOver
                                 ? "Lepas gambar anda disini"
@@ -424,9 +424,9 @@ function UploadProfilePicDialog() {
                           }}
                         />
                       </label>
-                      <div className="mx-auto flex items-center justify-center gap-2">
+                      <div className="flex items-center justify-center gap-2 mx-auto">
                         <button
-                          className="w-fit rounded-full bg-red-700 px-7 py-2 font-semibold text-white transition hover:bg-red-600 disabled:brightness-50"
+                          className="py-2 font-semibold text-white transition bg-red-700 rounded-full w-fit px-7 hover:bg-red-600 disabled:brightness-50"
                           disabled={isSubmitting}
                           onClick={handleClose}
                         >
@@ -434,7 +434,7 @@ function UploadProfilePicDialog() {
                         </button>
                         <button
                           type="submit"
-                          className="w-fit rounded-full bg-celtic-800 px-7 py-2 font-semibold text-white transition hover:bg-celtic-700 disabled:brightness-50"
+                          className="py-2 font-semibold text-white transition rounded-full w-fit bg-celtic-800 px-7 hover:bg-celtic-700 disabled:brightness-50"
                           disabled={isSubmitting}
                           onClick={() => {
                             const timer = setTimeout(() => {
