@@ -6,6 +6,7 @@ const prisma = new PrismaClient();
 export async function POST(req: NextRequest) {
   const formData = await req.formData();
   const signName = formData.get("signName") as string;
+  const jabatan = formData.get("jabatan") as string;
   const sortBy = formData.get("sortBy") as string;
   const nrp = formData.get("nrp") as string;
 
@@ -135,12 +136,15 @@ export async function POST(req: NextRequest) {
     </table>
     <div style="display: flex; width: 100%; flex-direction: column; justify-content: center; align-items: flex-end; margin-top: 20px;">
         <div style="display: flex; min-width: 150px; flex-direction: column; justify-content: center;">
-            <p style="width: 100%; text-align: center;">
+            <p style="width: 100%; text-align: center; margin-bottom: 0;">
                 Palembang, ${new Date().toLocaleDateString("id-ID", {
                   day: "numeric",
                   month: "numeric",
                   year: "numeric",
                 })}
+            </p>
+            <p style="margin-top: 0; margin-bottom: 0; width: 100%; text-align: center;">
+                ${jabatan}
             </p>
             <p style="margin-top: 50px; margin-bottom: 0; width: 100%; text-align: center;">
                 ${signName}

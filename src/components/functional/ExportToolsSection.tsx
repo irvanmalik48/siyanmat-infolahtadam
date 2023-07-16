@@ -14,6 +14,7 @@ interface LaporanSubmit {
   toolCode: string;
   signName: string;
   nrp: string;
+  jabatan: string;
 }
 
 const exportSuccessAtom = atom(false);
@@ -26,6 +27,7 @@ export default function ExportToolsSection() {
   const [toolCodeError, setToolCodeError] = useState<string | undefined>();
   const [signNameError, setSignNameError] = useState<string | undefined>();
   const [nrpError, setNrpError] = useState<string | undefined>();
+  const [jabatanError, setJabatanError] = useState<string | undefined>();
 
   const [onSuccess, setOnSuccess] = useAtom(exportSuccessAtom);
 
@@ -47,6 +49,7 @@ export default function ExportToolsSection() {
             toolCode: "all",
             signName: "",
             nrp: "",
+            jabatan: "",
           }}
           validate={(values) => {
             const errors: {
@@ -54,6 +57,7 @@ export default function ExportToolsSection() {
               nrp?: string;
               sortBy?: string;
               formatFile?: string;
+              jabatan?: string;
             } = {};
 
             if (values.toolCode === "all" && values.sortBy === "") {
@@ -71,6 +75,11 @@ export default function ExportToolsSection() {
               setNrpError(errors.nrp);
             }
 
+            if (values.jabatan === "") {
+              errors.jabatan = "Silahkan masukkan jabatan penandatangan";
+              setJabatanError(errors.jabatan);
+            }
+
             return errors;
           }}
           onSubmit={async (values, { setSubmitting, resetForm }) => {
@@ -79,6 +88,7 @@ export default function ExportToolsSection() {
               toolCode: values.toolCode,
               signName: values.signName,
               nrp: values.nrp,
+              jabatan: values.jabatan,
             };
 
             const formData = new FormData();
@@ -94,6 +104,7 @@ export default function ExportToolsSection() {
             formData.append("signName", exportData.signName);
             formData.append("nrp", exportData.nrp);
             formData.append("data", exportData.toolCode);
+            formData.append("jabatan", exportData.jabatan);
 
             let fetchLink;
 
@@ -123,10 +134,10 @@ export default function ExportToolsSection() {
           }}
         >
           {({ isSubmitting, errors, touched, values }) => (
-            <Form className="flex flex-col w-full gap-5 p-5 mt-8 border rounded-xl border-neutral-300">
+            <Form className="mt-8 flex w-full flex-col gap-5 rounded-xl border border-neutral-300 p-5">
               <motion.div
                 key="toolCode-container"
-                className="flex flex-col items-start justify-start w-full gap-1"
+                className="flex w-full flex-col items-start justify-start gap-1"
                 initial={{
                   height: "70px",
                 }}
@@ -152,7 +163,7 @@ export default function ExportToolsSection() {
                   id="toolCode"
                   name="toolCode"
                   as="select"
-                  className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                  className="w-full rounded-lg border border-neutral-300 px-5 py-2 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
                   defaultValue="all"
                 >
                   <option value="all">Semua</option>
@@ -170,7 +181,7 @@ export default function ExportToolsSection() {
                   {errors.toolCode && touched.toolCode && (
                     <motion.div
                       key="toolCode-error"
-                      className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
+                      className="w-full rounded-lg bg-red-400 bg-opacity-10 px-5 py-2 text-sm text-red-500"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
@@ -182,7 +193,7 @@ export default function ExportToolsSection() {
               </motion.div>
               <motion.div
                 key="sortBy-container"
-                className="flex flex-col items-start justify-start w-full gap-1"
+                className="flex w-full flex-col items-start justify-start gap-1"
                 initial={{
                   height: "70px",
                 }}
@@ -207,7 +218,7 @@ export default function ExportToolsSection() {
                   id="sortBy"
                   name="sortBy"
                   as="select"
-                  className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50 disabled:cursor-not-allowed disabled:brightness-75"
+                  className="w-full rounded-lg border border-neutral-300 px-5 py-2 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50 disabled:cursor-not-allowed disabled:brightness-75"
                   defaultValue=""
                   disabled={values.toolCode !== "all"}
                 >
@@ -224,7 +235,7 @@ export default function ExportToolsSection() {
                   {errors.sortBy && touched.sortBy && (
                     <motion.div
                       key="sortBy-error"
-                      className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
+                      className="w-full rounded-lg bg-red-400 bg-opacity-10 px-5 py-2 text-sm text-red-500"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
@@ -235,8 +246,56 @@ export default function ExportToolsSection() {
                 </AnimatePresence>
               </motion.div>
               <motion.div
+                key="jabatan-container"
+                className="flex w-full flex-col items-start justify-start gap-1"
+                initial={{
+                  height: "70px",
+                }}
+                animate={{
+                  height: errors.jabatan && touched.jabatan ? "110px" : "70px",
+                }}
+                exit={{
+                  height: "70px",
+                }}
+                transition={{
+                  type: "spring",
+                  stiffness: 500,
+                  height: {
+                    duration: 0.3,
+                  },
+                }}
+              >
+                <label htmlFor="jabatan" className="font-semibold">
+                  Jabatan Penandatangan
+                </label>
+                <Field
+                  id="jabatan"
+                  name="jabatan"
+                  type="text"
+                  className="w-full rounded-lg border border-neutral-300 px-5 py-2 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                  placeholder="Masukkan jabatan penandatangan"
+                />
+                <AnimatePresence
+                  onExitComplete={() => {
+                    setJabatanError(undefined);
+                  }}
+                >
+                  {errors.jabatan && touched.jabatan && (
+                    <motion.div
+                      key="jabatan-error"
+                      className="w-full rounded-lg bg-red-400 bg-opacity-10 px-5 py-2 text-sm text-red-500"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      {jabatanError}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+              <motion.div
                 key="signName-container"
-                className="flex flex-col items-start justify-start w-full gap-1"
+                className="flex w-full flex-col items-start justify-start gap-1"
                 initial={{
                   height: "70px",
                 }}
@@ -262,7 +321,7 @@ export default function ExportToolsSection() {
                   id="signName"
                   name="signName"
                   type="text"
-                  className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                  className="w-full rounded-lg border border-neutral-300 px-5 py-2 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
                   placeholder="Masukkan nama penandatangan"
                 />
                 <AnimatePresence
@@ -273,7 +332,7 @@ export default function ExportToolsSection() {
                   {errors.signName && touched.signName && (
                     <motion.div
                       key="signName-error"
-                      className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
+                      className="w-full rounded-lg bg-red-400 bg-opacity-10 px-5 py-2 text-sm text-red-500"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
@@ -285,7 +344,7 @@ export default function ExportToolsSection() {
               </motion.div>
               <motion.div
                 key="nrp-container"
-                className="flex flex-col items-start justify-start w-full gap-1"
+                className="flex w-full flex-col items-start justify-start gap-1"
                 initial={{
                   height: "70px",
                 }}
@@ -304,14 +363,14 @@ export default function ExportToolsSection() {
                 }}
               >
                 <label htmlFor="nrp" className="font-semibold">
-                  Jabatan, Korps, dan NRP
+                  Pangkat, Korps, dan NRP
                 </label>
                 <Field
                   id="nrp"
                   name="nrp"
                   type="text"
-                  className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
-                  placeholder="Masukkan jabatan, korps, dan NRP"
+                  className="w-full rounded-lg border border-neutral-300 px-5 py-2 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                  placeholder="Masukkan pangkat, korps, dan NRP"
                 />
                 <AnimatePresence
                   onExitComplete={() => {
@@ -321,7 +380,7 @@ export default function ExportToolsSection() {
                   {errors.nrp && touched.nrp && (
                     <motion.div
                       key="nrp-error"
-                      className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
+                      className="w-full rounded-lg bg-red-400 bg-opacity-10 px-5 py-2 text-sm text-red-500"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
@@ -334,7 +393,7 @@ export default function ExportToolsSection() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="self-end py-2 font-semibold text-white transition rounded-full w-fit bg-celtic-800 px-7 hover:bg-celtic-700 disabled:brightness-50"
+                className="w-fit self-end rounded-full bg-celtic-800 px-7 py-2 font-semibold text-white transition hover:bg-celtic-700 disabled:brightness-50"
               >
                 {isSubmitting ? "Memproses..." : "Cetak"}
               </button>
