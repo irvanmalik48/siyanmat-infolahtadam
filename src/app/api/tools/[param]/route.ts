@@ -10,7 +10,6 @@ interface CreateToolBody {
   name: string;
   brand: string;
   maxHourUsage: number;
-  hourUsageLeft: number;
   image?: File;
   condition: string;
 }
@@ -20,7 +19,6 @@ interface UpdateToolBody {
   name: string;
   brand: string;
   maxHourUsage: number;
-  hourUsageLeft: number;
   condition: string;
 }
 
@@ -56,9 +54,13 @@ export async function GET(
         name: true,
         brand: true,
         maxHourUsage: true,
-        hourUsageLeft: true,
         image: false,
         condition: true,
+        activities: {
+          select: {
+            activity: true,
+          },
+        }
       },
     });
   } else {
@@ -66,10 +68,35 @@ export async function GET(
       where: {
         toolCode: toolCode,
       },
+      include: {
+        activities: {
+          include: {
+            activity: true,
+          },
+        },
+      },
     });
   }
 
-  return new NextResponse(JSON.stringify(tools), {
+  if (getAll) {
+    return new NextResponse(JSON.stringify(tools.map((tool: any) => {
+      return {
+        ...tool,
+        hourUsageLeft: tool.maxHourUsage - tool.activities.reduce((acc: number, curr: any) => {
+          return acc + curr.activity.toolUsage;
+        }, 0)
+      }
+    })), {
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  return new NextResponse(JSON.stringify({
+    ...tools,
+    hourUsageLeft: tools.maxHourUsage - tools.activities.reduce((acc: number, curr: any) => {
+      return acc + curr.activity.toolUsage;
+    }, 0)
+  }), {
     headers: { "Content-Type": "application/json" },
   });
 }
@@ -115,7 +142,6 @@ export async function POST(req: NextRequest) {
       name: name as string,
       brand: brand as string,
       maxHourUsage: Number(maxHourUsage),
-      hourUsageLeft: Number(maxHourUsage),
       image: image as string,
       condition: (condition as string).toUpperCase(),
     },
@@ -140,7 +166,7 @@ export async function PATCH(
   const toolCodeFromParams = param;
   const formData = await req.formData();
 
-  const { toolCode, name, brand, maxHourUsage, hourUsageLeft, condition } =
+  const { toolCode, name, brand, maxHourUsage, condition } =
     Object.fromEntries(
       formData.entries() as IterableIterator<
         [keyof UpdateToolBody, string | undefined]
@@ -152,7 +178,6 @@ export async function PATCH(
     !name ||
     !brand ||
     !maxHourUsage ||
-    !hourUsageLeft ||
     !condition
   ) {
     return new NextResponse(
@@ -165,8 +190,6 @@ export async function PATCH(
       }
     );
   }
-
-  console.log(toolCode, name, brand, maxHourUsage, hourUsageLeft, condition);
 
   const prevTool = await prisma.tool.findFirst({
     where: {
@@ -195,7 +218,6 @@ export async function PATCH(
       name: name as string,
       brand: brand as string,
       maxHourUsage: Number(maxHourUsage),
-      hourUsageLeft: Number(hourUsageLeft),
       image: prevTool.image,
       condition: (condition as string).toUpperCase(),
     },

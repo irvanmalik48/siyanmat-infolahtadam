@@ -137,7 +137,6 @@ export async function POST(req: NextRequest) {
       },
       columns: [
         { name: "No" },
-        { name: "Kode Kegiatan" },
         { name: "Nama Kegiatan" },
         { name: "Deskripsi" },
         { name: "Tanggal Kegiatan" },
@@ -148,7 +147,6 @@ export async function POST(req: NextRequest) {
       rows: dataFlow?.map((activity: any, index: any) => {
         return [
           index + 1,
-          activity.activityCode,
           activity.name,
           activity.description,
           activity.date,
@@ -173,31 +171,26 @@ export async function POST(req: NextRequest) {
     sheet.mergeCells("B3:C3");
     sheet.mergeCells("B4:C4");
     sheet.mergeCells("B5:C5");
-    sheet.mergeCells("B6:C6");
 
-    sheet.getCell("B1").value = "Kode Peralatan";
+    sheet.getCell("B1").value = "Nama Peralatan";
     sheet.getCell("B1").alignment = { vertical: "middle" };
     sheet.getCell("B1").font = { bold: true };
 
-    sheet.getCell("B2").value = "Nama Peralatan";
+    sheet.getCell("B2").value = "Merk";
     sheet.getCell("B2").alignment = { vertical: "middle" };
     sheet.getCell("B2").font = { bold: true };
 
-    sheet.getCell("B3").value = "Merk";
+    sheet.getCell("B3").value = "Maksimal Waktu Guna (jam)";
     sheet.getCell("B3").alignment = { vertical: "middle" };
     sheet.getCell("B3").font = { bold: true };
 
-    sheet.getCell("B4").value = "Maksimal Waktu Guna (jam)";
+    sheet.getCell("B4").value = "Sisa Waktu Guna (jam)";
     sheet.getCell("B4").alignment = { vertical: "middle" };
     sheet.getCell("B4").font = { bold: true };
 
-    sheet.getCell("B5").value = "Sisa Waktu Guna (jam)";
+    sheet.getCell("B5").value = "Kondisi";
     sheet.getCell("B5").alignment = { vertical: "middle" };
     sheet.getCell("B5").font = { bold: true };
-
-    sheet.getCell("B6").value = "Kondisi";
-    sheet.getCell("B6").alignment = { vertical: "middle" };
-    sheet.getCell("B6").font = { bold: true };
 
     sheet.mergeCells("D1:E1");
     sheet.mergeCells("D2:E2");
@@ -234,7 +227,6 @@ export async function POST(req: NextRequest) {
       },
       columns: [
         { name: "No" },
-        { name: "Kode Kegiatan" },
         { name: "Nama Kegiatan" },
         { name: "Deskripsi" },
         { name: "Tanggal Kegiatan" },
@@ -244,7 +236,6 @@ export async function POST(req: NextRequest) {
       rows: dataFlow["activities"].map((activity: any, index: any) => {
         return [
           index + 1,
-          activity["activity"].activityCode,
           activity["activity"].name,
           activity["activity"].description,
           activity["activity"].date,
@@ -273,7 +264,6 @@ export async function POST(req: NextRequest) {
       },
       columns: [
         { name: "No" },
-        { name: "Kode Peralatan" },
         { name: "Nama Peralatan" },
         { name: "Merek" },
         { name: "Maksimal Waktu Guna (jam)" },
@@ -283,7 +273,6 @@ export async function POST(req: NextRequest) {
       rows: dataFlow?.map((tool: any, index: any) => {
         return [
           index + 1,
-          tool.toolCode,
           tool.name,
           tool.brand,
           tool.maxHourUsage,

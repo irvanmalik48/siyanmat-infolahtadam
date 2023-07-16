@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import { parse } from "path";
 
 const prisma = new PrismaClient();
 
@@ -153,19 +152,6 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  await prisma.tool.updateMany({
-    where: {
-      toolCode: {
-        in: splittedToolCodes,
-      },
-    },
-    data: {
-      hourUsageLeft: {
-        decrement: parseInt(toolUsage),
-      },
-    },
-  });
-
   return new NextResponse(JSON.stringify(activity), {
     headers: {
       "Content-Type": "application/json",
@@ -299,52 +285,6 @@ export async function PATCH(
     },
   });
 
-  // Update tool usage
-  const oldToolUsage = oldActivity?.toolUsage;
-
-  if (oldToolUsage && oldToolUsage !== parseInt(toolUsage)) {
-    const diff = parseInt(toolUsage) - oldToolUsage;
-
-    await prisma.tool.updateMany({
-      where: {
-        toolCode: {
-          in: splittedToolCodes,
-        },
-      },
-      data: {
-        hourUsageLeft: {
-          decrement: parseInt(toolUsage),
-        },
-      },
-    });
-
-    await prisma.tool.updateMany({
-      where: {
-        toolCode: {
-          in: oldActivity?.tools.map((tool) => tool.tool.toolCode),
-        },
-      },
-      data: {
-        hourUsageLeft: {
-          decrement: diff * -1,
-        },
-      },
-    });
-  } else {
-    await prisma.tool.updateMany({
-      where: {
-        toolCode: {
-          notIn: activity.tools.map((tool) => tool.tool.toolCode),
-        },
-      },
-      data: {
-        hourUsageLeft: {
-          decrement: parseInt(toolUsage),
-        },
-      },
-    });
-  }
-
   return new NextResponse(JSON.stringify(activity), {
     headers: {
       "Content-Type": "application/json",
@@ -404,19 +344,6 @@ export async function DELETE(
       }
     );
   }
-
-  await prisma.tool.updateMany({
-    where: {
-      toolCode: {
-        in: activity.tools.map((tool) => tool.tool.toolCode),
-      },
-    },
-    data: {
-      hourUsageLeft: {
-        increment: activity.toolUsage,
-      },
-    },
-  });
 
   await prisma.activityAndTool.deleteMany({
     where: {
