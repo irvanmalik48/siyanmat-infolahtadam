@@ -349,9 +349,9 @@ export async function DELETE(
     where: {
       activity: {
         activityCode,
-      }
-    }
-  })
+      },
+    },
+  });
 
   const activityToBeDeleted = await prisma.activity.delete({
     where: {

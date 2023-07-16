@@ -11,15 +11,18 @@ export async function POST(req: NextRequest) {
   const nrp = formData.get("nrp") as string;
 
   if (!signName || !sortBy || !nrp) {
-    return new NextResponse(JSON.stringify({
-      message: "Bad Request",
-    }), {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      status: 400,
-      statusText: "Bad Request",
-    });
+    return new NextResponse(
+      JSON.stringify({
+        message: "Bad Request",
+      }),
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        status: 400,
+        statusText: "Bad Request",
+      }
+    );
   }
 
   let tools = await prisma.tool.findMany({
@@ -30,7 +33,7 @@ export async function POST(req: NextRequest) {
         },
       },
     },
-  })
+  });
 
   tools = tools.sort((a, b) => {
     if (a.name < b.name) return -1;
@@ -63,7 +66,7 @@ export async function POST(req: NextRequest) {
   doc.setFontSize(12);
   doc.setFont("Times New Roman");
 
-  const htmlOutput = /* html */`
+  const htmlOutput = /* html */ `
   <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -89,10 +92,10 @@ export async function POST(req: NextRequest) {
     </h4>
     <h5 style="width: 100%; text-align: center; margin-top: 4px;">
         PER TANGGAL ${new Date().toLocaleDateString("id-ID", {
-    day: "numeric",
-    month: "numeric",
-    year: "numeric",
-  })}
+          day: "numeric",
+          month: "numeric",
+          year: "numeric",
+        })}
     </h5>
     <table style="border: 1px black solid; border-collapse: collapse; width: 100%; margin-bottom: auto;">
         <thead>
@@ -106,26 +109,46 @@ export async function POST(req: NextRequest) {
             </tr>
         </thead>
         <tbody>
-            ${tools.map((tool, index) => /* html */`
+            ${tools
+              .map(
+                (tool, index) => /* html */ `
             <tr>
-                <td style="border: 1px black solid; text-align: center;">${index + 1}</td>
-                <td style="border: 1px black solid; text-align: center; text-align: left; padding-left: 5px; padding-right: 5px;">${tool.name}</td>
-                <td style="border: 1px black solid; text-align: center;">${tool.brand}</td>
-                <td style="border: 1px black solid; text-align: center;">${tool.maxHourUsage} jam</td>
-                <td style="border: 1px black solid; text-align: center;">${tool.maxHourUsage - tool.activities.reduce((acc, curr) => acc + curr.activity.toolUsage, 0)} jam</td>
-                <td style="border: 1px black solid; text-align: center;">${tool.condition}</td>
+                <td style="border: 1px black solid; text-align: center;">${
+                  index + 1
+                }</td>
+                <td style="border: 1px black solid; text-align: center; text-align: left; padding-left: 5px; padding-right: 5px;">${
+                  tool.name
+                }</td>
+                <td style="border: 1px black solid; text-align: center;">${
+                  tool.brand
+                }</td>
+                <td style="border: 1px black solid; text-align: center;">${
+                  tool.maxHourUsage
+                } jam</td>
+                <td style="border: 1px black solid; text-align: center;">${
+                  tool.maxHourUsage -
+                  tool.activities.reduce(
+                    (acc, curr) => acc + curr.activity.toolUsage,
+                    0
+                  )
+                } jam</td>
+                <td style="border: 1px black solid; text-align: center;">${
+                  tool.condition
+                }</td>
             </tr>
-            `).join("")}
+            `
+              )
+              .join("")}
         </tbody>
     </table>
     <div style="display: flex; width: 100%; flex-direction: column; justify-content: center; align-items: flex-end; margin-top: 20px;">
         <div style="display: flex; min-width: 150px; flex-direction: column; justify-content: center;">
             <p style="width: 100%; text-align: center;">
                 Palembang, ${new Date().toLocaleDateString("id-ID", {
-    day: "numeric",
-    month: "numeric",
-    year: "numeric",
-  })}
+                  day: "numeric",
+                  month: "numeric",
+                  year: "numeric",
+                })}
             </p>
             <p style="margin-top: 50px; margin-bottom: 0; width: 100%; text-align: center;">
                 ${signName}

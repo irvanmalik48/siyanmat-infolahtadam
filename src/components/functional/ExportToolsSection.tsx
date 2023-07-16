@@ -113,9 +113,9 @@ export default function ExportToolsSection() {
             printJS({
               printable: blob,
               type: "raw-html",
-              style: "@page { size: A4; margin-top: 2.03cm; margin-bottom: 1.27cm; margin-left: 2.54cm; margin-right: 1.52cm } body { font-family: sans-serif; }",
-
-            })
+              style:
+                "@page { size: A4; margin-top: 2.03cm; margin-bottom: 1.27cm; margin-left: 2.54cm; margin-right: 1.52cm } body { font-family: sans-serif; }",
+            });
 
             setSubmitting(false);
             setOnSuccess(true);
@@ -123,10 +123,10 @@ export default function ExportToolsSection() {
           }}
         >
           {({ isSubmitting, errors, touched, values }) => (
-            <Form className="flex flex-col w-full gap-5 p-5 mt-8 border rounded-xl border-neutral-300">
+            <Form className="mt-8 flex w-full flex-col gap-5 rounded-xl border border-neutral-300 p-5">
               <motion.div
                 key="toolCode-container"
-                className="flex flex-col items-start justify-start w-full gap-1"
+                className="flex w-full flex-col items-start justify-start gap-1"
                 initial={{
                   height: "70px",
                 }}
@@ -152,7 +152,7 @@ export default function ExportToolsSection() {
                   id="toolCode"
                   name="toolCode"
                   as="select"
-                  className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                  className="w-full rounded-lg border border-neutral-300 px-5 py-2 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
                   defaultValue="all"
                 >
                   <option value="all">Semua</option>
@@ -170,7 +170,7 @@ export default function ExportToolsSection() {
                   {errors.toolCode && touched.toolCode && (
                     <motion.div
                       key="toolCode-error"
-                      className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
+                      className="w-full rounded-lg bg-red-400 bg-opacity-10 px-5 py-2 text-sm text-red-500"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
@@ -182,7 +182,7 @@ export default function ExportToolsSection() {
               </motion.div>
               <motion.div
                 key="sortBy-container"
-                className="flex flex-col items-start justify-start w-full gap-1"
+                className="flex w-full flex-col items-start justify-start gap-1"
                 initial={{
                   height: "70px",
                 }}
@@ -207,7 +207,7 @@ export default function ExportToolsSection() {
                   id="sortBy"
                   name="sortBy"
                   as="select"
-                  className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50 disabled:cursor-not-allowed disabled:brightness-75"
+                  className="w-full rounded-lg border border-neutral-300 px-5 py-2 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50 disabled:cursor-not-allowed disabled:brightness-75"
                   defaultValue=""
                   disabled={values.toolCode !== "all"}
                 >
@@ -224,7 +224,7 @@ export default function ExportToolsSection() {
                   {errors.sortBy && touched.sortBy && (
                     <motion.div
                       key="sortBy-error"
-                      className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
+                      className="w-full rounded-lg bg-red-400 bg-opacity-10 px-5 py-2 text-sm text-red-500"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
@@ -236,12 +236,13 @@ export default function ExportToolsSection() {
               </motion.div>
               <motion.div
                 key="signName-container"
-                className="flex flex-col items-start justify-start w-full gap-1"
+                className="flex w-full flex-col items-start justify-start gap-1"
                 initial={{
                   height: "70px",
                 }}
                 animate={{
-                  height: errors.signName && touched.signName ? "110px" : "70px",
+                  height:
+                    errors.signName && touched.signName ? "110px" : "70px",
                 }}
                 exit={{
                   height: "70px",
@@ -261,7 +262,7 @@ export default function ExportToolsSection() {
                   id="signName"
                   name="signName"
                   type="text"
-                  className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                  className="w-full rounded-lg border border-neutral-300 px-5 py-2 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
                   placeholder="Masukkan nama penandatangan"
                 />
                 <AnimatePresence
@@ -272,7 +273,7 @@ export default function ExportToolsSection() {
                   {errors.signName && touched.signName && (
                     <motion.div
                       key="signName-error"
-                      className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
+                      className="w-full rounded-lg bg-red-400 bg-opacity-10 px-5 py-2 text-sm text-red-500"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
@@ -284,7 +285,7 @@ export default function ExportToolsSection() {
               </motion.div>
               <motion.div
                 key="nrp-container"
-                className="flex flex-col items-start justify-start w-full gap-1"
+                className="flex w-full flex-col items-start justify-start gap-1"
                 initial={{
                   height: "70px",
                 }}
@@ -309,7 +310,7 @@ export default function ExportToolsSection() {
                   id="nrp"
                   name="nrp"
                   type="text"
-                  className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                  className="w-full rounded-lg border border-neutral-300 px-5 py-2 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
                   placeholder="Masukkan jabatan, korps, dan NRP"
                 />
                 <AnimatePresence
@@ -320,7 +321,7 @@ export default function ExportToolsSection() {
                   {errors.nrp && touched.nrp && (
                     <motion.div
                       key="nrp-error"
-                      className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
+                      className="w-full rounded-lg bg-red-400 bg-opacity-10 px-5 py-2 text-sm text-red-500"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
@@ -333,7 +334,7 @@ export default function ExportToolsSection() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="self-end py-2 font-semibold text-white transition rounded-full w-fit bg-celtic-800 px-7 hover:bg-celtic-700 disabled:brightness-50"
+                className="w-fit self-end rounded-full bg-celtic-800 px-7 py-2 font-semibold text-white transition hover:bg-celtic-700 disabled:brightness-50"
               >
                 {isSubmitting ? "Memproses..." : "Cetak"}
               </button>

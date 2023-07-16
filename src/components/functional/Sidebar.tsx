@@ -46,7 +46,7 @@ const links = [
 export default function Sidebar() {
   return (
     <aside className="sticky top-0 min-h-screen w-72 bg-celtic-800">
-      <div className="flex flex-col w-full gap-3">
+      <div className="flex w-full flex-col gap-3">
         <SidebarProfile />
         <SidebarNav />
       </div>
@@ -58,7 +58,7 @@ function SidebarNav() {
   const router = useRouter();
 
   return (
-    <nav className="flex flex-col w-full gap-2 px-3 text-white">
+    <nav className="flex w-full flex-col gap-2 px-3 text-white">
       {links.map((link) => (
         <SidebarNavLink
           key={link.href}
@@ -123,13 +123,13 @@ function SidebarProfile() {
   if (error) return <SidebarProfileError />;
 
   return (
-    <div className="relative w-full group">
+    <div className="group relative w-full">
       <img
         src={`/api/images${data?.image}`}
         alt="profile"
-        className="z-0 object-cover w-full aspect-square"
+        className="z-0 aspect-square w-full object-cover"
       />
-      <div className="absolute bottom-0 left-0 z-10 flex flex-col items-start justify-center w-full px-5 py-2 bg-opacity-50 bg-neutral-800 backdrop-blur-md">
+      <div className="absolute bottom-0 left-0 z-10 flex w-full flex-col items-start justify-center bg-neutral-800 bg-opacity-50 px-5 py-2 backdrop-blur-md">
         <p className="font-semibold text-white">Selamat datang,</p>
         <p className="text-lg font-bold text-white">{data?.name}!</p>
       </div>
@@ -143,9 +143,9 @@ function SidebarProfileError() {
       <img
         src="/placeholder_portrait.png"
         alt="profile"
-        className="z-0 object-cover w-full aspect-square"
+        className="z-0 aspect-square w-full object-cover"
       />
-      <div className="absolute bottom-0 left-0 z-10 flex flex-col items-start justify-center w-full px-5 py-2 bg-opacity-50 bg-neutral-800 backdrop-blur-md">
+      <div className="absolute bottom-0 left-0 z-10 flex w-full flex-col items-start justify-center bg-neutral-800 bg-opacity-50 px-5 py-2 backdrop-blur-md">
         <p className="font-semibold text-white">Please relogin</p>
         <p className="text-lg font-bold text-white">Unauthenticated!</p>
       </div>
@@ -156,10 +156,10 @@ function SidebarProfileError() {
 function SidebarProfileSkeleton() {
   return (
     <div className="relative w-full">
-      <div className="w-full aspect-square animate-pulse bg-neutral-300"></div>
-      <div className="absolute bottom-0 left-0 z-10 flex flex-col items-start justify-center w-full gap-2 px-5 py-2 bg-opacity-50 bg-neutral-800 backdrop-blur-md">
-        <div className="w-1/2 h-5 rounded-full animate-pulse bg-neutral-300" />
-        <div className="w-full h-6 rounded-full animate-pulse bg-neutral-300" />
+      <div className="aspect-square w-full animate-pulse bg-neutral-300"></div>
+      <div className="absolute bottom-0 left-0 z-10 flex w-full flex-col items-start justify-center gap-2 bg-neutral-800 bg-opacity-50 px-5 py-2 backdrop-blur-md">
+        <div className="h-5 w-1/2 animate-pulse rounded-full bg-neutral-300" />
+        <div className="h-6 w-full animate-pulse rounded-full bg-neutral-300" />
       </div>
     </div>
   );

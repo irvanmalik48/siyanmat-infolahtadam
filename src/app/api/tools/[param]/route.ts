@@ -60,7 +60,7 @@ export async function GET(
           select: {
             activity: true,
           },
-        }
+        },
       },
     });
   } else {
@@ -79,26 +79,38 @@ export async function GET(
   }
 
   if (getAll) {
-    return new NextResponse(JSON.stringify(tools.map((tool: any) => {
-      return {
-        ...tool,
-        hourUsageLeft: tool.maxHourUsage - tool.activities.reduce((acc: number, curr: any) => {
-          return acc + curr.activity.toolUsage;
-        }, 0)
+    return new NextResponse(
+      JSON.stringify(
+        tools.map((tool: any) => {
+          return {
+            ...tool,
+            hourUsageLeft:
+              tool.maxHourUsage -
+              tool.activities.reduce((acc: number, curr: any) => {
+                return acc + curr.activity.toolUsage;
+              }, 0),
+          };
+        })
+      ),
+      {
+        headers: { "Content-Type": "application/json" },
       }
-    })), {
-      headers: { "Content-Type": "application/json" },
-    });
+    );
   }
 
-  return new NextResponse(JSON.stringify({
-    ...tools,
-    hourUsageLeft: tools.maxHourUsage - tools.activities.reduce((acc: number, curr: any) => {
-      return acc + curr.activity.toolUsage;
-    }, 0)
-  }), {
-    headers: { "Content-Type": "application/json" },
-  });
+  return new NextResponse(
+    JSON.stringify({
+      ...tools,
+      hourUsageLeft:
+        tools.maxHourUsage -
+        tools.activities.reduce((acc: number, curr: any) => {
+          return acc + curr.activity.toolUsage;
+        }, 0),
+    }),
+    {
+      headers: { "Content-Type": "application/json" },
+    }
+  );
 }
 
 // Create a new tool
@@ -166,20 +178,13 @@ export async function PATCH(
   const toolCodeFromParams = param;
   const formData = await req.formData();
 
-  const { toolCode, name, brand, maxHourUsage, condition } =
-    Object.fromEntries(
-      formData.entries() as IterableIterator<
-        [keyof UpdateToolBody, string | undefined]
-      >
-    );
+  const { toolCode, name, brand, maxHourUsage, condition } = Object.fromEntries(
+    formData.entries() as IterableIterator<
+      [keyof UpdateToolBody, string | undefined]
+    >
+  );
 
-  if (
-    !toolCode ||
-    !name ||
-    !brand ||
-    !maxHourUsage ||
-    !condition
-  ) {
+  if (!toolCode || !name || !brand || !maxHourUsage || !condition) {
     return new NextResponse(
       JSON.stringify({
         error: "Missing fields",

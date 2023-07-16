@@ -14,15 +14,18 @@ export async function POST(req: NextRequest) {
   const nrp = formData.get("nrp") as string;
 
   if (!startDate || !endDate || !signName || !sortBy || !nrp) {
-    return new NextResponse(JSON.stringify({
-      message: "Bad Request",
-    }), {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      status: 400,
-      statusText: "Bad Request",
-    });
+    return new NextResponse(
+      JSON.stringify({
+        message: "Bad Request",
+      }),
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        status: 400,
+        statusText: "Bad Request",
+      }
+    );
   }
 
   const startDateDDMMYYYY = new Date().toLocaleDateString("id-ID", {
@@ -52,7 +55,7 @@ export async function POST(req: NextRequest) {
               activities: {
                 include: {
                   activity: true,
-                }
+                },
               },
             },
           },
@@ -86,7 +89,7 @@ export async function POST(req: NextRequest) {
   doc.setFontSize(12);
   doc.setFont("Times New Roman");
 
-  const htmlOutput = /* html */`
+  const htmlOutput = /* html */ `
   <!DOCTYPE html>
   <html lang="en">
   <head>
@@ -128,47 +131,77 @@ export async function POST(req: NextRequest) {
               </tr>
           </thead>
           <tbody>
-              ${activities.map((activity, index) => {
-    return /* html */`
+              ${activities
+                .map((activity, index) => {
+                  return /* html */ `
                   <tr>
-                      <td style="border: 1px black solid; text-align: center; padding-top: 5px; padding-bottom: 5px;" rowspan="3">${index + 1}</td>
-                      <td style="border: 1px black solid; text-align: center; padding-top: 5px; padding-bottom: 5px; text-align: left; padding-left: 5px; padding-right: 5px;" rowspan="3">${activity.name}</td>
-                      <td style="border: 1px black solid; text-align: center; padding-top: 5px; padding-bottom: 5px;" rowspan="3">${activity.date.toLocaleDateString("id-ID", {
-      day: "numeric",
-      month: "numeric",
-      year: "numeric",
-    })}</td>
-                      ${activity.tools.slice(0, 1).map((tool) => {
-      return /* html */`
-                          <td style="border: 1px black solid; text-align: center; padding-top: 5px; padding-bottom: 5px;">${tool.tool.name}</td>
-                          <td style="border: 1px black solid; text-align: center; padding-top: 5px; padding-bottom: 5px;">${tool.tool.maxHourUsage - tool.tool.activities.reduce((acc, curr) => acc + curr.activity.toolUsage, 0)} jam</td>
+                      <td style="border: 1px black solid; text-align: center; padding-top: 5px; padding-bottom: 5px;" rowspan="3">${
+                        index + 1
+                      }</td>
+                      <td style="border: 1px black solid; text-align: center; padding-top: 5px; padding-bottom: 5px; text-align: left; padding-left: 5px; padding-right: 5px;" rowspan="3">${
+                        activity.name
+                      }</td>
+                      <td style="border: 1px black solid; text-align: center; padding-top: 5px; padding-bottom: 5px;" rowspan="3">${activity.date.toLocaleDateString(
+                        "id-ID",
+                        {
+                          day: "numeric",
+                          month: "numeric",
+                          year: "numeric",
+                        }
+                      )}</td>
+                      ${activity.tools
+                        .slice(0, 1)
+                        .map((tool) => {
+                          return /* html */ `
+                          <td style="border: 1px black solid; text-align: center; padding-top: 5px; padding-bottom: 5px;">${
+                            tool.tool.name
+                          }</td>
+                          <td style="border: 1px black solid; text-align: center; padding-top: 5px; padding-bottom: 5px;">${
+                            tool.tool.maxHourUsage -
+                            tool.tool.activities.reduce(
+                              (acc, curr) => acc + curr.activity.toolUsage,
+                              0
+                            )
+                          } jam</td>
                           `;
-    }).join("")
-      }
-                      <td style="border: 1px black solid; text-align: center; padding-top: 5px; padding-bottom: 5px;" rowspan="3">${activity.operatorName}</td>
+                        })
+                        .join("")}
+                      <td style="border: 1px black solid; text-align: center; padding-top: 5px; padding-bottom: 5px;" rowspan="3">${
+                        activity.operatorName
+                      }</td>
                   </tr>
-                  ${activity.tools.slice(1).map((tool) => {
-        return /* html */`
+                  ${activity.tools
+                    .slice(1)
+                    .map((tool) => {
+                      return /* html */ `
                       <tr>
-                          <td style="border: 1px black solid; text-align: center; padding-top: 5px; padding-bottom: 5px;">${tool.tool.name}</td>
-                          <td style="border: 1px black solid; text-align: center; padding-top: 5px; padding-bottom: 5px;">${tool.tool.maxHourUsage - tool.tool.activities.reduce((acc, curr) => acc + curr.activity.toolUsage, 0)} jam</td>
+                          <td style="border: 1px black solid; text-align: center; padding-top: 5px; padding-bottom: 5px;">${
+                            tool.tool.name
+                          }</td>
+                          <td style="border: 1px black solid; text-align: center; padding-top: 5px; padding-bottom: 5px;">${
+                            tool.tool.maxHourUsage -
+                            tool.tool.activities.reduce(
+                              (acc, curr) => acc + curr.activity.toolUsage,
+                              0
+                            )
+                          } jam</td>
                       </tr>
                       `;
-      }).join("")
-      }
+                    })
+                    .join("")}
                   `;
-  }).join("")
-    }
+                })
+                .join("")}
           </tbody>
       </table>
       <div style="display: flex; width: 100%; flex-direction: column; justify-content: center; align-items: flex-end; margin-top: 20px;">
           <div style="display: flex; min-width: 150px; flex-direction: column; justify-content: center;">
               <p style="width: 100%; text-align: center;">
                   Palembang, ${new Date().toLocaleDateString("id-ID", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    })}
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
               </p>
               <p style="margin-top: 50px; margin-bottom: 0; width: 100%; text-align: center;">
                   ${signName}

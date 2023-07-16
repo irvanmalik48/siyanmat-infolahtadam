@@ -116,10 +116,10 @@ export default function EditToolSection({ code }: { code: string }) {
             }}
           >
             {({ isSubmitting, errors, touched }) => (
-              <Form className="flex flex-col w-full gap-5 p-5 mt-8 border rounded-xl border-neutral-300">
+              <Form className="mt-8 flex w-full flex-col gap-5 rounded-xl border border-neutral-300 p-5">
                 <motion.div
                   key="image-container"
-                  className="flex flex-col items-start justify-start w-full gap-1"
+                  className="flex w-full flex-col items-start justify-start gap-1"
                   initial={{
                     height: "86px",
                   }}
@@ -140,7 +140,7 @@ export default function EditToolSection({ code }: { code: string }) {
                   <label htmlFor="image" className="font-semibold">
                     Gambar Alat
                   </label>
-                  <div className="w-full transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50">
+                  <div className="w-full rounded-lg border border-neutral-300 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50">
                     <Field
                       id="image"
                       name="image"
@@ -171,7 +171,7 @@ export default function EditToolSection({ code }: { code: string }) {
                     {errors.image && touched.image && (
                       <motion.div
                         key="image-error"
-                        className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
+                        className="w-full rounded-lg bg-red-400 bg-opacity-10 px-5 py-2 text-sm text-red-500"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -184,7 +184,7 @@ export default function EditToolSection({ code }: { code: string }) {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="self-end py-2 font-semibold text-white transition rounded-full w-fit bg-celtic-800 px-7 hover:bg-celtic-700 disabled:brightness-50"
+                  className="w-fit self-end rounded-full bg-celtic-800 px-7 py-2 font-semibold text-white transition hover:bg-celtic-700 disabled:brightness-50"
                 >
                   {isSubmitting ? "Menyimpan..." : "Update"}
                 </button>
@@ -266,10 +266,10 @@ export default function EditToolSection({ code }: { code: string }) {
             }}
           >
             {({ isSubmitting, errors, touched }) => (
-              <Form className="flex flex-col w-full gap-5 p-5 mt-5 border rounded-xl border-neutral-300">
+              <Form className="mt-5 flex w-full flex-col gap-5 rounded-xl border border-neutral-300 p-5">
                 <motion.div
                   key="toolCode-container"
-                  className="flex flex-col items-start justify-start w-full gap-1"
+                  className="flex w-full flex-col items-start justify-start gap-1"
                   initial={{
                     height: "70px",
                   }}
@@ -295,7 +295,7 @@ export default function EditToolSection({ code }: { code: string }) {
                     id="toolCode"
                     name="toolCode"
                     type="text"
-                    className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                    className="w-full rounded-lg border border-neutral-300 px-5 py-2 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
                     placeholder="Masukkan kode alat (i.e. AL-0001)"
                   />
                   <AnimatePresence
@@ -306,7 +306,7 @@ export default function EditToolSection({ code }: { code: string }) {
                     {errors.toolCode && touched.toolCode && (
                       <motion.div
                         key="toolCode-error"
-                        className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
+                        className="w-full rounded-lg bg-red-400 bg-opacity-10 px-5 py-2 text-sm text-red-500"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -318,7 +318,7 @@ export default function EditToolSection({ code }: { code: string }) {
                 </motion.div>
                 <motion.div
                   key="name-container"
-                  className="flex flex-col items-start justify-start w-full gap-1"
+                  className="flex w-full flex-col items-start justify-start gap-1"
                   initial={{
                     height: "70px",
                   }}
@@ -343,7 +343,7 @@ export default function EditToolSection({ code }: { code: string }) {
                     id="name"
                     name="name"
                     type="text"
-                    className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                    className="w-full rounded-lg border border-neutral-300 px-5 py-2 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
                     placeholder="Masukkan nama alat"
                   />
                   <AnimatePresence
@@ -354,7 +354,7 @@ export default function EditToolSection({ code }: { code: string }) {
                     {errors.name && touched.name && (
                       <motion.div
                         key="name-error"
-                        className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
+                        className="w-full rounded-lg bg-red-400 bg-opacity-10 px-5 py-2 text-sm text-red-500"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -364,7 +364,7 @@ export default function EditToolSection({ code }: { code: string }) {
                     )}
                   </AnimatePresence>
                 </motion.div>
-                <div className="flex flex-col items-start justify-start w-full gap-1">
+                <div className="flex w-full flex-col items-start justify-start gap-1">
                   <label htmlFor="brand" className="font-semibold">
                     Merek Alat
                   </label>
@@ -372,13 +372,13 @@ export default function EditToolSection({ code }: { code: string }) {
                     id="brand"
                     name="brand"
                     type="text"
-                    className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                    className="w-full rounded-lg border border-neutral-300 px-5 py-2 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
                     placeholder="Masukkan merek alat (kosongkan jika tidak ada merek)"
                   />
                 </div>
                 <motion.div
                   key="maxHourUsage-container"
-                  className="flex flex-col items-start justify-start w-full gap-1"
+                  className="flex w-full flex-col items-start justify-start gap-1"
                   initial={{
                     height: "70px",
                   }}
@@ -406,7 +406,7 @@ export default function EditToolSection({ code }: { code: string }) {
                     id="maxHourUsage"
                     name="maxHourUsage"
                     type="number"
-                    className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                    className="w-full rounded-lg border border-neutral-300 px-5 py-2 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
                   />
                   <AnimatePresence
                     onExitComplete={() => {
@@ -416,7 +416,7 @@ export default function EditToolSection({ code }: { code: string }) {
                     {errors.maxHourUsage && touched.maxHourUsage && (
                       <motion.div
                         key="maxHourUsage-error"
-                        className="w-full px-5 py-2 text-sm text-red-500 bg-red-400 rounded-lg bg-opacity-10"
+                        className="w-full rounded-lg bg-red-400 bg-opacity-10 px-5 py-2 text-sm text-red-500"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -426,7 +426,7 @@ export default function EditToolSection({ code }: { code: string }) {
                     )}
                   </AnimatePresence>
                 </motion.div>
-                <div className="flex flex-col items-start justify-start w-full gap-1">
+                <div className="flex w-full flex-col items-start justify-start gap-1">
                   <label htmlFor="condition" className="font-semibold">
                     Kondisi Alat
                   </label>
@@ -434,14 +434,14 @@ export default function EditToolSection({ code }: { code: string }) {
                     id="condition"
                     name="condition"
                     type="text"
-                    className="w-full px-5 py-2 transition border rounded-lg outline-none border-neutral-300 ring-4 ring-transparent focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
+                    className="w-full rounded-lg border border-neutral-300 px-5 py-2 outline-none ring-4 ring-transparent transition focus:border-celtic-800 focus:ring-celtic-800 focus:ring-opacity-50"
                     placeholder="Masukkan kondisi alat (B/RB/RR)"
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="self-end py-2 font-semibold text-white transition rounded-full w-fit bg-celtic-800 px-7 hover:bg-celtic-700 disabled:brightness-50"
+                  className="w-fit self-end rounded-full bg-celtic-800 px-7 py-2 font-semibold text-white transition hover:bg-celtic-700 disabled:brightness-50"
                 >
                   {isSubmitting ? "Menyimpan..." : "Simpan"}
                 </button>
