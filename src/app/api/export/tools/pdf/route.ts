@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
-import { jsPDF } from "jspdf";
 
 const prisma = new PrismaClient();
 
@@ -58,13 +57,6 @@ export async function POST(req: NextRequest) {
   } else {
     // fallback to default sort by name
   }
-
-  const doc = new jsPDF({
-    orientation: "portrait",
-  });
-
-  doc.setFontSize(12);
-  doc.setFont("Times New Roman");
 
   const htmlOutput = /* html */ `
   <!DOCTYPE html>
