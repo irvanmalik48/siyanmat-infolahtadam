@@ -84,9 +84,9 @@ model Tool {
 }
 
 model ActivityAndTool {
-  activity    Activity @relation(fields: [activityId], references: [id], onDelete: SetDefault)
+  activity    Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
   activityId  String   @default("")
-  tool        Tool     @relation(fields: [toolId], references: [id], onDelete: SetDefault)
+  tool        Tool     @relation(fields: [toolId], references: [id], onDelete: Cascade)
   toolId      String   @default("")
 
   @@id([activityId, toolId])

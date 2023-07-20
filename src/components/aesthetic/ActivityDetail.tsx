@@ -138,7 +138,7 @@ export default function ToolDetail({ code }: { code: string }) {
             <label className="font-semibold" htmlFor="tool">
               Alat yang Digunakan
             </label>
-            {activity?.tools.map((tool) => (
+            {activity?.tools.length! > 0 && activity?.tools.map((tool) => (
               <Link
                 id="tool"
                 href={`/tools/view/${tool.tool.toolCode}`}
@@ -170,6 +170,9 @@ export default function ToolDetail({ code }: { code: string }) {
                 </div>
               </Link>
             ))}
+            {activity?.tools.length! <= 0 && (
+              <p className="w-full">Tidak ada alat yang digunakan.</p>
+            )}
           </div>
           <div className="flex w-full items-center justify-end gap-3">
             <Link
