@@ -128,13 +128,13 @@ export async function POST(req: NextRequest) {
                 .map((activity, index) => {
                   return /* html */ `
                   <tr>
-                      <td style="border: 1px black solid; text-align: center; padding-top: 5px; padding-bottom: 5px;" rowspan="3">${
+                      <td style="border: 1px black solid; text-align: center; padding-top: 5px; padding-bottom: 5px;" rowspan="${activity.tools.length}">${
                         index + 1
                       }</td>
                       <td style="border: 1px black solid; text-align: center; padding-top: 5px; padding-bottom: 5px; text-align: left; padding-left: 5px; padding-right: 5px;" rowspan="3">${
                         activity.name
                       }</td>
-                      <td style="border: 1px black solid; text-align: center; padding-top: 5px; padding-bottom: 5px;" rowspan="3">${activity.date.toLocaleDateString(
+                      <td style="border: 1px black solid; text-align: center; padding-top: 5px; padding-bottom: 5px;" rowspan="${activity.tools.length}">${activity.date.toLocaleDateString(
                         "id-ID",
                         {
                           day: "numeric",
